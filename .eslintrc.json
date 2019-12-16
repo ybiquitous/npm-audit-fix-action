@@ -12,5 +12,6 @@
   "parserOptions": {
     "ecmaVersion": 2020
   },
-  "rules": {}
+  "rules": {},
+  "ignorePatterns": ["dist/"]
 }
