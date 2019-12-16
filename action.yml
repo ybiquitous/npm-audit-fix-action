@@ -1,5 +1,5 @@
 name: "npm audit fix"
-description: "npm audit fix"
+description: "Run `npm audit fix` and create a pull request"
 inputs:
   github_token:
     description: "GitHub token"
