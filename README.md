@@ -1,6 +1,6 @@
 
 <p align="center">
-  <a href="https://github.com/actions/javascript-action/actions"><img alt="javscript-action status" src="https://github.com/actions/javascript-action/workflows/units-test/badge.svg"></a>
+  <a href="https://github.com/ybiquitous/npm-audit-fix-action/actions"><img alt="javscript-action status" src="https://github.com/ybiquitous/npm-audit-fix-action/workflows/units-test/badge.svg"></a>
 </p>
 
 # Create a JavaScript Action
@@ -106,9 +106,9 @@ See the [versioning documentation](https://github.com/actions/toolkit/blob/maste
 You can now consume the action by referencing the v1 branch
 
 ```yaml
-uses: actions/javascript-action@v1
+uses: ybiquitous/npm-audit-fix-action@v1
 with:
   milliseconds: 1000
 ```
 
-See the [actions tab](https://github.com/actions/javascript-action/actions) for runs of this action! :rocket:
+See the [actions tab](https://github.com/ybiquitous/npm-audit-fix-action/actions) for runs of this action! :rocket:
