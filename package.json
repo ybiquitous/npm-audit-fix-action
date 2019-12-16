@@ -1,6 +1,6 @@
 {
-  "name": "javascript-action",
-  "version": "1.0.0",
+  "name": "npm-audit-fix-action",
+  "version": "0.0.1",
   "description": "JavaScript Action Template",
   "main": "lib/index.js",
   "scripts": {
