@@ -4,14 +4,12 @@
     "es6": true,
     "node": true
   },
-  "extends": [
-    "eslint:recommended",
-    "plugin:node/recommended",
-    "plugin:jest/recommended"
-  ],
+  "extends": ["eslint:recommended", "plugin:node/recommended", "plugin:jest/recommended"],
   "parserOptions": {
     "ecmaVersion": 2020
   },
-  "rules": {},
+  "rules": {
+    "no-template-curly-in-string": "error"
+  },
   "ignorePatterns": ["dist/"]
 }
