@@ -6,14 +6,11 @@
   },
   "extends": [
     "eslint:recommended",
-    "plugin:jest/recommended",
+    "plugin:node/recommended",
+    "plugin:jest/recommended"
   ],
-  "globals": {
-    "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly"
-  },
   "parserOptions": {
-    "ecmaVersion": 2018
+    "ecmaVersion": 2020
   },
   "rules": {}
 }
