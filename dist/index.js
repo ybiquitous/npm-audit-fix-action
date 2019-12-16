@@ -7888,18 +7888,23 @@ async function run() {
       return await audit();
     });
 
-    const fixData = await core.group("Fix vulnerabilities", async () => {
+    const fix = await core.group("Fix vulnerabilities", async () => {
       return await auditFix();
     });
 
     await core.group("Show audit report", async () => {
-      await report(auditData, fixData);
+      await report(auditData, fix);
     });
+
+    if (fix.updated.length + fix.added.length + fix.removed.length === 0) {
+      console.log("No update.");
+      return;
+    }
 
     await core.group("Create a pull request", async () => {
       await createPullRequest({
         audit: auditData,
-        fix: fixData,
+        fix: fix,
         token: core.getInput("github_token"),
         defaultBranch: core.getInput("default_branch"),
         repo: process.env.GITHUB_REPOSITORY,
@@ -8792,16 +8797,11 @@ module.exports = function btoa(str) {
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
 const os = __webpack_require__(87);
+const newAdvisories = __webpack_require__(687);
 const capitalize = __webpack_require__(203);
 
 module.exports = async function report(audit, fix) {
-  const advisories = Object.values(audit.advisories);
-  const findAdvisory = (name, version) => {
-    return (
-      advisories.find(a => a.module_name === name && a.findings.find(f => f.version === version)) ||
-      {}
-    );
-  };
+  const advisories = newAdvisories(audit);
 
   const lines = [];
 
@@ -8809,7 +8809,7 @@ module.exports = async function report(audit, fix) {
   if (fix.updated.length) {
     fix.updated.forEach(({ name, version, previousVersion }) => {
       lines.push(`  --> ${name}: ${previousVersion} to ${version}`);
-      const { title, severity, cwe, url } = findAdvisory(name, previousVersion);
+      const { title, severity, cwe, url } = advisories.find(name, previousVersion);
       if (title) {
         lines.push(`      [${capitalize(severity)}] ${title} (${cwe})`);
         lines.push(`      ${url}`);
@@ -8861,6 +8861,24 @@ module.exports = async function report(audit, fix) {
   lines.push(`${fix.elapsed / 1000}s elapsed`);
 
   console.log(lines.join(os.EOL));
+};
+
+
+/***/ }),
+
+/***/ 687:
+/***/ (function(module) {
+
+module.exports = function advisories(audit) {
+  const list = Object.values(audit.advisories);
+
+  return {
+    find: (name, version) => {
+      return (
+        list.find(a => a.module_name === name && a.findings.find(f => f.version === version)) || {}
+      );
+    },
+  };
 };
 
 
@@ -8929,6 +8947,8 @@ module.exports = {"activity":{"checkStarringRepo":{"method":"GET","params":{"own
 
 const exec = __webpack_require__(986);
 const github = __webpack_require__(469);
+const newAdvisories = __webpack_require__(687);
+const capitalize = __webpack_require__(203);
 
 module.exports = async function createPullRequest({
   audit,
@@ -8939,8 +8959,33 @@ module.exports = async function createPullRequest({
   actor,
   email,
 }) {
-  const commitSummary = "npm audit fix";
-  const commitDetails = "";
+  const advisories = newAdvisories(audit);
+
+  const buildDetails = () => {
+    const lines = [];
+    lines.push("### Updated");
+    lines.push("");
+    lines.push("|Package|Version|Title|Severity|Info|");
+    lines.push("|-------|-------|-----|--------|----|");
+    fix.updated.forEach(({ name, version, previousVersion }) => {
+      const { title, severity, url } = advisories.find(name, previousVersion);
+      lines.push(
+        "| " +
+          [
+            `[${name}](https://npm.im/${name})`,
+            `\`${previousVersion}\` -> \`${version}\``,
+            title || "-",
+            capitalize(severity) || "-",
+            url || "-",
+          ].join(" | ") +
+          " |"
+      );
+    });
+    return lines;
+  };
+
+  const commitSummary = "chore(deps): npm audit fix";
+  const commitDetails = buildDetails().join("\n");
   const commitMessage = `${commitSummary}\n\n${commitDetails}`;
   const branch = "npm-audit-fix";
   const remote = `https://${actor}:${token}@github.com/${repo}.git`;
@@ -8962,7 +9007,7 @@ module.exports = async function createPullRequest({
     head: branch,
     base: defaultBranch,
   });
-  console.log(pullRequest);
+  console.log(`Successfully created: ${pullRequest.html_url}`);
 };
 
 
