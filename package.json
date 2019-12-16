@@ -1,7 +1,7 @@
 {
   "name": "npm-audit-fix-action",
   "version": "0.0.1",
-  "description": "JavaScript Action Template",
+  "description": "A GitHub Action for `npm audit fix`",
   "main": "lib/index.js",
   "scripts": {
     "lint": "eslint .",
@@ -28,7 +28,9 @@
   },
   "homepage": "https://github.com/ybiquitous/npm-audit-fix-action#readme",
   "dependencies": {
-    "@actions/core": "^1.1.1"
+    "@actions/core": "^1.1.1",
+    "@actions/exec": "^1.0.2",
+    "@actions/github": "^2.0.0"
   },
   "devDependencies": {
     "@zeit/ncc": "^0.20.5",
