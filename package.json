@@ -2,10 +2,10 @@
   "name": "javascript-action",
   "version": "1.0.0",
   "description": "JavaScript Action Template",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "lint": "eslint .",
-    "package": "ncc build index.js -o dist",
+    "package": "ncc build lib/index.js -o dist",
     "pretest": "npm run lint",
     "test": "jest",
     "prettier": "prettier \"**/*.{js,json,yml,md}\"",
