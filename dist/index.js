@@ -7911,7 +7911,7 @@ async function run() {
     }
 
     const branch = core.getInput("branch");
-    if (branchExists(branch)) {
+    if (await branchExists(branch)) {
       console.log(`"${branch}" branch exists already.`);
       return;
     }
