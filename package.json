@@ -91,6 +91,11 @@
     "ignorePatterns": [
       "dist/"
     ],
+    "rules": {
+      "max-lines-per-function": "warn",
+      "max-statements": "warn",
+      "no-console": "warn"
+    },
     "overrides": [
       {
         "files": [
