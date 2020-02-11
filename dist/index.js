@@ -1279,13 +1279,17 @@ module.exports = windowsRelease;
 
 const { exec } = __webpack_require__(986);
 
+/**
+ * @returns {Promise<AuditReport>}
+ */
 module.exports = async function audit() {
   let stdout = "";
-  const stdoutFn = data => {
-    stdout += data.toString();
-  };
   await exec("npm", ["audit", "--json"], {
-    listeners: { stdout: stdoutFn },
+    listeners: {
+      stdout: data => {
+        stdout += data.toString();
+      },
+    },
     silent: true,
     ignoreReturnCode: true,
   });
@@ -2484,12 +2488,15 @@ function checkMode (stat, options) {
 /***/ 203:
 /***/ (function(module) {
 
-module.exports = function capitalize(s) {
-  if (typeof s === "string") {
-    return s.charAt(0).toUpperCase() + s.slice(1);
-  } else {
-    return "";
+/**
+ * @param {string} str
+ * @returns {string}
+ */
+module.exports = function capitalize(str) {
+  if (typeof str === "string") {
+    return str.charAt(0).toUpperCase() + str.slice(1);
   }
+  return "";
 };
 
 
@@ -7862,12 +7869,17 @@ module.exports.Collection = Hook.Collection
 
 const core = __webpack_require__(470);
 const { exec } = __webpack_require__(986);
+const pkg = __webpack_require__(731);
 const audit = __webpack_require__(50);
 const auditFix = __webpack_require__(905);
 const report = __webpack_require__(684);
 const createPullRequest = __webpack_require__(708);
 
-const NPM_VERSION = "6.13.7";
+const NPM_VERSION = pkg.engines.npm;
+
+if (!NPM_VERSION) {
+  throw new Error(`No NPM_VERSION!`);
+}
 
 async function run() {
   try {
@@ -7876,19 +7888,25 @@ async function run() {
       await exec("npm", ["config", "set", "ignore-scripts", "true"]);
     });
 
-    await core.group("Update npm", () => {
-      exec("sudo", ["npm", "install", "--global", `npm@${NPM_VERSION}`]);
+    await core.group("Update npm", async () => {
+      await exec("sudo", ["npm", "install", "--global", `npm@${NPM_VERSION}`]);
     });
 
-    await core.group("Install user packages", () => {
-      exec("npm", ["ci"]);
+    await core.group("Install user packages", async () => {
+      await exec("npm", ["ci"]);
     });
 
-    const auditReport = await core.group("Get audit report", () => audit());
+    const auditReport = await core.group("Get audit report", () => {
+      return audit();
+    });
 
-    const fix = await core.group("Fix vulnerabilities", () => auditFix());
+    const fix = await core.group("Fix vulnerabilities", () => {
+      return auditFix();
+    });
 
-    await core.group("Show audit report", () => report(auditReport, fix));
+    await core.group("Show audit report", () => {
+      return report(auditReport, fix);
+    });
 
     if (fix.updated.length + fix.added.length + fix.removed.length === 0) {
       console.log("No update.");
@@ -7910,16 +7928,26 @@ async function run() {
       return;
     }
 
+    const repository = process.env.GITHUB_REPOSITORY;
+    if (!repository) {
+      throw new Error("No GITHUB_REPOSITORY!");
+    }
+
+    const actor = process.env.GITHUB_ACTOR;
+    if (!actor) {
+      throw new Error("No GITHUB_ACTOR!");
+    }
+
     await core.group("Create a pull request", () => {
-      createPullRequest({
+      return createPullRequest({
         audit: auditReport,
         fix,
         branch,
         token: core.getInput("github_token"),
         defaultBranch: core.getInput("default_branch"),
         commitTitle: core.getInput("commit_title"),
-        repository: process.env.GITHUB_REPOSITORY,
-        actor: process.env.GITHUB_ACTOR,
+        repository,
+        actor,
         email: "actions@github.com",
       });
     });
@@ -8811,7 +8839,11 @@ const os = __webpack_require__(87);
 const newAdvisories = __webpack_require__(687);
 const capitalize = __webpack_require__(203);
 
-module.exports = async function report(audit, fix) {
+/**
+ * @param {AuditReport} audit
+ * @param {Fix} fix
+ */
+module.exports = function report(audit, fix) {
   const advisories = newAdvisories(audit);
 
   const lines = [];
@@ -8820,8 +8852,9 @@ module.exports = async function report(audit, fix) {
   if (fix.updated.length) {
     fix.updated.forEach(({ name, version, previousVersion }) => {
       lines.push(`  --> ${name}: ${previousVersion} to ${version}`);
-      const { title, severity, cwe, url } = advisories.find(name, previousVersion);
-      if (title) {
+      const advisory = advisories.find(name, previousVersion);
+      if (advisory) {
+        const { title, severity, cwe, url } = advisory;
         lines.push(`      [${capitalize(severity)}] ${title} (${cwe})`);
         lines.push(`      ${url}`);
       }
@@ -8872,6 +8905,8 @@ module.exports = async function report(audit, fix) {
   lines.push(`${fix.elapsed / 1000}s elapsed`);
 
   console.log(lines.join(os.EOL));
+
+  return Promise.resolve();
 };
 
 
@@ -8880,14 +8915,16 @@ module.exports = async function report(audit, fix) {
 /***/ 687:
 /***/ (function(module) {
 
+/**
+ * @param {AuditReport} audit
+ * @returns {Advisories}
+ */
 module.exports = function advisories(audit) {
   const list = Object.values(audit.advisories);
 
   return {
     find: (name, version) => {
-      return (
-        list.find(a => a.module_name === name && a.findings.find(f => f.version === version)) || {}
-      );
+      return list.find(a => a.module_name === name && a.findings.find(f => f.version === version));
     },
   };
 };
@@ -8961,13 +8998,22 @@ const github = __webpack_require__(469);
 const newAdvisories = __webpack_require__(687);
 const capitalize = __webpack_require__(203);
 
+/**
+ * @param {string} name
+ */
 const npmPackage = name => `[${name}](https://npm.im/${name})`;
 
-const buildDetail = (title, severity, url) => {
-  return title ? `**[${capitalize(severity)}]** ${title} ([ref](${url}))` : "-";
-};
+/**
+ * @param {Advisory} advisory
+ */
+const buildDetail = ({ title, severity, url }) =>
+  `**[${capitalize(severity)}]** ${title} ([ref](${url}))`;
 
-const buildDetails = ({ fix, advisories }) => {
+/**
+ * @param {Fix} fix
+ * @param {Advisories} advisories
+ */
+const buildDetails = (fix, advisories) => {
   const header = [];
   header.push("| Package | Version | Detail |");
   header.push("| ------- | ------- | ------ |");
@@ -8980,8 +9026,8 @@ const buildDetails = ({ fix, advisories }) => {
     lines.push("");
     lines.push(...header);
     fix.updated.forEach(({ name, version, previousVersion }) => {
-      const { title, severity, url } = advisories.find(name, previousVersion);
-      const detail = buildDetail(title, severity, url);
+      const advisory = advisories.find(name, previousVersion);
+      const detail = advisory ? buildDetail(advisory) : "-";
       lines.push(`| ${npmPackage(name)} | \`${previousVersion}\` → \`${version}\` | ${detail} |`);
     });
   }
@@ -8991,8 +9037,8 @@ const buildDetails = ({ fix, advisories }) => {
     lines.push("");
     lines.push(...header);
     fix.added.forEach(({ name, version }) => {
-      const { title, severity, url } = advisories.find(name, version);
-      const detail = buildDetail(title, severity, url);
+      const advisory = advisories.find(name, version);
+      const detail = advisory ? buildDetail(advisory) : "-";
       lines.push(`| ${npmPackage}) | \`${version}\` | ${detail} |`);
     });
   }
@@ -9002,8 +9048,8 @@ const buildDetails = ({ fix, advisories }) => {
     lines.push("");
     lines.push(...header);
     fix.removed.forEach(({ name, version }) => {
-      const { title, severity, url } = advisories.find(name, version);
-      const detail = buildDetail(title, severity, url);
+      const advisory = advisories.find(name, version);
+      const detail = advisory ? buildDetail(advisory) : "-";
       lines.push(`| ${npmPackage}) | \`${version}\` | ${detail} |`);
     });
   }
@@ -9016,6 +9062,19 @@ const buildDetails = ({ fix, advisories }) => {
   return lines;
 };
 
+/**
+ * @param {{
+ *  audit: AuditReport,
+ *  fix: Fix,
+ *  token: string,
+ *  branch: string,
+ *  defaultBranch: string,
+ *  commitTitle: string,
+ *  repository: string,
+ *  actor: string,
+ *  email: string,
+ * }} params
+ */
 module.exports = async function createPullRequest({
   audit,
   fix,
@@ -9029,7 +9088,7 @@ module.exports = async function createPullRequest({
 }) {
   const advisories = newAdvisories(audit);
 
-  const commitBody = buildDetails({ fix, advisories })
+  const commitBody = buildDetails(fix, advisories)
     .join("\n")
     .trim();
   const commitMessage = `${commitTitle}\n\n${commitBody}`;
@@ -9055,6 +9114,13 @@ module.exports = async function createPullRequest({
   console.log(`The pull request was created successfully: ${pullRequest.html_url}`);
 };
 
+
+/***/ }),
+
+/***/ 731:
+/***/ (function(module) {
+
+module.exports = {"name":"npm-audit-fix-action","version":"0.0.1","description":"A GitHub Action for `npm audit fix`","author":"Masafumi Koba","license":"MIT","keywords":["GitHub","Actions","JavaScript"],"repository":"ybiquitous/npm-audit-fix-action","engines":{"node":">=12.13.0","npm":"6.13.7"},"main":"lib/index.js","scripts":{"package":"ncc build lib/index.js -o dist","test":"jest","test:watch":"jest --watch","test:coverage":"echo \"unsupported.\" && exit 1","prettier":"prettier --ignore-path .gitignore \"**/*.{css,html,js,json,jsx,md,mdx,mjs,scss,ts,tsx,yaml,yml}\"","prettier:check":"npm run prettier -- --check","prettier:write":"npm run prettier -- --write","format":"npm-run-all --print-label --parallel lint:*:fix prettier:write","lint":"npm-run-all --print-label --parallel lint:*","lint:js":"eslint --ignore-path .gitignore --ext .js,.jsx,.mjs,.ts,.tsx .","lint:js:fix":"npm run lint:js -- --fix","lint:md":"remark . --frail","lint:md:fix":"remark . --output","lint:types":"tsc --noEmit","prerelease":"git checkout master && git pull origin master && npm ci && npm test","release":"standard-version","release:dry-run":"standard-version --dry-run"},"dependencies":{"@actions/core":"^1.1.1","@actions/exec":"^1.0.2","@actions/github":"^2.0.0"},"devDependencies":{"@typescript-eslint/eslint-plugin":"^2.19.0","@typescript-eslint/parser":"^2.19.0","@zeit/ncc":"^0.20.5","eslint":"^6.7.2","eslint-config-ybiquitous":"^10.6.0","eslint-plugin-jest":"^23.1.1","jest":"^24.9.0","prettier":"^1.19.1","typescript":"^3.7.5","ybiq":"^10.0.0"},"prettier":{"trailingComma":"es5"},"husky":{"hooks":{"commit-msg":"commitlint -E HUSKY_GIT_PARAMS","pre-commit":"lint-staged"}},"lint-staged":{"!(dist)/**/*.{js,jsx,mjs,ts,tsx}":"eslint --fix","!(dist)/**/*.{css,html,js,json,jsx,md,mdx,mjs,scss,ts,tsx,yaml,yml}":"prettier --write","!(CHANGELOG).md":"remark --frail"},"standard-version":{"sign":true,"scripts":{"postchangelog":"prettier --write CHANGELOG.md"}},"remarkConfig":{"plugins":["preset-lint-recommended","lint-no-heading-punctuation",["lint-list-item-bullet-indent",false],["lint-list-item-indent",false],"validate-links"]},"commitlint":{"extends":["@commitlint/config-conventional"]},"eslintConfig":{"extends":["ybiquitous/node"],"ignorePatterns":["dist/"],"rules":{"max-lines-per-function":"warn","max-statements":"warn","no-console":"warn"},"overrides":[{"files":["**/*.test.js"],"extends":["plugin:jest/recommended"]},{"files":["**/*.ts"],"extends":["ybiquitous/typescript"]}]}};
 
 /***/ }),
 
@@ -11977,13 +12043,17 @@ function patchForDeprecation(octokit, apiOptions, method, methodName) {
 
 const { exec } = __webpack_require__(986);
 
+/**
+ * @returns {Promise<Fix>}
+ */
 module.exports = async function auditFix() {
   let stdout = "";
-  const stdoutFn = data => {
-    stdout += data.toString();
-  };
   await exec("npm", ["audit", "fix", "--json"], {
-    listeners: { stdout: stdoutFn },
+    listeners: {
+      stdout: data => {
+        stdout += data.toString();
+      },
+    },
     silent: true,
   });
   return JSON.parse(stdout);
