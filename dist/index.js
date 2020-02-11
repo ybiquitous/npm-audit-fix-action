@@ -7905,6 +7905,7 @@ async function run() {
     });
 
     await core.group("Install user packages", async () => {
+      await exec("npm", ["install", "--package-lock-only"]);
       await exec("npm", ["ci"]);
     });
 
