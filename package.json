@@ -10,6 +10,10 @@
     "JavaScript"
   ],
   "repository": "ybiquitous/npm-audit-fix-action",
+  "engines": {
+    "node": ">=12.13.0",
+    "npm": "6.13.7"
+  },
   "main": "lib/index.js",
   "scripts": {
     "package": "ncc build lib/index.js -o dist",
