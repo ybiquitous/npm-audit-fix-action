@@ -1,0 +1,144 @@
+{
+  "actions": [
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 118,
+          "path": "karma-threshold-reporter>istanbul>fileset>glob>minimatch",
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "minimatch",
+      "target": "3.0.4",
+      "depth": 5
+    },
+    {
+      "action": "review",
+      "module": "minimatch",
+      "resolves": [
+        {
+          "id": 118,
+          "path": "karma-threshold-reporter>istanbul>fileset>minimatch",
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    },
+    {
+      "action": "review",
+      "module": "marked",
+      "resolves": [
+        {
+          "id": 812,
+          "path": "esdoc>marked",
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 812,
+          "path": "esdoc-standard-plugin>esdoc-publish-html-plugin>marked",
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    }
+  ],
+  "advisories": {
+    "118": {
+      "findings": [
+        {
+          "version": "2.0.10",
+          "paths": [
+            "karma-threshold-reporter>istanbul>fileset>glob>minimatch",
+            "karma-threshold-reporter>istanbul>fileset>minimatch"
+          ]
+        }
+      ],
+      "id": 118,
+      "created": "2016-05-25T16:37:20.000Z",
+      "updated": "2018-03-01T21:58:01.072Z",
+      "deleted": null,
+      "title": "Regular Expression Denial of Service",
+      "found_by": {
+        "name": "Nick Starke"
+      },
+      "reported_by": {
+        "name": "Nick Starke"
+      },
+      "module_name": "minimatch",
+      "cves": ["CVE-2016-10540"],
+      "vulnerable_versions": "<=3.0.1",
+      "patched_versions": ">=3.0.2",
+      "overview": "Affected versions of `minimatch` are vulnerable to regular expression denial of service attacks when user input is passed into the `pattern` argument of `minimatch(path, pattern)`.\n\n\n## Proof of Concept\n```\nvar minimatch = require(“minimatch”);\n\n// utility function for generating long strings\nvar genstr = function (len, chr) {\n  var result = “”;\n  for (i=0; i<=len; i++) {\n    result = result + chr;\n  }\n  return result;\n}\n\nvar exploit = “[!” + genstr(1000000, “\\\\”) + “A”;\n\n// minimatch exploit.\nconsole.log(“starting minimatch”);\nminimatch(“foo”, exploit);\nconsole.log(“finishing minimatch”);\n```",
+      "recommendation": "Update to version 3.0.2 or later.",
+      "references": "",
+      "access": "public",
+      "severity": "high",
+      "cwe": "CWE-400",
+      "metadata": {
+        "module_type": "Multi.Library",
+        "exploitability": 4,
+        "affected_components": "Internal::Code::Function::minimatch({type:'args', key:0, vector:{type:'string'}})"
+      },
+      "url": "https://npmjs.com/advisories/118"
+    },
+    "812": {
+      "findings": [
+        {
+          "version": "0.3.19",
+          "paths": ["esdoc>marked", "esdoc-standard-plugin>esdoc-publish-html-plugin>marked"]
+        }
+      ],
+      "id": 812,
+      "created": "2019-04-10T17:42:37.650Z",
+      "updated": "2019-04-10T17:42:37.650Z",
+      "deleted": null,
+      "title": "Regular Expression Denial of Service",
+      "found_by": {
+        "link": "",
+        "name": "Anders Kaseorg"
+      },
+      "reported_by": {
+        "link": "",
+        "name": "Anders Kaseorg"
+      },
+      "module_name": "marked",
+      "cves": [],
+      "vulnerable_versions": ">=0.3.14 <0.6.2",
+      "patched_versions": ">=0.6.2",
+      "overview": "Versions of `marked` prior to 0.6.2 and later than 0.3.14 are vulnerable to Regular Expression Denial of Service. Email addresses may be evaluated in quadratic time, allowing attackers to potentially crash the node process due to resource exhaustion.",
+      "recommendation": "Upgrade to version 0.6.2 or later.",
+      "references": "- [GitHub PR](https://github.com/markedjs/marked/pull/1460)\n- [Snyk Report](https://snyk.io/vuln/SNYK-JS-MARKED-174116)",
+      "access": "public",
+      "severity": "moderate",
+      "cwe": "CWE-400",
+      "metadata": {
+        "module_type": "",
+        "exploitability": 5,
+        "affected_components": ""
+      },
+      "url": "https://npmjs.com/advisories/812"
+    }
+  },
+  "muted": [],
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 2,
+      "high": 2,
+      "critical": 0
+    },
+    "dependencies": 0,
+    "devDependencies": 13083,
+    "optionalDependencies": 413,
+    "totalDependencies": 13083
+  },
+  "runId": "661980bd-5c41-4a95-8821-f9582f23ba12"
+}
