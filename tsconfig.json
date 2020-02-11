@@ -11,5 +11,5 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
   },
-  "exclude": ["dist/**", "**/*.test.*"]
+  "exclude": ["dist/**"]
 }
