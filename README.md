@@ -8,7 +8,7 @@ This action runs [`npm audit fix`](https://docs.npmjs.com/cli/audit) and creates
 
 ## Usage
 
-For example, you can add a new workflow via `.github/workflows/npm-audit-fix.yml`
+For example, you can add a new workflow via [`.github/workflows/npm-audit-fix.yml`](.github/workflows/npm-audit-fix.yml):
 
 ```yaml
 name: npm audit fix
