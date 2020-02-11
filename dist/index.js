@@ -1278,13 +1278,14 @@ module.exports = windowsRelease;
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
 const { exec } = __webpack_require__(986);
+const npmArgs = __webpack_require__(510);
 
 /**
  * @returns {Promise<AuditReport>}
  */
 module.exports = async function audit() {
   let stdout = "";
-  await exec("npm", ["audit", "--json"], {
+  await exec("npm", npmArgs("audit", "--json"), {
     listeners: {
       stdout: data => {
         stdout += data.toString();
@@ -2441,13 +2442,14 @@ function authenticationPlugin(octokit, options) {
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
 const { exec } = __webpack_require__(986);
+const npmArgs = __webpack_require__(510);
 
 function npmVersion() {
   return "6.13.7";
 }
 
 module.exports = function updateNpm() {
-  return exec("sudo", ["npm", "install", "--global", `npm@${npmVersion()}`]);
+  return exec("sudo", ["npm", ...npmArgs("install", "--global", `npm@${npmVersion()}`)]);
 };
 
 module.exports.npmVersion = npmVersion; // Export for test
@@ -7768,52 +7770,14 @@ module.exports = resolveCommand;
 /***/ 510:
 /***/ (function(module) {
 
-module.exports = addHook
+const DEFAULT_OPTIONS = Object.freeze(["--ignore-scripts", "--no-progress"]);
 
-function addHook (state, kind, name, hook) {
-  var orig = hook
-  if (!state.registry[name]) {
-    state.registry[name] = []
-  }
-
-  if (kind === 'before') {
-    hook = function (method, options) {
-      return Promise.resolve()
-        .then(orig.bind(null, options))
-        .then(method.bind(null, options))
-    }
-  }
-
-  if (kind === 'after') {
-    hook = function (method, options) {
-      var result
-      return Promise.resolve()
-        .then(method.bind(null, options))
-        .then(function (result_) {
-          result = result_
-          return orig(result, options)
-        })
-        .then(function () {
-          return result
-        })
-    }
-  }
-
-  if (kind === 'error') {
-    hook = function (method, options) {
-      return Promise.resolve()
-        .then(method.bind(null, options))
-        .catch(function (error) {
-          return orig(error, options)
-        })
-    }
-  }
-
-  state.registry[name].push({
-    hook: hook,
-    orig: orig
-  })
-}
+/**
+ * @param {string[]} args
+ */
+module.exports = function npmArgs(...args) {
+  return [...args, ...DEFAULT_OPTIONS];
+};
 
 
 /***/ }),
@@ -7822,7 +7786,7 @@ function addHook (state, kind, name, hook) {
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
 var register = __webpack_require__(363)
-var addHook = __webpack_require__(510)
+var addHook = __webpack_require__(838)
 var removeHook = __webpack_require__(763)
 
 // bind with array of arguments: https://stackoverflow.com/a/21792913
@@ -7889,24 +7853,20 @@ const core = __webpack_require__(470);
 const { exec } = __webpack_require__(986);
 const audit = __webpack_require__(50);
 const auditFix = __webpack_require__(905);
+const npmArgs = __webpack_require__(510);
 const updateNpm = __webpack_require__(193);
 const report = __webpack_require__(684);
 const createPullRequest = __webpack_require__(708);
 
 async function run() {
   try {
-    await core.group("Prepare", async () => {
-      await exec("npm", ["config", "set", "progress", "false"]);
-      await exec("npm", ["config", "set", "ignore-scripts", "true"]);
-    });
-
     await core.group("Update npm", async () => {
       await updateNpm();
     });
 
     await core.group("Install user packages", async () => {
-      await exec("npm", ["install", "--package-lock-only"]);
-      await exec("npm", ["ci"]);
+      await exec("npm", npmArgs("install", "--package-lock-only"));
+      await exec("npm", npmArgs("ci"));
     });
 
     const auditReport = await core.group("Get audit report", () => {
@@ -9707,6 +9667,59 @@ function sync (path, options) {
 /***/ (function(module) {
 
 module.exports = require("url");
+
+/***/ }),
+
+/***/ 838:
+/***/ (function(module) {
+
+module.exports = addHook
+
+function addHook (state, kind, name, hook) {
+  var orig = hook
+  if (!state.registry[name]) {
+    state.registry[name] = []
+  }
+
+  if (kind === 'before') {
+    hook = function (method, options) {
+      return Promise.resolve()
+        .then(orig.bind(null, options))
+        .then(method.bind(null, options))
+    }
+  }
+
+  if (kind === 'after') {
+    hook = function (method, options) {
+      var result
+      return Promise.resolve()
+        .then(method.bind(null, options))
+        .then(function (result_) {
+          result = result_
+          return orig(result, options)
+        })
+        .then(function () {
+          return result
+        })
+    }
+  }
+
+  if (kind === 'error') {
+    hook = function (method, options) {
+      return Promise.resolve()
+        .then(method.bind(null, options))
+        .catch(function (error) {
+          return orig(error, options)
+        })
+    }
+  }
+
+  state.registry[name].push({
+    hook: hook,
+    orig: orig
+  })
+}
+
 
 /***/ }),
 
@@ -12048,13 +12061,14 @@ function patchForDeprecation(octokit, apiOptions, method, methodName) {
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
 const { exec } = __webpack_require__(986);
+const npmArgs = __webpack_require__(510);
 
 /**
  * @returns {Promise<Fix>}
  */
 module.exports = async function auditFix() {
   let stdout = "";
-  await exec("npm", ["audit", "fix", "--json"], {
+  await exec("npm", npmArgs("audit", "fix", "--json"), {
     listeners: {
       stdout: data => {
         stdout += data.toString();
