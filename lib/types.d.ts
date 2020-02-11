@@ -16,13 +16,22 @@ type Advisories = {
 };
 
 type AuditReport = {
-  advisories: { [packageName: string]: Advisory };
+  advisories: { [id: string]: Advisory };
 };
 
-type Fix = {
-  updated: [];
-  added: [];
-  removed: [];
-  warnings: [];
+type FixEntry = {
+  name: string;
+  version: string;
+};
+
+type FixUpdateEntry = FixEntry & {
+  previousVersion: string;
+};
+
+type AuditFix = {
+  added: FixEntry[];
+  removed: FixEntry[];
+  updated: FixUpdateEntry[];
+  warnings: string[];
   elapsed: number;
 };
