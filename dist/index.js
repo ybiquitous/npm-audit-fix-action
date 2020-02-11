@@ -2437,6 +2437,24 @@ function authenticationPlugin(octokit, options) {
 
 /***/ }),
 
+/***/ 193:
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+const { exec } = __webpack_require__(986);
+
+function npmVersion() {
+  return "6.13.7";
+}
+
+module.exports = function updateNpm() {
+  return exec("sudo", ["npm", "install", "--global", `npm@${npmVersion()}`]);
+};
+
+module.exports.npmVersion = npmVersion; // Export for test
+
+
+/***/ }),
+
 /***/ 197:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -7869,17 +7887,11 @@ module.exports.Collection = Hook.Collection
 
 const core = __webpack_require__(470);
 const { exec } = __webpack_require__(986);
-const pkg = __webpack_require__(731);
 const audit = __webpack_require__(50);
 const auditFix = __webpack_require__(905);
+const updateNpm = __webpack_require__(193);
 const report = __webpack_require__(684);
 const createPullRequest = __webpack_require__(708);
-
-const NPM_VERSION = pkg.engines.npm;
-
-if (!NPM_VERSION) {
-  throw new Error(`No NPM_VERSION!`);
-}
 
 async function run() {
   try {
@@ -7889,7 +7901,7 @@ async function run() {
     });
 
     await core.group("Update npm", async () => {
-      await exec("sudo", ["npm", "install", "--global", `npm@${NPM_VERSION}`]);
+      await updateNpm();
     });
 
     await core.group("Install user packages", async () => {
@@ -9114,13 +9126,6 @@ module.exports = async function createPullRequest({
   console.log(`The pull request was created successfully: ${pullRequest.html_url}`);
 };
 
-
-/***/ }),
-
-/***/ 731:
-/***/ (function(module) {
-
-module.exports = {"name":"npm-audit-fix-action","version":"0.0.1","description":"A GitHub Action for `npm audit fix`","author":"Masafumi Koba","license":"MIT","keywords":["GitHub","Actions","JavaScript"],"repository":"ybiquitous/npm-audit-fix-action","engines":{"node":">=12.13.0","npm":"6.13.7"},"main":"lib/index.js","scripts":{"package":"ncc build lib/index.js -o dist","test":"jest","test:watch":"jest --watch","test:coverage":"echo \"unsupported.\" && exit 1","prettier":"prettier --ignore-path .gitignore \"**/*.{css,html,js,json,jsx,md,mdx,mjs,scss,ts,tsx,yaml,yml}\"","prettier:check":"npm run prettier -- --check","prettier:write":"npm run prettier -- --write","format":"npm-run-all --print-label --parallel lint:*:fix prettier:write","lint":"npm-run-all --print-label --parallel lint:*","lint:js":"eslint --ignore-path .gitignore --ext .js,.jsx,.mjs,.ts,.tsx .","lint:js:fix":"npm run lint:js -- --fix","lint:md":"remark . --frail","lint:md:fix":"remark . --output","lint:types":"tsc --noEmit","prerelease":"git checkout master && git pull origin master && npm ci && npm test","release":"standard-version","release:dry-run":"standard-version --dry-run"},"dependencies":{"@actions/core":"^1.1.1","@actions/exec":"^1.0.2","@actions/github":"^2.0.0"},"devDependencies":{"@typescript-eslint/eslint-plugin":"^2.19.0","@typescript-eslint/parser":"^2.19.0","@zeit/ncc":"^0.20.5","eslint":"^6.7.2","eslint-config-ybiquitous":"^10.6.0","eslint-plugin-jest":"^23.1.1","jest":"^24.9.0","prettier":"^1.19.1","typescript":"^3.7.5","ybiq":"^10.0.0"},"prettier":{"trailingComma":"es5"},"husky":{"hooks":{"commit-msg":"commitlint -E HUSKY_GIT_PARAMS","pre-commit":"lint-staged"}},"lint-staged":{"!(dist)/**/*.{js,jsx,mjs,ts,tsx}":"eslint --fix","!(dist)/**/*.{css,html,js,json,jsx,md,mdx,mjs,scss,ts,tsx,yaml,yml}":"prettier --write","!(CHANGELOG).md":"remark --frail"},"standard-version":{"sign":true,"scripts":{"postchangelog":"prettier --write CHANGELOG.md"}},"remarkConfig":{"plugins":["preset-lint-recommended","lint-no-heading-punctuation",["lint-list-item-bullet-indent",false],["lint-list-item-indent",false],"validate-links"]},"commitlint":{"extends":["@commitlint/config-conventional"]},"eslintConfig":{"extends":["ybiquitous/node"],"ignorePatterns":["dist/"],"rules":{"max-lines-per-function":"warn","max-statements":"warn","no-console":"warn"},"overrides":[{"files":["**/*.test.js"],"extends":["plugin:jest/recommended"]},{"files":["**/*.ts"],"extends":["ybiquitous/typescript"]}]}};
 
 /***/ }),
 
