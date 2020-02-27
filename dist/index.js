@@ -2444,15 +2444,11 @@ function authenticationPlugin(octokit, options) {
 const { exec } = __webpack_require__(986);
 const npmArgs = __webpack_require__(510);
 
-function npmVersion() {
-  return "6.14.1";
-}
+const NPM_VERSION = "6.14.1";
 
 module.exports = function updateNpm() {
-  return exec("sudo", ["npm", ...npmArgs("install", "--global", `npm@${npmVersion()}`)]);
+  return exec("sudo", ["npm", ...npmArgs("install", "--global", `npm@${NPM_VERSION}`)]);
 };
-
-module.exports.npmVersion = npmVersion; // Export for test
 
 
 /***/ }),
