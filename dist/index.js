@@ -2445,7 +2445,7 @@ const { exec } = __webpack_require__(986);
 const npmArgs = __webpack_require__(510);
 
 function npmVersion() {
-  return "6.13.7";
+  return "6.14.1";
 }
 
 module.exports = function updateNpm() {
