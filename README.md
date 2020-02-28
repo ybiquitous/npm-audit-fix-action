@@ -21,6 +21,7 @@ jobs:
   npm-audit-fix:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - uses: ybiquitous/npm-audit-fix-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
