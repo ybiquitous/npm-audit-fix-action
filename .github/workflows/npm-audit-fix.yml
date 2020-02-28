@@ -2,15 +2,13 @@ name: npm audit fix
 
 on:
   schedule:
-    - cron: 0 0 * * * # Runs at 00:00 UTC every day
+    - cron: 0 * * * *
 
 jobs:
   npm-audit-fix:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - uses: ybiquitous/npm-audit-fix-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # branch: "npm-audit-fix"
-          # default_branch: "master"
-          # commit_title: "chore(deps): npm audit fix"
