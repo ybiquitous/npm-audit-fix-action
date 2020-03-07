@@ -7858,6 +7858,18 @@ const report = __webpack_require__(684);
 const buildPullRequestBody = __webpack_require__(603);
 const createPullRequest = __webpack_require__(708);
 
+/**
+ * @returns {Promise<boolean>}
+ */
+async function filesChanged() {
+  try {
+    const exitCode = await exec("git", ["diff", "--exit-code"]);
+    return exitCode === 0;
+  } catch (err) {
+    return false;
+  }
+}
+
 async function run() {
   try {
     await core.group("Update npm", async () => {
@@ -7888,8 +7900,8 @@ async function run() {
       return;
     }
 
-    const exitCode = await exec("git", ["diff", "--exit-code"]);
-    if (exitCode === 0) {
+    const changed = await filesChanged();
+    if (changed) {
       console.log("No file changes.");
       return;
     }
