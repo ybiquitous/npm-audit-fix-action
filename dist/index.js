@@ -5472,18 +5472,18 @@ const hostedGitInfo = __webpack_require__(668);
  */
 
 /**
- * @type {WeakMap<object, UrlInfo>}
+ * @type {Map<string, UrlInfo>}
  */
-const cache = new WeakMap();
+const cache = new Map();
 
 /**
  * @param {string} packageName
  * @returns {Promise<UrlInfo | null>}
  */
 async function fetchUrl(packageName) {
-  const found = cache.get(packageName);
-  if (found) {
-    return found;
+  const cached = cache.get(packageName);
+  if (cached) {
+    return cached;
   }
 
   let stdout = "";
