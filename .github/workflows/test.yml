@@ -21,6 +21,14 @@ jobs:
       - run: npm ci
       - run: npm test
 
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm ci
+      - run: npm run package
+      - run: git diff --exit-code
+
   smoke:
     runs-on: ubuntu-latest
     steps:
