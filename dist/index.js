@@ -7957,6 +7957,18 @@ async function filesChanged() {
   }
 }
 
+/**
+ * @param {string} name
+ * @returns {string}
+ */
+function getFromEnv(name) {
+  const value = process.env[name];
+  if (value) {
+    return value;
+  }
+  throw new Error(`Not found '${name}' in the environment variables`);
+}
+
 async function run() {
   try {
     await core.group("Update npm", async () => {
@@ -8008,16 +8020,6 @@ async function run() {
       return;
     }
 
-    const repository = process.env.GITHUB_REPOSITORY;
-    if (!repository) {
-      throw new Error("No GITHUB_REPOSITORY!");
-    }
-
-    const actor = process.env.GITHUB_ACTOR;
-    if (!actor) {
-      throw new Error("No GITHUB_ACTOR!");
-    }
-
     await core.group("Create a pull request", async () => {
       const allPackageNames = Array.from(
         new Set([
@@ -8034,8 +8036,8 @@ async function run() {
         defaultBranch: core.getInput("default_branch"),
         title: core.getInput("commit_title"),
         body: buildPullRequestBody(auditReport, fix, allUrls),
-        repository,
-        actor,
+        repository: getFromEnv("GITHUB_REPOSITORY"),
+        actor: getFromEnv("GITHUB_ACTOR"),
         email: "actions@github.com",
       });
     });
