@@ -8473,7 +8473,7 @@ module.exports = async function createOrUpdatePullRequest({
     await octokit.pulls.update({
       owner,
       repo,
-      number: pull.number,
+      pull_number: pull.number,
       title,
       body,
     });
