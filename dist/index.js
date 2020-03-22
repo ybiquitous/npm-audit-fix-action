@@ -7950,7 +7950,7 @@ const packageRepoUrls = __webpack_require__(405);
  */
 async function filesChanged() {
   try {
-    const exitCode = await exec("git", ["diff", "--exit-code"]);
+    const exitCode = await exec("git", ["diff", "--exit-code", "--quiet"]);
     return exitCode === 0;
   } catch (err) {
     return false;
