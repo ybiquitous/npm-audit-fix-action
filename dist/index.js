@@ -7950,7 +7950,7 @@ const packageRepoUrls = __webpack_require__(405);
  */
 async function filesChanged() {
   try {
-    const exitCode = await exec("git", ["diff", "--exit-code", "--quiet"]);
+    const exitCode = await exec("git", ["diff", "--exit-code"]);
     return exitCode === 0;
   } catch (err) {
     return false;
@@ -8001,7 +8001,7 @@ async function run() {
       return;
     }
 
-    const changed = await filesChanged();
+    const changed = await core.group("Check file changes", filesChanged);
     if (changed) {
       console.log("No file changes.");
       return;
