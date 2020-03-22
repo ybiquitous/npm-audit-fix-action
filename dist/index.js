@@ -7980,15 +7980,17 @@ async function run() {
       await exec("npm", npmArgs("ci"));
     });
 
-    const auditReport = await core.group("Get audit report", () => {
-      return audit();
+    const auditReport = await core.group("Get audit report", async () => {
+      const res = await audit();
+      console.log(res);
+      return res;
     });
-    console.log(auditReport);
 
-    const fix = await core.group("Fix vulnerabilities", () => {
-      return auditFix();
+    const fix = await core.group("Fix vulnerabilities", async () => {
+      const res = await auditFix();
+      console.log(res);
+      return res;
     });
-    console.log(fix);
 
     await core.group("Show audit report", () => {
       return report(auditReport, fix);
