@@ -8637,6 +8637,13 @@ const buildDetail = advisory => {
 const buildTableRow = (...items) => `| ${items.join(" | ")} |`;
 
 /**
+ * @param {{ name: string }} a
+ * @param {{ name: string }} b
+ * @returns {number}
+ */
+const byNameOrder = (a, b) => a.name.localeCompare(b.name);
+
+/**
  * @param {AuditReport} audit
  * @param {AuditFix} fix
  * @param {Map<string, { type: string, url: string }>} urls
@@ -8674,7 +8681,7 @@ module.exports = function buildPullRequestBody(audit, fix, urls) {
     lines.push("### Updated");
     lines.push("");
     lines.push(...header);
-    fix.updated.forEach(({ name, version, previousVersion }) => {
+    fix.updated.sort(byNameOrder).forEach(({ name, version, previousVersion }) => {
       lines.push(
         buildTableRow(
           packageSummary(name),
@@ -8689,7 +8696,7 @@ module.exports = function buildPullRequestBody(audit, fix, urls) {
     lines.push("### Added");
     lines.push("");
     lines.push(...header);
-    fix.added.forEach(({ name, version }) => {
+    fix.added.sort(byNameOrder).forEach(({ name, version }) => {
       lines.push(
         buildTableRow(
           packageSummary(name),
@@ -8704,7 +8711,7 @@ module.exports = function buildPullRequestBody(audit, fix, urls) {
     lines.push("### Removed");
     lines.push("");
     lines.push(...header);
-    fix.removed.forEach(({ name, version }) => {
+    fix.removed.sort(byNameOrder).forEach(({ name, version }) => {
       lines.push(
         buildTableRow(
           packageSummary(name),
