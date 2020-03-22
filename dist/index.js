@@ -8005,21 +8005,6 @@ async function run() {
       return;
     }
 
-    const branch = core.getInput("branch");
-    const branchExists = await core.group("Check if branch exists", async () => {
-      try {
-        await exec("git", ["fetch", "--depth=1", "--quiet", "--no-auto-gc", "origin", branch]);
-        return true;
-      } catch (err) {
-        return false;
-      }
-    });
-
-    if (branchExists) {
-      console.log(`"${branch}" branch exists already.`);
-      return;
-    }
-
     await core.group("Create a pull request", async () => {
       const allPackageNames = Array.from(
         new Set([
@@ -8031,7 +8016,7 @@ async function run() {
       const allUrls = await packageRepoUrls(allPackageNames);
 
       return createPullRequest({
-        branch,
+        branch: core.getInput("branch"),
         token: core.getInput("github_token"),
         defaultBranch: core.getInput("default_branch"),
         title: core.getInput("commit_title"),
@@ -10306,6 +10291,23 @@ const { exec } = __webpack_require__(986);
 const github = __webpack_require__(469);
 
 /**
+ * @param {import('@actions/github').GitHub} octokit
+ * @param {{ owner: string, repo: string, branch: string, defaultBranch: string }} info
+ */
+async function findPullRequest(octokit, { owner, repo, branch, defaultBranch }) {
+  const pulls = await octokit.pulls.list({
+    owner,
+    repo,
+    state: "open",
+    base: defaultBranch,
+    sort: "updated",
+    direction: "desc",
+    per_page: 100,
+  });
+  return pulls.data.find(pull => pull.head.ref === branch);
+}
+
+/**
  * @param {{
  *  token: string,
  *  branch: string,
@@ -10329,24 +10331,37 @@ module.exports = async function createPullRequest({
 }) {
   const remote = `https://${actor}:${token}@github.com/${repository}.git`;
   const [owner, repo] = repository.split("/");
+  const octokit = new github.GitHub(token);
+
+  const pull = await findPullRequest(octokit, { owner, repo, branch, defaultBranch });
 
   await exec("git", ["config", "user.name", actor]);
   await exec("git", ["config", "user.email", email]);
   await exec("git", ["add", "package-lock.json"]);
   await exec("git", ["commit", "--message", `${title}\n\n${body}`]);
   await exec("git", ["checkout", "-B", branch]);
-  await exec("git", ["push", remote, `HEAD:${branch}`]);
+  await exec("git", ["push", remote, `HEAD:${branch}`, ...(pull ? ["--force"] : [])]);
 
-  const octokit = new github.GitHub(token);
-  const { data: pullRequest } = await octokit.pulls.create({
-    owner,
-    repo,
-    title,
-    body,
-    head: branch,
-    base: defaultBranch,
-  });
-  console.log(`The pull request was created successfully: ${pullRequest.html_url}`);
+  if (pull) {
+    await octokit.pulls.update({
+      owner,
+      repo,
+      number: pull.number,
+      title,
+      body,
+    });
+    console.log(`The pull request was updated successfully: ${pull.html_url}`);
+  } else {
+    const newPull = await octokit.pulls.create({
+      owner,
+      repo,
+      title,
+      body,
+      head: branch,
+      base: defaultBranch,
+    });
+    console.log(`The pull request was created successfully: ${newPull.data.html_url}`);
+  }
 };
 
 
