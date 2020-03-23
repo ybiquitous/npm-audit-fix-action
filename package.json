@@ -35,7 +35,7 @@
     "release:dry-run": "standard-version --dry-run"
   },
   "dependencies": {
-    "@actions/core": "^1.1.1",
+    "@actions/core": "^1.2.3",
     "@actions/exec": "^1.0.2",
     "@actions/github": "^2.0.0",
     "hosted-git-info": "^3.0.4"
