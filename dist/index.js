@@ -9759,6 +9759,42 @@ const buildTableRow = (...items) => `| ${items.join(" | ")} |`;
 const byNameOrder = (a, b) => a.name.localeCompare(b.name);
 
 /**
+ * @param {FixEntry[]} entries
+ * @returns {FixEntry[]}
+ */
+const uniqueEntries = entries => {
+  /** @type {FixEntry[]} */
+  const unique = [];
+  const set = new Set();
+  entries.forEach(e => {
+    const key = `${e.name}@${e.version}`;
+    if (!set.has(key)) {
+      set.add(key);
+      unique.push(e);
+    }
+  });
+  return unique;
+};
+
+/**
+ * @param {FixUpdateEntry[]} entries
+ * @returns {FixUpdateEntry[]}
+ */
+const uniqueUpdateEntries = entries => {
+  /** @type {FixUpdateEntry[]} */
+  const unique = [];
+  const set = new Set();
+  entries.forEach(e => {
+    const key = `${e.name}@${e.version} <- ${e.previousVersion}`;
+    if (!set.has(key)) {
+      set.add(key);
+      unique.push(e);
+    }
+  });
+  return unique;
+};
+
+/**
  * @param {AuditReport} audit
  * @param {AuditFix} fix
  * @param {Map<string, { type: string, url: string }>} urls
@@ -9796,45 +9832,51 @@ module.exports = function buildPullRequestBody(audit, fix, urls) {
     lines.push("### Updated");
     lines.push("");
     lines.push(...header);
-    fix.updated.sort(byNameOrder).forEach(({ name, version, previousVersion }) => {
-      lines.push(
-        buildTableRow(
-          packageSummary(name),
-          `\`${previousVersion}\` → \`${version}\``,
-          buildDetail(advisories.find(name, previousVersion))
-        )
-      );
-    });
+    uniqueUpdateEntries(fix.updated)
+      .sort(byNameOrder)
+      .forEach(({ name, version, previousVersion }) => {
+        lines.push(
+          buildTableRow(
+            packageSummary(name),
+            `\`${previousVersion}\` → \`${version}\``,
+            buildDetail(advisories.find(name, previousVersion))
+          )
+        );
+      });
   }
   if (fix.added.length) {
     lines.push("");
     lines.push("### Added");
     lines.push("");
     lines.push(...header);
-    fix.added.sort(byNameOrder).forEach(({ name, version }) => {
-      lines.push(
-        buildTableRow(
-          packageSummary(name),
-          `\`${version}\``,
-          buildDetail(advisories.find(name, version))
-        )
-      );
-    });
+    uniqueEntries(fix.added)
+      .sort(byNameOrder)
+      .forEach(({ name, version }) => {
+        lines.push(
+          buildTableRow(
+            packageSummary(name),
+            `\`${version}\``,
+            buildDetail(advisories.find(name, version))
+          )
+        );
+      });
   }
   if (fix.removed.length) {
     lines.push("");
     lines.push("### Removed");
     lines.push("");
     lines.push(...header);
-    fix.removed.sort(byNameOrder).forEach(({ name, version }) => {
-      lines.push(
-        buildTableRow(
-          packageSummary(name),
-          `\`${version}\``,
-          buildDetail(advisories.find(name, version))
-        )
-      );
-    });
+    uniqueEntries(fix.removed)
+      .sort(byNameOrder)
+      .forEach(({ name, version }) => {
+        lines.push(
+          buildTableRow(
+            packageSummary(name),
+            `\`${version}\``,
+            buildDetail(advisories.find(name, version))
+          )
+        );
+      });
   }
 
   lines.push("");
