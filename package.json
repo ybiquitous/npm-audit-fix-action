@@ -20,7 +20,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "echo \"unsupported.\" && exit 1",
-    "prettier": "prettier --ignore-path .gitignore \"**/*.{css,html,js,json,jsx,md,mdx,mjs,scss,ts,tsx,yaml,yml}\"",
+    "prettier": "prettier --ignore-path .gitignore .",
     "prettier:check": "npm run prettier -- --check",
     "prettier:write": "npm run prettier -- --write",
     "format": "npm-run-all --print-label --parallel lint:*:fix prettier:write",
@@ -43,19 +43,15 @@
   "devDependencies": {
     "@types/hosted-git-info": "^3.0.0",
     "@types/jest": "^25.2.1",
-    "@typescript-eslint/eslint-plugin": "^2.27.0",
-    "@typescript-eslint/parser": "^2.27.0",
+    "@typescript-eslint/eslint-plugin": "^2.28.0",
+    "@typescript-eslint/parser": "^2.28.0",
     "@zeit/ncc": "^0.22.1",
     "eslint": "^6.8.0",
-    "eslint-config-ybiquitous": "^10.9.1",
+    "eslint-config-ybiquitous": "^10.10.0",
     "eslint-plugin-jest": "^23.8.2",
     "jest": "^25.3.0",
-    "prettier": "^1.19.1",
     "typescript": "^3.8.3",
-    "ybiq": "^10.0.0"
-  },
-  "prettier": {
-    "trailingComma": "es5"
+    "ybiq": "^11.0.0"
   },
   "husky": {
     "hooks": {
@@ -65,7 +61,7 @@
   },
   "lint-staged": {
     "!(dist)/**/*.{js,jsx,mjs,ts,tsx}": "eslint --fix",
-    "!(dist)/**/*.{css,html,js,json,jsx,md,mdx,mjs,scss,ts,tsx,yaml,yml}": "prettier --write",
+    "!(dist)/**/*": "prettier --write",
     "!(CHANGELOG).md": "remark --frail"
   },
   "standard-version": {

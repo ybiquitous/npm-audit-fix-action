@@ -1382,7 +1382,7 @@ module.exports = async function audit() {
   let stdout = "";
   await exec("npm", npmArgs("audit", "--json"), {
     listeners: {
-      stdout: data => {
+      stdout: (data) => {
         stdout += data.toString();
       },
     },
@@ -5997,7 +5997,7 @@ async function fetchUrl(packageName) {
   let stdout = "";
   await exec("npm", ["view", packageName, "repository.url"], {
     listeners: {
-      stdout: data => {
+      stdout: (data) => {
         stdout += data.toString();
       },
     },
@@ -8629,9 +8629,9 @@ async function run() {
     await core.group("Create or update a pull request", async () => {
       const allPackageNames = Array.from(
         new Set([
-          ...fix.added.map(e => e.name),
-          ...fix.updated.map(e => e.name),
-          ...fix.removed.map(e => e.name),
+          ...fix.added.map((e) => e.name),
+          ...fix.updated.map((e) => e.name),
+          ...fix.removed.map((e) => e.name),
         ])
       );
       const allUrls = await packageRepoUrls(allPackageNames);
@@ -9496,7 +9496,7 @@ async function findPullRequest(octokit, { owner, repo, branch, defaultBranch }) 
     direction: "desc",
     per_page: 100,
   });
-  return pulls.data.find(pull => pull.head.ref === branch);
+  return pulls.data.find((pull) => pull.head.ref === branch);
 }
 
 /**
@@ -9732,13 +9732,13 @@ const capitalize = __webpack_require__(203);
 /**
  * @param {string} name
  */
-const npmPackage = name => `[${name}](https://npm.im/${name})`;
+const npmPackage = (name) => `[${name}](https://npm.im/${name})`;
 
 /**
  * @param {Advisory | undefined} advisory
  * @returns {string}
  */
-const buildDetail = advisory => {
+const buildDetail = (advisory) => {
   if (advisory) {
     const { title, severity, url } = advisory;
     return `**[${capitalize(severity)}]** ${title} ([ref](${url}))`;
@@ -9763,11 +9763,11 @@ const byNameOrder = (a, b) => a.name.localeCompare(b.name);
  * @param {T[]} entries
  * @returns {T[]}
  */
-const uniqueEntries = entries => {
+const uniqueEntries = (entries) => {
   /** @type {T[]} */
   const unique = [];
   const set = new Set();
-  entries.forEach(e => {
+  entries.forEach((e) => {
     const key = Object.values(e).join(":");
     if (!set.has(key)) {
       set.add(key);
@@ -9788,7 +9788,7 @@ module.exports = function buildPullRequestBody(audit, fix, urls) {
    * @param {string} name
    * @returns {string | null}
    */
-  const repoLink = name => {
+  const repoLink = (name) => {
     const url = urls.get(name);
     return url ? `[${url.type}](${url.url})` : null;
   };
@@ -9797,7 +9797,7 @@ module.exports = function buildPullRequestBody(audit, fix, urls) {
    * @param {string} name
    * @returns {string}
    */
-  const packageSummary = name => {
+  const packageSummary = (name) => {
     const pkg = npmPackage(name);
     const repo = repoLink(name);
     return repo ? `${pkg} (${repo})` : pkg;
@@ -10998,7 +10998,7 @@ module.exports = function report(audit, fix) {
   lines.push("");
   lines.push("Warnings:");
   if (fix.warnings.length) {
-    fix.warnings.forEach(warning => {
+    fix.warnings.forEach((warning) => {
       lines.push(`   --> ${warning}`);
     });
   } else {
@@ -11036,7 +11036,9 @@ module.exports = function advisories(audit) {
 
   return {
     find: (name, version) => {
-      return list.find(a => a.module_name === name && a.findings.find(f => f.version === version));
+      return list.find(
+        (a) => a.module_name === name && a.findings.find((f) => f.version === version)
+      );
     },
   };
 };
@@ -27522,7 +27524,7 @@ module.exports = async function auditFix() {
   let stdout = "";
   await exec("npm", npmArgs("audit", "fix", "--json"), {
     listeners: {
-      stdout: data => {
+      stdout: (data) => {
         stdout += data.toString();
       },
     },
