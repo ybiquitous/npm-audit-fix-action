@@ -1,0 +1,17 @@
+name: Release
+
+on:
+  push:
+    tags: ["**"]
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: softprops/action-gh-release@v1
+        with:
+          body: |
+            See the [changelog](https://github.com/${{ github.repository }}/blob/${{ github.sha }}/CHANGELOG.md) for more details.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
