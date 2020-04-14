@@ -1,6 +1,4 @@
-<p align="center">
-  <a href="https://github.com/ybiquitous/npm-audit-fix-action/actions"><img alt="javscript-action status" src="https://github.com/ybiquitous/npm-audit-fix-action/workflows/units-test/badge.svg"></a>
-</p>
+[![test](https://github.com/ybiquitous/npm-audit-fix-action/workflows/test/badge.svg)](https://github.com/ybiquitous/npm-audit-fix-action/actions)
 
 # `npm audit fix` Action
 
