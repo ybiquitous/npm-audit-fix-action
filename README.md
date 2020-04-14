@@ -30,9 +30,9 @@ jobs:
           # commit_title: "chore(deps): npm audit fix"
 ```
 
-## Demo
+## Screenshot
 
-![A pull request for demo](demo.png)
+![A pull request](screenshot.png)
 
 ## License
 
