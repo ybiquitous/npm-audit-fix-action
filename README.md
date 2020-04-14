@@ -18,7 +18,7 @@ on:
     - cron: 0 0 * * * # Runs at 00:00 UTC every day
 
 jobs:
-  npm-audit-fix:
+  run:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
