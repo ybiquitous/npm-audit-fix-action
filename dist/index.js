@@ -2877,7 +2877,7 @@ function authenticationPlugin(octokit, options) {
 const { exec } = __webpack_require__(986);
 const npmArgs = __webpack_require__(510);
 
-const NPM_VERSION = "6.14.4";
+const NPM_VERSION = "6.14.5";
 
 module.exports = async function updateNpm() {
   await exec("sudo", ["npm", ...npmArgs("install", "--global", `npm@${NPM_VERSION}`)]);
