@@ -3,7 +3,7 @@ description: "Run `npm audit fix` and create a pull request"
 inputs:
   github_token:
     description: "GitHub token"
-    required: true
+    required: false
   branch:
     description: "New Branch"
     required: false
