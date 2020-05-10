@@ -15,7 +15,7 @@ inputs:
   commit_title:
     description: "Commit title"
     required: false
-    default: "chore(deps): npm audit fix"
+    default: "build(deps): npm audit fix"
 runs:
   using: "node12"
   main: "dist/index.js"
