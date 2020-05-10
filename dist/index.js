@@ -54,7 +54,7 @@ const {
 const Core = __webpack_require__(529);
 
 const CORE_PLUGINS = [
-  __webpack_require__(190),
+  __webpack_require__(440),
   __webpack_require__(19), // deprecated: remove in v17
   requestLog,
   __webpack_require__(148),
@@ -1404,6 +1404,63 @@ module.exports = async function audit() {
   });
   return JSON.parse(stdout);
 };
+
+
+/***/ }),
+
+/***/ 68:
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+async function auth(token) {
+  const tokenType = token.split(/\./).length === 3 ? "app" : /^v\d+\./.test(token) ? "installation" : "oauth";
+  return {
+    type: "token",
+    token: token,
+    tokenType
+  };
+}
+
+/**
+ * Prefix token for usage in the Authorization header
+ *
+ * @param token OAuth token or JSON Web Token
+ */
+function withAuthorizationPrefix(token) {
+  if (token.split(/\./).length === 3) {
+    return `bearer ${token}`;
+  }
+
+  return `token ${token}`;
+}
+
+async function hook(token, request, route, parameters) {
+  const endpoint = request.endpoint.merge(route, parameters);
+  endpoint.headers.authorization = withAuthorizationPrefix(token);
+  return request(endpoint);
+}
+
+const createTokenAuth = function createTokenAuth(token) {
+  if (!token) {
+    throw new Error("[@octokit/auth-token] No token passed to createTokenAuth");
+  }
+
+  if (typeof token !== "string") {
+    throw new Error("[@octokit/auth-token] Token passed to createTokenAuth is not a string");
+  }
+
+  token = token.replace(/^(token|bearer) +/i, "");
+  return Object.assign(auth.bind(null, token), {
+    hook: hook.bind(null, token)
+  });
+};
+
+exports.createTokenAuth = createTokenAuth;
+//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -2791,81 +2848,152 @@ module.exports = opts => {
 /***/ 190:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
-module.exports = authenticationPlugin;
+"use strict";
 
-const { createTokenAuth } = __webpack_require__(813);
-const { Deprecation } = __webpack_require__(692);
-const once = __webpack_require__(969);
+var url = __webpack_require__(835)
+var gitHosts = __webpack_require__(813)
+var GitHost = module.exports = __webpack_require__(982)
+var LRU = __webpack_require__(702)
+var cache = new LRU({max: 1000})
 
-const beforeRequest = __webpack_require__(863);
-const requestError = __webpack_require__(293);
-const validate = __webpack_require__(954);
-const withAuthorizationPrefix = __webpack_require__(143);
+var protocolToRepresentationMap = {
+  'git+ssh:': 'sshurl',
+  'git+https:': 'https',
+  'ssh:': 'sshurl',
+  'git:': 'git'
+}
 
-const deprecateAuthBasic = once((log, deprecation) => log.warn(deprecation));
-const deprecateAuthObject = once((log, deprecation) => log.warn(deprecation));
+function protocolToRepresentation (protocol) {
+  return protocolToRepresentationMap[protocol] || protocol.slice(0, -1)
+}
 
-function authenticationPlugin(octokit, options) {
-  // If `options.authStrategy` is set then use it and pass in `options.auth`
-  if (options.authStrategy) {
-    const auth = options.authStrategy(options.auth);
-    octokit.hook.wrap("request", auth.hook);
-    octokit.auth = auth;
-    return;
+var authProtocols = {
+  'git:': true,
+  'https:': true,
+  'git+https:': true,
+  'http:': true,
+  'git+http:': true
+}
+
+module.exports.fromUrl = function (giturl, opts) {
+  if (typeof giturl !== 'string') return
+  var key = giturl + JSON.stringify(opts || {})
+
+  if (!cache.has(key)) {
+    cache.set(key, fromUrl(giturl, opts))
   }
 
-  // If neither `options.authStrategy` nor `options.auth` are set, the `octokit` instance
-  // is unauthenticated. The `octokit.auth()` method is a no-op and no request hook is registred.
-  if (!options.auth) {
-    octokit.auth = () =>
-      Promise.resolve({
-        type: "unauthenticated"
-      });
-    return;
+  return cache.get(key)
+}
+
+function fromUrl (giturl, opts) {
+  if (giturl == null || giturl === '') return
+  var url = fixupUnqualifiedGist(
+    isGitHubShorthand(giturl) ? 'github:' + giturl : giturl
+  )
+  var parsed = parseGitUrl(url)
+  var shortcutMatch = url.match(new RegExp('^([^:]+):(?:(?:[^@:]+(?:[^@]+)?@)?([^/]*))[/](.+?)(?:[.]git)?($|#)'))
+  var matches = Object.keys(gitHosts).map(function (gitHostName) {
+    try {
+      var gitHostInfo = gitHosts[gitHostName]
+      var auth = null
+      if (parsed.auth && authProtocols[parsed.protocol]) {
+        auth = parsed.auth
+      }
+      var committish = parsed.hash ? decodeURIComponent(parsed.hash.substr(1)) : null
+      var user = null
+      var project = null
+      var defaultRepresentation = null
+      if (shortcutMatch && shortcutMatch[1] === gitHostName) {
+        user = shortcutMatch[2] && decodeURIComponent(shortcutMatch[2])
+        project = decodeURIComponent(shortcutMatch[3])
+        defaultRepresentation = 'shortcut'
+      } else {
+        if (parsed.host && parsed.host !== gitHostInfo.domain && parsed.host.replace(/^www[.]/, '') !== gitHostInfo.domain) return
+        if (!gitHostInfo.protocols_re.test(parsed.protocol)) return
+        if (!parsed.path) return
+        var pathmatch = gitHostInfo.pathmatch
+        var matched = parsed.path.match(pathmatch)
+        if (!matched) return
+        /* istanbul ignore else */
+        if (matched[1] !== null && matched[1] !== undefined) {
+          user = decodeURIComponent(matched[1].replace(/^:/, ''))
+        }
+        project = decodeURIComponent(matched[2])
+        defaultRepresentation = protocolToRepresentation(parsed.protocol)
+      }
+      return new GitHost(gitHostName, user, auth, project, committish, defaultRepresentation, opts)
+    } catch (ex) {
+      /* istanbul ignore else */
+      if (ex instanceof URIError) {
+      } else throw ex
+    }
+  }).filter(function (gitHostInfo) { return gitHostInfo })
+  if (matches.length !== 1) return
+  return matches[0]
+}
+
+function isGitHubShorthand (arg) {
+  // Note: This does not fully test the git ref format.
+  // See https://www.kernel.org/pub/software/scm/git/docs/git-check-ref-format.html
+  //
+  // The only way to do this properly would be to shell out to
+  // git-check-ref-format, and as this is a fast sync function,
+  // we don't want to do that.  Just let git fail if it turns
+  // out that the commit-ish is invalid.
+  // GH usernames cannot start with . or -
+  return /^[^:@%/\s.-][^:@%/\s]*[/][^:@\s/%]+(?:#.*)?$/.test(arg)
+}
+
+function fixupUnqualifiedGist (giturl) {
+  // necessary for round-tripping gists
+  var parsed = url.parse(giturl)
+  if (parsed.protocol === 'gist:' && parsed.host && !parsed.path) {
+    return parsed.protocol + '/' + parsed.host
+  } else {
+    return giturl
   }
+}
 
-  const isBasicAuthString =
-    typeof options.auth === "string" &&
-    /^basic/.test(withAuthorizationPrefix(options.auth));
-
-  // If only `options.auth` is set to a string, use the default token authentication strategy.
-  if (typeof options.auth === "string" && !isBasicAuthString) {
-    const auth = createTokenAuth(options.auth);
-    octokit.hook.wrap("request", auth.hook);
-    octokit.auth = auth;
-    return;
+function parseGitUrl (giturl) {
+  var matched = giturl.match(/^([^@]+)@([^:/]+):[/]?((?:[^/]+[/])?[^/]+?)(?:[.]git)?(#.*)?$/)
+  if (!matched) {
+    var legacy = url.parse(giturl)
+    if (legacy.auth) {
+      // git urls can be in the form of scp-style/ssh-connect strings, like
+      // git+ssh://user@host.com:some/path, which the legacy url parser
+      // supports, but WhatWG url.URL class does not.  However, the legacy
+      // parser de-urlencodes the username and password, so something like
+      // https://user%3An%40me:p%40ss%3Aword@x.com/ becomes
+      // https://user:n@me:p@ss:word@x.com/ which is all kinds of wrong.
+      // Pull off just the auth and host, so we dont' get the confusing
+      // scp-style URL, then pass that to the WhatWG parser to get the
+      // auth properly escaped.
+      const authmatch = giturl.match(/[^@]+@[^:/]+/)
+      /* istanbul ignore else - this should be impossible */
+      if (authmatch) {
+        var whatwg = new url.URL(authmatch[0])
+        legacy.auth = whatwg.username || ''
+        if (whatwg.password) legacy.auth += ':' + whatwg.password
+      }
+    }
+    return legacy
   }
-
-  // Otherwise log a deprecation message
-  const [deprecationMethod, deprecationMessapge] = isBasicAuthString
-    ? [
-        deprecateAuthBasic,
-        'Setting the "new Octokit({ auth })" option to a Basic Auth string is deprecated. Use https://github.com/octokit/auth-basic.js instead. See (https://octokit.github.io/rest.js/#authentication)'
-      ]
-    : [
-        deprecateAuthObject,
-        'Setting the "new Octokit({ auth })" option to an object without also setting the "authStrategy" option is deprecated and will be removed in v17. See (https://octokit.github.io/rest.js/#authentication)'
-      ];
-  deprecationMethod(
-    octokit.log,
-    new Deprecation("[@octokit/rest] " + deprecationMessapge)
-  );
-
-  octokit.auth = () =>
-    Promise.resolve({
-      type: "deprecated",
-      message: deprecationMessapge
-    });
-
-  validate(options.auth);
-
-  const state = {
-    octokit,
-    auth: options.auth
-  };
-
-  octokit.hook.before("request", beforeRequest.bind(null, state));
-  octokit.hook.error("request", requestError.bind(null, state));
+  return {
+    protocol: 'git+ssh:',
+    slashes: true,
+    auth: matched[1],
+    host: matched[2],
+    port: null,
+    hostname: matched[2],
+    hash: matched[4],
+    search: null,
+    query: null,
+    pathname: '/' + matched[3],
+    path: '/' + matched[3],
+    href: 'git+ssh://' + matched[1] + '@' + matched[2] +
+          '/' + matched[3] + (matched[4] || '')
+  }
 }
 
 
@@ -5079,93 +5207,6 @@ exports.paginateRest = paginateRest;
 
 /***/ }),
 
-/***/ 317:
-/***/ (function(module) {
-
-"use strict";
-
-
-var gitHosts = module.exports = {
-  github: {
-    // First two are insecure and generally shouldn't be used any more, but
-    // they are still supported.
-    'protocols': [ 'git', 'http', 'git+ssh', 'git+https', 'ssh', 'https' ],
-    'domain': 'github.com',
-    'treepath': 'tree',
-    'filetemplate': 'https://{auth@}raw.githubusercontent.com/{user}/{project}/{committish}/{path}',
-    'bugstemplate': 'https://{domain}/{user}/{project}/issues',
-    'gittemplate': 'git://{auth@}{domain}/{user}/{project}.git{#committish}',
-    'tarballtemplate': 'https://codeload.{domain}/{user}/{project}/tar.gz/{committish}'
-  },
-  bitbucket: {
-    'protocols': [ 'git+ssh', 'git+https', 'ssh', 'https' ],
-    'domain': 'bitbucket.org',
-    'treepath': 'src',
-    'tarballtemplate': 'https://{domain}/{user}/{project}/get/{committish}.tar.gz'
-  },
-  gitlab: {
-    'protocols': [ 'git+ssh', 'git+https', 'ssh', 'https' ],
-    'domain': 'gitlab.com',
-    'treepath': 'tree',
-    'bugstemplate': 'https://{domain}/{user}/{project}/issues',
-    'httpstemplate': 'git+https://{auth@}{domain}/{user}/{projectPath}.git{#committish}',
-    'tarballtemplate': 'https://{domain}/{user}/{project}/repository/archive.tar.gz?ref={committish}',
-    'pathmatch': /^[/]([^/]+)[/]((?!.*(\/-\/|\/repository\/archive\.tar\.gz\?=.*|\/repository\/[^/]+\/archive.tar.gz$)).*?)(?:[.]git|[/])?$/
-  },
-  gist: {
-    'protocols': [ 'git', 'git+ssh', 'git+https', 'ssh', 'https' ],
-    'domain': 'gist.github.com',
-    'pathmatch': /^[/](?:([^/]+)[/])?([a-z0-9]{32,})(?:[.]git)?$/,
-    'filetemplate': 'https://gist.githubusercontent.com/{user}/{project}/raw{/committish}/{path}',
-    'bugstemplate': 'https://{domain}/{project}',
-    'gittemplate': 'git://{domain}/{project}.git{#committish}',
-    'sshtemplate': 'git@{domain}:/{project}.git{#committish}',
-    'sshurltemplate': 'git+ssh://git@{domain}/{project}.git{#committish}',
-    'browsetemplate': 'https://{domain}/{project}{/committish}',
-    'browsefiletemplate': 'https://{domain}/{project}{/committish}{#path}',
-    'docstemplate': 'https://{domain}/{project}{/committish}',
-    'httpstemplate': 'git+https://{domain}/{project}.git{#committish}',
-    'shortcuttemplate': '{type}:{project}{#committish}',
-    'pathtemplate': '{project}{#committish}',
-    'tarballtemplate': 'https://codeload.github.com/gist/{project}/tar.gz/{committish}',
-    'hashformat': function (fragment) {
-      return 'file-' + formatHashFragment(fragment)
-    }
-  }
-}
-
-var gitHostDefaults = {
-  'sshtemplate': 'git@{domain}:{user}/{project}.git{#committish}',
-  'sshurltemplate': 'git+ssh://git@{domain}/{user}/{project}.git{#committish}',
-  'browsetemplate': 'https://{domain}/{user}/{project}{/tree/committish}',
-  'browsefiletemplate': 'https://{domain}/{user}/{project}/{treepath}/{committish}/{path}{#fragment}',
-  'docstemplate': 'https://{domain}/{user}/{project}{/tree/committish}#readme',
-  'httpstemplate': 'git+https://{auth@}{domain}/{user}/{project}.git{#committish}',
-  'filetemplate': 'https://{domain}/{user}/{project}/raw/{committish}/{path}',
-  'shortcuttemplate': '{type}:{user}/{project}{#committish}',
-  'pathtemplate': '{user}/{project}{#committish}',
-  'pathmatch': /^[/]([^/]+)[/]([^/]+?)(?:[.]git|[/])?$/,
-  'hashformat': formatHashFragment
-}
-
-Object.keys(gitHosts).forEach(function (name) {
-  Object.keys(gitHostDefaults).forEach(function (key) {
-    if (gitHosts[name][key]) return
-    gitHosts[name][key] = gitHostDefaults[key]
-  })
-  gitHosts[name].protocols_re = RegExp('^(' +
-    gitHosts[name].protocols.map(function (protocol) {
-      return protocol.replace(/([\\+*{}()[\]$^|])/g, '\\$1')
-    }).join('|') + '):$')
-})
-
-function formatHashFragment (fragment) {
-  return fragment.toLowerCase().replace(/^\W+|\/|\W+$/g, '').replace(/\W+/g, '-')
-}
-
-
-/***/ }),
-
 /***/ 323:
 /***/ (function(module) {
 
@@ -5986,11 +6027,7 @@ function Octokit(plugins, options) {
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
 const { exec } = __webpack_require__(986);
-const hostedGitInfo = __webpack_require__(668);
-
-/**
- * @typedef {{ name: string, url: string, type: string }} UrlInfo
- */
+const hostedGitInfo = __webpack_require__(190);
 
 /**
  * @type {Map<string, UrlInfo>}
@@ -6037,18 +6074,18 @@ async function fetchUrl(packageName) {
 
 /**
  * @param {string[]} packageNames
- * @returns {Promise<Map<string, UrlInfo>>}
+ * @returns {Promise<{[name: string]: UrlInfo}>}
  */
 module.exports = async function packageRepoUrls(packageNames) {
   const allUrls = await Promise.all(packageNames.map(fetchUrl));
 
   /**
-   * @type {Map<string, UrlInfo>}
+   * @type {{ [name: string]: UrlInfo}}
    */
-  const map = new Map();
+  const map = {};
   for (const url of allUrls) {
     if (url) {
-      map.set(url.name, url);
+      map[url.name] = url;
     }
   }
   return map;
@@ -6221,6 +6258,89 @@ function escapeProperty(s) {
         .replace(/,/g, '%2C');
 }
 //# sourceMappingURL=command.js.map
+
+/***/ }),
+
+/***/ 440:
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+module.exports = authenticationPlugin;
+
+const { createTokenAuth } = __webpack_require__(68);
+const { Deprecation } = __webpack_require__(692);
+const once = __webpack_require__(969);
+
+const beforeRequest = __webpack_require__(863);
+const requestError = __webpack_require__(293);
+const validate = __webpack_require__(954);
+const withAuthorizationPrefix = __webpack_require__(143);
+
+const deprecateAuthBasic = once((log, deprecation) => log.warn(deprecation));
+const deprecateAuthObject = once((log, deprecation) => log.warn(deprecation));
+
+function authenticationPlugin(octokit, options) {
+  // If `options.authStrategy` is set then use it and pass in `options.auth`
+  if (options.authStrategy) {
+    const auth = options.authStrategy(options.auth);
+    octokit.hook.wrap("request", auth.hook);
+    octokit.auth = auth;
+    return;
+  }
+
+  // If neither `options.authStrategy` nor `options.auth` are set, the `octokit` instance
+  // is unauthenticated. The `octokit.auth()` method is a no-op and no request hook is registred.
+  if (!options.auth) {
+    octokit.auth = () =>
+      Promise.resolve({
+        type: "unauthenticated"
+      });
+    return;
+  }
+
+  const isBasicAuthString =
+    typeof options.auth === "string" &&
+    /^basic/.test(withAuthorizationPrefix(options.auth));
+
+  // If only `options.auth` is set to a string, use the default token authentication strategy.
+  if (typeof options.auth === "string" && !isBasicAuthString) {
+    const auth = createTokenAuth(options.auth);
+    octokit.hook.wrap("request", auth.hook);
+    octokit.auth = auth;
+    return;
+  }
+
+  // Otherwise log a deprecation message
+  const [deprecationMethod, deprecationMessapge] = isBasicAuthString
+    ? [
+        deprecateAuthBasic,
+        'Setting the "new Octokit({ auth })" option to a Basic Auth string is deprecated. Use https://github.com/octokit/auth-basic.js instead. See (https://octokit.github.io/rest.js/#authentication)'
+      ]
+    : [
+        deprecateAuthObject,
+        'Setting the "new Octokit({ auth })" option to an object without also setting the "authStrategy" option is deprecated and will be removed in v17. See (https://octokit.github.io/rest.js/#authentication)'
+      ];
+  deprecationMethod(
+    octokit.log,
+    new Deprecation("[@octokit/rest] " + deprecationMessapge)
+  );
+
+  octokit.auth = () =>
+    Promise.resolve({
+      type: "deprecated",
+      message: deprecationMessapge
+    });
+
+  validate(options.auth);
+
+  const state = {
+    octokit,
+    auth: options.auth
+  };
+
+  octokit.hook.before("request", beforeRequest.bind(null, state));
+  octokit.hook.error("request", requestError.bind(null, state));
+}
+
 
 /***/ }),
 
@@ -8599,10 +8719,9 @@ const audit = __webpack_require__(50);
 const auditFix = __webpack_require__(905);
 const npmArgs = __webpack_require__(510);
 const updateNpm = __webpack_require__(193);
-const report = __webpack_require__(684);
+const aggregateReport = __webpack_require__(599);
 const buildPullRequestBody = __webpack_require__(603);
 const createOrUpdatePullRequest = __webpack_require__(583);
-const packageRepoUrls = __webpack_require__(405);
 
 /**
  * @returns {Promise<boolean>}
@@ -8645,17 +8764,17 @@ async function run() {
       return res;
     });
 
-    const fix = await core.group("Fix vulnerabilities", async () => {
+    const fixReport = await core.group("Fix vulnerabilities", async () => {
       const res = await auditFix();
       console.log(res);
       return res;
     });
 
-    await core.group("Show audit report", () => {
-      return report(auditReport, fix);
+    const report = await core.group("Aggregate report", () => {
+      return aggregateReport(auditReport, fixReport);
     });
 
-    if (fix.updated.length + fix.added.length + fix.removed.length === 0) {
+    if (report.packageCount === 0) {
       console.log("No update.");
       return;
     }
@@ -8666,22 +8785,13 @@ async function run() {
       return;
     }
 
-    await core.group("Create or update a pull request", async () => {
-      const allPackageNames = Array.from(
-        new Set([
-          ...fix.added.map((e) => e.name),
-          ...fix.updated.map((e) => e.name),
-          ...fix.removed.map((e) => e.name),
-        ])
-      );
-      const allUrls = await packageRepoUrls(allPackageNames);
-
+    await core.group("Create or update a pull request", () => {
       return createOrUpdatePullRequest({
         branch: core.getInput("branch"),
         token: core.getInput("github_token") || getFromEnv("GITHUB_TOKEN"),
         defaultBranch: core.getInput("default_branch"),
         title: core.getInput("commit_title"),
-        body: buildPullRequestBody(auditReport, fix, allUrls),
+        body: buildPullRequestBody(report),
         repository: getFromEnv("GITHUB_REPOSITORY"),
         actor: getFromEnv("GITHUB_ACTOR"),
         email: "actions@github.com",
@@ -9633,234 +9743,123 @@ module.exports = async function createOrUpdatePullRequest({
 /***/ 599:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
-"use strict";
+const capitalize = __webpack_require__(203);
+const newAdvisories = __webpack_require__(687);
+const semverToNumber = __webpack_require__(915);
+const packageRepoUrls = __webpack_require__(405);
 
-var gitHosts = __webpack_require__(317)
-/* eslint-disable node/no-deprecated-api */
-
-// copy-pasta util._extend from node's source, to avoid pulling
-// the whole util module into peoples' webpack bundles.
-/* istanbul ignore next */
-var extend = Object.assign || function _extend (target, source) {
-  // Don't do anything if source isn't an object
-  if (source === null || typeof source !== 'object') return target
-
-  const keys = Object.keys(source)
-  let i = keys.length
-  while (i--) {
-    target[keys[i]] = source[keys[i]]
-  }
-  return target
-}
-
-module.exports = GitHost
-function GitHost (type, user, auth, project, committish, defaultRepresentation, opts) {
-  var gitHostInfo = this
-  gitHostInfo.type = type
-  Object.keys(gitHosts[type]).forEach(function (key) {
-    gitHostInfo[key] = gitHosts[type][key]
-  })
-  gitHostInfo.user = user
-  gitHostInfo.auth = auth
-  gitHostInfo.project = project
-  gitHostInfo.committish = committish
-  gitHostInfo.default = defaultRepresentation
-  gitHostInfo.opts = opts || {}
-}
-
-GitHost.prototype.hash = function () {
-  return this.committish ? '#' + this.committish : ''
-}
-
-GitHost.prototype._fill = function (template, opts) {
-  if (!template) return
-  var vars = extend({}, opts)
-  vars.path = vars.path ? vars.path.replace(/^[/]+/g, '') : ''
-  opts = extend(extend({}, this.opts), opts)
-  var self = this
-  Object.keys(this).forEach(function (key) {
-    if (self[key] != null && vars[key] == null) vars[key] = self[key]
-  })
-  var rawAuth = vars.auth
-  var rawcommittish = vars.committish
-  var rawFragment = vars.fragment
-  var rawPath = vars.path
-  var rawProject = vars.project
-  Object.keys(vars).forEach(function (key) {
-    var value = vars[key]
-    if ((key === 'path' || key === 'project') && typeof value === 'string') {
-      vars[key] = value.split('/').map(function (pathComponent) {
-        return encodeURIComponent(pathComponent)
-      }).join('/')
-    } else if (key !== 'domain') {
-      vars[key] = encodeURIComponent(value)
+/**
+ * @param {AuditReport} audit
+ * @param {AuditFix} fix
+ * @returns {Promise<Report>}
+ */
+module.exports = async function aggregateReport(audit, fix) {
+  /**
+   * @param {{ name: string, version: string }} a
+   * @param {{ name: string, version: string }} b
+   * @returns {number}
+   */
+  const byNameAndVersion = (a, b) => {
+    const res = a.name.localeCompare(b.name);
+    if (res === 0) {
+      return res;
     }
-  })
-  vars['auth@'] = rawAuth ? rawAuth + '@' : ''
-  vars['#fragment'] = rawFragment ? '#' + this.hashformat(rawFragment) : ''
-  vars.fragment = vars.fragment ? vars.fragment : ''
-  vars['#path'] = rawPath ? '#' + this.hashformat(rawPath) : ''
-  vars['/path'] = vars.path ? '/' + vars.path : ''
-  vars.projectPath = rawProject.split('/').map(encodeURIComponent).join('/')
-  if (opts.noCommittish) {
-    vars['#committish'] = ''
-    vars['/tree/committish'] = ''
-    vars['/committish'] = ''
-    vars.committish = ''
-  } else {
-    vars['#committish'] = rawcommittish ? '#' + rawcommittish : ''
-    vars['/tree/committish'] = vars.committish
-      ? '/' + vars.treepath + '/' + vars.committish
-      : ''
-    vars['/committish'] = vars.committish ? '/' + vars.committish : ''
-    vars.committish = vars.committish || 'master'
-  }
-  var res = template
-  Object.keys(vars).forEach(function (key) {
-    res = res.replace(new RegExp('[{]' + key + '[}]', 'g'), vars[key])
-  })
-  if (opts.noGitPlus) {
-    return res.replace(/^git[+]/, '')
-  } else {
-    return res
-  }
-}
 
-GitHost.prototype.ssh = function (opts) {
-  return this._fill(this.sshtemplate, opts)
-}
+    return semverToNumber(a.version) - semverToNumber(b.version);
+  };
 
-GitHost.prototype.sshurl = function (opts) {
-  return this._fill(this.sshurltemplate, opts)
-}
-
-GitHost.prototype.browse = function (P, F, opts) {
-  if (typeof P === 'string') {
-    if (typeof F !== 'string') {
-      opts = F
-      F = null
+  /** @type {Report["added"]} */
+  const added = [];
+  const addedSet = new Set();
+  fix.added.forEach(({ name, version }) => {
+    const key = JSON.stringify({ name, version });
+    if (!addedSet.has(key)) {
+      addedSet.add(key);
+      added.push({ name, version });
     }
-    return this._fill(this.browsefiletemplate, extend({
-      fragment: F,
-      path: P
-    }, opts))
-  } else {
-    return this._fill(this.browsetemplate, P)
-  }
-}
+  });
+  added.sort(byNameAndVersion);
 
-GitHost.prototype.docs = function (opts) {
-  return this._fill(this.docstemplate, opts)
-}
+  /** @type {Report["removed"]} */
+  const removed = [];
+  const removedSet = new Set();
+  fix.removed.forEach(({ name, version }) => {
+    const key = JSON.stringify({ name, version });
+    if (!removedSet.has(key)) {
+      removedSet.add(key);
+      removed.push({ name, version });
+    }
+  });
+  removed.sort(byNameAndVersion);
 
-GitHost.prototype.bugs = function (opts) {
-  return this._fill(this.bugstemplate, opts)
-}
+  const advisories = newAdvisories(audit);
 
-GitHost.prototype.https = function (opts) {
-  return this._fill(this.httpstemplate, opts)
-}
+  /** @type {Report["updated"]} */
+  const updated = [];
+  const updatedSet = new Set();
+  fix.updated.forEach(({ name, version, previousVersion }) => {
+    const key = JSON.stringify({ name, version, previousVersion });
+    if (!updatedSet.has(key)) {
+      updatedSet.add(key);
 
-GitHost.prototype.git = function (opts) {
-  return this._fill(this.gittemplate, opts)
-}
+      const advisory = advisories.find(name, previousVersion);
+      if (advisory) {
+        const { title, severity, url } = advisory;
+        updated.push({
+          name,
+          version,
+          previousVersion,
+          severity: capitalize(severity),
+          title,
+          url,
+        });
+      } else {
+        updated.push({ name, version, previousVersion });
+      }
+    }
+  });
+  updated.sort(byNameAndVersion);
 
-GitHost.prototype.shortcut = function (opts) {
-  return this._fill(this.shortcuttemplate, opts)
-}
+  const allPackageNames = Array.from(
+    new Set([
+      ...added.map((e) => e.name),
+      ...updated.map((e) => e.name),
+      ...removed.map((e) => e.name),
+    ])
+  );
+  const packageCount = allPackageNames.length;
+  const packageUrls = await packageRepoUrls(allPackageNames);
 
-GitHost.prototype.path = function (opts) {
-  return this._fill(this.pathtemplate, opts)
-}
-
-GitHost.prototype.tarball = function (opts_) {
-  var opts = extend({}, opts_, { noCommittish: false })
-  return this._fill(this.tarballtemplate, opts)
-}
-
-GitHost.prototype.file = function (P, opts) {
-  return this._fill(this.filetemplate, extend({ path: P }, opts))
-}
-
-GitHost.prototype.getDefaultRepresentation = function () {
-  return this.default
-}
-
-GitHost.prototype.toString = function (opts) {
-  if (this.default && typeof this[this.default] === 'function') return this[this.default](opts)
-  return this.sshurl(opts)
-}
+  return { added, removed, updated, packageCount, packageUrls };
+};
 
 
 /***/ }),
 
 /***/ 603:
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-const newAdvisories = __webpack_require__(687);
-const capitalize = __webpack_require__(203);
+/***/ (function(module) {
 
 /**
- * @param {string} name
- */
-const npmPackage = (name) => `[${name}](https://npm.im/${name})`;
-
-/**
- * @param {Advisory | undefined} advisory
- * @returns {string}
- */
-const buildDetail = (advisory) => {
-  if (advisory) {
-    const { title, severity, url } = advisory;
-    return `**[${capitalize(severity)}]** ${title} ([ref](${url}))`;
-  }
-  return "-";
-};
-
-/**
- * @param {...string} items
- */
-const buildTableRow = (...items) => `| ${items.join(" | ")} |`;
-
-/**
- * @param {{ name: string }} a
- * @param {{ name: string }} b
- * @returns {number}
- */
-const byNameOrder = (a, b) => a.name.localeCompare(b.name);
-
-/**
- * @template {{[key: string]: string}} T
- * @param {T[]} entries
- * @returns {T[]}
- */
-const uniqueEntries = (entries) => {
-  /** @type {T[]} */
-  const unique = [];
-  const set = new Set();
-  entries.forEach((e) => {
-    const key = Object.values(e).join(":");
-    if (!set.has(key)) {
-      set.add(key);
-      unique.push(e);
-    }
-  });
-  return unique;
-};
-
-/**
- * @param {AuditReport} audit
- * @param {AuditFix} fix
- * @param {Map<string, { type: string, url: string }>} urls
+ * @param {Report} report
  * @returns {String}
  */
-module.exports = function buildPullRequestBody(audit, fix, urls) {
+module.exports = function buildPullRequestBody(report) {
+  /**
+   * @param {string} name
+   */
+  const npmPackage = (name) => `[${name}](https://npm.im/${name})`;
+
+  /**
+   * @param {...string} items
+   */
+  const buildTableRow = (...items) => `| ${items.join(" | ")} |`;
+
   /**
    * @param {string} name
    * @returns {string | null}
    */
   const repoLink = (name) => {
-    const url = urls.get(name);
+    const url = report.packageUrls[name];
     return url ? `[${url.type}](${url.url})` : null;
   };
 
@@ -9874,63 +9873,44 @@ module.exports = function buildPullRequestBody(audit, fix, urls) {
     return repo ? `${pkg} (${repo})` : pkg;
   };
 
-  const advisories = newAdvisories(audit);
-
   const header = [];
   header.push("| Package | Version | Detail |");
   header.push("|:--------|:-------:|:-------|");
 
   const lines = [];
-  if (fix.updated.length) {
+  if (report.updated.length > 0) {
     lines.push("");
     lines.push("### Updated");
     lines.push("");
     lines.push(...header);
-    uniqueEntries(fix.updated)
-      .sort(byNameOrder)
-      .forEach(({ name, version, previousVersion }) => {
-        lines.push(
-          buildTableRow(
-            packageSummary(name),
-            `\`${previousVersion}\` → \`${version}\``,
-            buildDetail(advisories.find(name, previousVersion))
-          )
-        );
-      });
+
+    report.updated.forEach((e) => {
+      lines.push(
+        buildTableRow(
+          packageSummary(e.name),
+          `\`${e.previousVersion}\` → \`${e.version}\``,
+          "severity" in e ? `**[${e.severity}]** ${e.title} ([ref](${e.url}))` : "-"
+        )
+      );
+    });
   }
-  if (fix.added.length) {
+  if (report.added.length > 0) {
     lines.push("");
     lines.push("### Added");
     lines.push("");
     lines.push(...header);
-    uniqueEntries(fix.added)
-      .sort(byNameOrder)
-      .forEach(({ name, version }) => {
-        lines.push(
-          buildTableRow(
-            packageSummary(name),
-            `\`${version}\``,
-            buildDetail(advisories.find(name, version))
-          )
-        );
-      });
+    report.added.forEach(({ name, version }) => {
+      lines.push(buildTableRow(packageSummary(name), `\`${version}\``, "-"));
+    });
   }
-  if (fix.removed.length) {
+  if (report.removed.length > 0) {
     lines.push("");
     lines.push("### Removed");
     lines.push("");
     lines.push(...header);
-    uniqueEntries(fix.removed)
-      .sort(byNameOrder)
-      .forEach(({ name, version }) => {
-        lines.push(
-          buildTableRow(
-            packageSummary(name),
-            `\`${version}\``,
-            buildDetail(advisories.find(name, version))
-          )
-        );
-      });
+    report.removed.forEach(({ name, version }) => {
+      lines.push(buildTableRow(packageSummary(name), `\`${version}\``, "-"));
+    });
   }
 
   lines.push("");
@@ -10583,160 +10563,6 @@ if (process.platform === 'linux') {
 
 /***/ }),
 
-/***/ 668:
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-"use strict";
-
-var url = __webpack_require__(835)
-var gitHosts = __webpack_require__(317)
-var GitHost = module.exports = __webpack_require__(599)
-var LRU = __webpack_require__(702)
-var cache = new LRU({max: 1000})
-
-var protocolToRepresentationMap = {
-  'git+ssh:': 'sshurl',
-  'git+https:': 'https',
-  'ssh:': 'sshurl',
-  'git:': 'git'
-}
-
-function protocolToRepresentation (protocol) {
-  return protocolToRepresentationMap[protocol] || protocol.slice(0, -1)
-}
-
-var authProtocols = {
-  'git:': true,
-  'https:': true,
-  'git+https:': true,
-  'http:': true,
-  'git+http:': true
-}
-
-module.exports.fromUrl = function (giturl, opts) {
-  if (typeof giturl !== 'string') return
-  var key = giturl + JSON.stringify(opts || {})
-
-  if (!cache.has(key)) {
-    cache.set(key, fromUrl(giturl, opts))
-  }
-
-  return cache.get(key)
-}
-
-function fromUrl (giturl, opts) {
-  if (giturl == null || giturl === '') return
-  var url = fixupUnqualifiedGist(
-    isGitHubShorthand(giturl) ? 'github:' + giturl : giturl
-  )
-  var parsed = parseGitUrl(url)
-  var shortcutMatch = url.match(new RegExp('^([^:]+):(?:(?:[^@:]+(?:[^@]+)?@)?([^/]*))[/](.+?)(?:[.]git)?($|#)'))
-  var matches = Object.keys(gitHosts).map(function (gitHostName) {
-    try {
-      var gitHostInfo = gitHosts[gitHostName]
-      var auth = null
-      if (parsed.auth && authProtocols[parsed.protocol]) {
-        auth = parsed.auth
-      }
-      var committish = parsed.hash ? decodeURIComponent(parsed.hash.substr(1)) : null
-      var user = null
-      var project = null
-      var defaultRepresentation = null
-      if (shortcutMatch && shortcutMatch[1] === gitHostName) {
-        user = shortcutMatch[2] && decodeURIComponent(shortcutMatch[2])
-        project = decodeURIComponent(shortcutMatch[3])
-        defaultRepresentation = 'shortcut'
-      } else {
-        if (parsed.host && parsed.host !== gitHostInfo.domain && parsed.host.replace(/^www[.]/, '') !== gitHostInfo.domain) return
-        if (!gitHostInfo.protocols_re.test(parsed.protocol)) return
-        if (!parsed.path) return
-        var pathmatch = gitHostInfo.pathmatch
-        var matched = parsed.path.match(pathmatch)
-        if (!matched) return
-        /* istanbul ignore else */
-        if (matched[1] !== null && matched[1] !== undefined) {
-          user = decodeURIComponent(matched[1].replace(/^:/, ''))
-        }
-        project = decodeURIComponent(matched[2])
-        defaultRepresentation = protocolToRepresentation(parsed.protocol)
-      }
-      return new GitHost(gitHostName, user, auth, project, committish, defaultRepresentation, opts)
-    } catch (ex) {
-      /* istanbul ignore else */
-      if (ex instanceof URIError) {
-      } else throw ex
-    }
-  }).filter(function (gitHostInfo) { return gitHostInfo })
-  if (matches.length !== 1) return
-  return matches[0]
-}
-
-function isGitHubShorthand (arg) {
-  // Note: This does not fully test the git ref format.
-  // See https://www.kernel.org/pub/software/scm/git/docs/git-check-ref-format.html
-  //
-  // The only way to do this properly would be to shell out to
-  // git-check-ref-format, and as this is a fast sync function,
-  // we don't want to do that.  Just let git fail if it turns
-  // out that the commit-ish is invalid.
-  // GH usernames cannot start with . or -
-  return /^[^:@%/\s.-][^:@%/\s]*[/][^:@\s/%]+(?:#.*)?$/.test(arg)
-}
-
-function fixupUnqualifiedGist (giturl) {
-  // necessary for round-tripping gists
-  var parsed = url.parse(giturl)
-  if (parsed.protocol === 'gist:' && parsed.host && !parsed.path) {
-    return parsed.protocol + '/' + parsed.host
-  } else {
-    return giturl
-  }
-}
-
-function parseGitUrl (giturl) {
-  var matched = giturl.match(/^([^@]+)@([^:/]+):[/]?((?:[^/]+[/])?[^/]+?)(?:[.]git)?(#.*)?$/)
-  if (!matched) {
-    var legacy = url.parse(giturl)
-    if (legacy.auth) {
-      // git urls can be in the form of scp-style/ssh-connect strings, like
-      // git+ssh://user@host.com:some/path, which the legacy url parser
-      // supports, but WhatWG url.URL class does not.  However, the legacy
-      // parser de-urlencodes the username and password, so something like
-      // https://user%3An%40me:p%40ss%3Aword@x.com/ becomes
-      // https://user:n@me:p@ss:word@x.com/ which is all kinds of wrong.
-      // Pull off just the auth and host, so we dont' get the confusing
-      // scp-style URL, then pass that to the WhatWG parser to get the
-      // auth properly escaped.
-      const authmatch = giturl.match(/[^@]+@[^:/]+/)
-      /* istanbul ignore else - this should be impossible */
-      if (authmatch) {
-        var whatwg = new url.URL(authmatch[0])
-        legacy.auth = whatwg.username || ''
-        if (whatwg.password) legacy.auth += ':' + whatwg.password
-      }
-    }
-    return legacy
-  }
-  return {
-    protocol: 'git+ssh:',
-    slashes: true,
-    auth: matched[1],
-    host: matched[2],
-    port: null,
-    hostname: matched[2],
-    hash: matched[4],
-    search: null,
-    query: null,
-    pathname: '/' + matched[3],
-    path: '/' + matched[3],
-    href: 'git+ssh://' + matched[1] + '@' + matched[2] +
-          '/' + matched[3] + (matched[4] || '')
-  }
-}
-
-
-/***/ }),
-
 /***/ 669:
 /***/ (function(module) {
 
@@ -11011,86 +10837,6 @@ function authenticate(state, options) {
 module.exports = function btoa(str) {
   return new Buffer(str).toString('base64')
 }
-
-
-/***/ }),
-
-/***/ 684:
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-const os = __webpack_require__(87);
-const newAdvisories = __webpack_require__(687);
-const capitalize = __webpack_require__(203);
-
-/**
- * @param {AuditReport} audit
- * @param {AuditFix} fix
- */
-module.exports = function report(audit, fix) {
-  const advisories = newAdvisories(audit);
-
-  const lines = [];
-
-  lines.push("Updated:");
-  if (fix.updated.length) {
-    fix.updated.forEach(({ name, version, previousVersion }) => {
-      lines.push(`  --> ${name}: ${previousVersion} to ${version}`);
-      const advisory = advisories.find(name, previousVersion);
-      if (advisory) {
-        const { title, severity, cwe, url } = advisory;
-        lines.push(`      [${capitalize(severity)}] ${title} (${cwe})`);
-        lines.push(`      ${url}`);
-      }
-    });
-  } else {
-    lines.push("  --> none");
-  }
-
-  lines.push("");
-  lines.push("Added:");
-  if (fix.added.length) {
-    fix.added.forEach(({ name, version }) => {
-      lines.push(`  --> ${name}: ${version}`);
-    });
-  } else {
-    lines.push("  --> none");
-  }
-
-  lines.push("");
-  lines.push("Removed:");
-  if (fix.removed.length) {
-    fix.removed.forEach(({ name, version }) => {
-      lines.push(`  --> ${name}: ${version}`);
-    });
-  } else {
-    lines.push("  --> none");
-  }
-
-  lines.push("");
-  lines.push("Warnings:");
-  if (fix.warnings.length) {
-    fix.warnings.forEach((warning) => {
-      lines.push(`   --> ${warning}`);
-    });
-  } else {
-    lines.push("  --> none");
-  }
-
-  lines.push("");
-  lines.push(
-    [
-      `${fix.updated.length} updated`,
-      `${fix.added.length} added`,
-      `${fix.removed.length} removed`,
-      `${fix.warnings.length} warnings`,
-    ].join(", ")
-  );
-  lines.push(`${fix.elapsed / 1000}s elapsed`);
-
-  console.log(lines.join(os.EOL));
-
-  return Promise.resolve();
-};
 
 
 /***/ }),
@@ -11836,58 +11582,88 @@ exports.getUserAgent = getUserAgent;
 /***/ }),
 
 /***/ 813:
-/***/ (function(__unusedmodule, exports) {
+/***/ (function(module) {
 
 "use strict";
 
 
-Object.defineProperty(exports, '__esModule', { value: true });
-
-async function auth(token) {
-  const tokenType = token.split(/\./).length === 3 ? "app" : /^v\d+\./.test(token) ? "installation" : "oauth";
-  return {
-    type: "token",
-    token: token,
-    tokenType
-  };
+var gitHosts = module.exports = {
+  github: {
+    // First two are insecure and generally shouldn't be used any more, but
+    // they are still supported.
+    'protocols': [ 'git', 'http', 'git+ssh', 'git+https', 'ssh', 'https' ],
+    'domain': 'github.com',
+    'treepath': 'tree',
+    'filetemplate': 'https://{auth@}raw.githubusercontent.com/{user}/{project}/{committish}/{path}',
+    'bugstemplate': 'https://{domain}/{user}/{project}/issues',
+    'gittemplate': 'git://{auth@}{domain}/{user}/{project}.git{#committish}',
+    'tarballtemplate': 'https://codeload.{domain}/{user}/{project}/tar.gz/{committish}'
+  },
+  bitbucket: {
+    'protocols': [ 'git+ssh', 'git+https', 'ssh', 'https' ],
+    'domain': 'bitbucket.org',
+    'treepath': 'src',
+    'tarballtemplate': 'https://{domain}/{user}/{project}/get/{committish}.tar.gz'
+  },
+  gitlab: {
+    'protocols': [ 'git+ssh', 'git+https', 'ssh', 'https' ],
+    'domain': 'gitlab.com',
+    'treepath': 'tree',
+    'bugstemplate': 'https://{domain}/{user}/{project}/issues',
+    'httpstemplate': 'git+https://{auth@}{domain}/{user}/{projectPath}.git{#committish}',
+    'tarballtemplate': 'https://{domain}/{user}/{project}/repository/archive.tar.gz?ref={committish}',
+    'pathmatch': /^[/]([^/]+)[/]((?!.*(\/-\/|\/repository\/archive\.tar\.gz\?=.*|\/repository\/[^/]+\/archive.tar.gz$)).*?)(?:[.]git|[/])?$/
+  },
+  gist: {
+    'protocols': [ 'git', 'git+ssh', 'git+https', 'ssh', 'https' ],
+    'domain': 'gist.github.com',
+    'pathmatch': /^[/](?:([^/]+)[/])?([a-z0-9]{32,})(?:[.]git)?$/,
+    'filetemplate': 'https://gist.githubusercontent.com/{user}/{project}/raw{/committish}/{path}',
+    'bugstemplate': 'https://{domain}/{project}',
+    'gittemplate': 'git://{domain}/{project}.git{#committish}',
+    'sshtemplate': 'git@{domain}:/{project}.git{#committish}',
+    'sshurltemplate': 'git+ssh://git@{domain}/{project}.git{#committish}',
+    'browsetemplate': 'https://{domain}/{project}{/committish}',
+    'browsefiletemplate': 'https://{domain}/{project}{/committish}{#path}',
+    'docstemplate': 'https://{domain}/{project}{/committish}',
+    'httpstemplate': 'git+https://{domain}/{project}.git{#committish}',
+    'shortcuttemplate': '{type}:{project}{#committish}',
+    'pathtemplate': '{project}{#committish}',
+    'tarballtemplate': 'https://codeload.github.com/gist/{project}/tar.gz/{committish}',
+    'hashformat': function (fragment) {
+      return 'file-' + formatHashFragment(fragment)
+    }
+  }
 }
 
-/**
- * Prefix token for usage in the Authorization header
- *
- * @param token OAuth token or JSON Web Token
- */
-function withAuthorizationPrefix(token) {
-  if (token.split(/\./).length === 3) {
-    return `bearer ${token}`;
-  }
-
-  return `token ${token}`;
+var gitHostDefaults = {
+  'sshtemplate': 'git@{domain}:{user}/{project}.git{#committish}',
+  'sshurltemplate': 'git+ssh://git@{domain}/{user}/{project}.git{#committish}',
+  'browsetemplate': 'https://{domain}/{user}/{project}{/tree/committish}',
+  'browsefiletemplate': 'https://{domain}/{user}/{project}/{treepath}/{committish}/{path}{#fragment}',
+  'docstemplate': 'https://{domain}/{user}/{project}{/tree/committish}#readme',
+  'httpstemplate': 'git+https://{auth@}{domain}/{user}/{project}.git{#committish}',
+  'filetemplate': 'https://{domain}/{user}/{project}/raw/{committish}/{path}',
+  'shortcuttemplate': '{type}:{user}/{project}{#committish}',
+  'pathtemplate': '{user}/{project}{#committish}',
+  'pathmatch': /^[/]([^/]+)[/]([^/]+?)(?:[.]git|[/])?$/,
+  'hashformat': formatHashFragment
 }
 
-async function hook(token, request, route, parameters) {
-  const endpoint = request.endpoint.merge(route, parameters);
-  endpoint.headers.authorization = withAuthorizationPrefix(token);
-  return request(endpoint);
+Object.keys(gitHosts).forEach(function (name) {
+  Object.keys(gitHostDefaults).forEach(function (key) {
+    if (gitHosts[name][key]) return
+    gitHosts[name][key] = gitHostDefaults[key]
+  })
+  gitHosts[name].protocols_re = RegExp('^(' +
+    gitHosts[name].protocols.map(function (protocol) {
+      return protocol.replace(/([\\+*{}()[\]$^|])/g, '\\$1')
+    }).join('|') + '):$')
+})
+
+function formatHashFragment (fragment) {
+  return fragment.toLowerCase().replace(/^\W+|\/|\W+$/g, '').replace(/\W+/g, '-')
 }
-
-const createTokenAuth = function createTokenAuth(token) {
-  if (!token) {
-    throw new Error("[@octokit/auth-token] No token passed to createTokenAuth");
-  }
-
-  if (typeof token !== "string") {
-    throw new Error("[@octokit/auth-token] Token passed to createTokenAuth is not a string");
-  }
-
-  token = token.replace(/^(token|bearer) +/i, "");
-  return Object.assign(auth.bind(null, token), {
-    hook: hook.bind(null, token)
-  });
-};
-
-exports.createTokenAuth = createTokenAuth;
-//# sourceMappingURL=index.js.map
 
 
 /***/ }),
@@ -27607,6 +27383,28 @@ module.exports = async function auditFix() {
 
 /***/ }),
 
+/***/ 915:
+/***/ (function(module) {
+
+/**
+ * @param {string} version
+ * @returns {number}
+ */
+module.exports = function semverToNumber(version) {
+  return version
+    .split(".")
+    .slice(0, 3)
+    .reverse()
+    .map((str) => parseInt(str, 10))
+    .reduce((sum, num, idx) => {
+      const added = num * 10 ** (idx * 2) || 0;
+      return sum + added;
+    }, 0);
+};
+
+
+/***/ }),
+
 /***/ 916:
 /***/ (function(__unusedmodule, exports) {
 
@@ -28246,6 +28044,170 @@ function onceStrict (fn) {
   f.onceError = name + " shouldn't be called more than once"
   f.called = false
   return f
+}
+
+
+/***/ }),
+
+/***/ 982:
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+var gitHosts = __webpack_require__(813)
+/* eslint-disable node/no-deprecated-api */
+
+// copy-pasta util._extend from node's source, to avoid pulling
+// the whole util module into peoples' webpack bundles.
+/* istanbul ignore next */
+var extend = Object.assign || function _extend (target, source) {
+  // Don't do anything if source isn't an object
+  if (source === null || typeof source !== 'object') return target
+
+  const keys = Object.keys(source)
+  let i = keys.length
+  while (i--) {
+    target[keys[i]] = source[keys[i]]
+  }
+  return target
+}
+
+module.exports = GitHost
+function GitHost (type, user, auth, project, committish, defaultRepresentation, opts) {
+  var gitHostInfo = this
+  gitHostInfo.type = type
+  Object.keys(gitHosts[type]).forEach(function (key) {
+    gitHostInfo[key] = gitHosts[type][key]
+  })
+  gitHostInfo.user = user
+  gitHostInfo.auth = auth
+  gitHostInfo.project = project
+  gitHostInfo.committish = committish
+  gitHostInfo.default = defaultRepresentation
+  gitHostInfo.opts = opts || {}
+}
+
+GitHost.prototype.hash = function () {
+  return this.committish ? '#' + this.committish : ''
+}
+
+GitHost.prototype._fill = function (template, opts) {
+  if (!template) return
+  var vars = extend({}, opts)
+  vars.path = vars.path ? vars.path.replace(/^[/]+/g, '') : ''
+  opts = extend(extend({}, this.opts), opts)
+  var self = this
+  Object.keys(this).forEach(function (key) {
+    if (self[key] != null && vars[key] == null) vars[key] = self[key]
+  })
+  var rawAuth = vars.auth
+  var rawcommittish = vars.committish
+  var rawFragment = vars.fragment
+  var rawPath = vars.path
+  var rawProject = vars.project
+  Object.keys(vars).forEach(function (key) {
+    var value = vars[key]
+    if ((key === 'path' || key === 'project') && typeof value === 'string') {
+      vars[key] = value.split('/').map(function (pathComponent) {
+        return encodeURIComponent(pathComponent)
+      }).join('/')
+    } else if (key !== 'domain') {
+      vars[key] = encodeURIComponent(value)
+    }
+  })
+  vars['auth@'] = rawAuth ? rawAuth + '@' : ''
+  vars['#fragment'] = rawFragment ? '#' + this.hashformat(rawFragment) : ''
+  vars.fragment = vars.fragment ? vars.fragment : ''
+  vars['#path'] = rawPath ? '#' + this.hashformat(rawPath) : ''
+  vars['/path'] = vars.path ? '/' + vars.path : ''
+  vars.projectPath = rawProject.split('/').map(encodeURIComponent).join('/')
+  if (opts.noCommittish) {
+    vars['#committish'] = ''
+    vars['/tree/committish'] = ''
+    vars['/committish'] = ''
+    vars.committish = ''
+  } else {
+    vars['#committish'] = rawcommittish ? '#' + rawcommittish : ''
+    vars['/tree/committish'] = vars.committish
+      ? '/' + vars.treepath + '/' + vars.committish
+      : ''
+    vars['/committish'] = vars.committish ? '/' + vars.committish : ''
+    vars.committish = vars.committish || 'master'
+  }
+  var res = template
+  Object.keys(vars).forEach(function (key) {
+    res = res.replace(new RegExp('[{]' + key + '[}]', 'g'), vars[key])
+  })
+  if (opts.noGitPlus) {
+    return res.replace(/^git[+]/, '')
+  } else {
+    return res
+  }
+}
+
+GitHost.prototype.ssh = function (opts) {
+  return this._fill(this.sshtemplate, opts)
+}
+
+GitHost.prototype.sshurl = function (opts) {
+  return this._fill(this.sshurltemplate, opts)
+}
+
+GitHost.prototype.browse = function (P, F, opts) {
+  if (typeof P === 'string') {
+    if (typeof F !== 'string') {
+      opts = F
+      F = null
+    }
+    return this._fill(this.browsefiletemplate, extend({
+      fragment: F,
+      path: P
+    }, opts))
+  } else {
+    return this._fill(this.browsetemplate, P)
+  }
+}
+
+GitHost.prototype.docs = function (opts) {
+  return this._fill(this.docstemplate, opts)
+}
+
+GitHost.prototype.bugs = function (opts) {
+  return this._fill(this.bugstemplate, opts)
+}
+
+GitHost.prototype.https = function (opts) {
+  return this._fill(this.httpstemplate, opts)
+}
+
+GitHost.prototype.git = function (opts) {
+  return this._fill(this.gittemplate, opts)
+}
+
+GitHost.prototype.shortcut = function (opts) {
+  return this._fill(this.shortcuttemplate, opts)
+}
+
+GitHost.prototype.path = function (opts) {
+  return this._fill(this.pathtemplate, opts)
+}
+
+GitHost.prototype.tarball = function (opts_) {
+  var opts = extend({}, opts_, { noCommittish: false })
+  return this._fill(this.tarballtemplate, opts)
+}
+
+GitHost.prototype.file = function (P, opts) {
+  return this._fill(this.filetemplate, extend({ path: P }, opts))
+}
+
+GitHost.prototype.getDefaultRepresentation = function () {
+  return this.default
+}
+
+GitHost.prototype.toString = function (opts) {
+  if (this.default && typeof this[this.default] === 'function') return this[this.default](opts)
+  return this.sshurl(opts)
 }
 
 
