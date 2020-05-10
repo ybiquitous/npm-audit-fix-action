@@ -9761,10 +9761,12 @@ module.exports = async function aggregateReport(audit, fix) {
    */
   const byNameAndVersion = (a, b) => {
     const res = a.name.localeCompare(b.name);
-    if (res === 0) {
-      return res;
+    if (res > 0) {
+      return 1;
     }
-
+    if (res < 0) {
+      return -1;
+    }
     return semverToNumber(a.version) - semverToNumber(b.version);
   };
 
