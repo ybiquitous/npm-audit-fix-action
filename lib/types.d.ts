@@ -35,3 +35,27 @@ type AuditFix = {
   warnings: string[];
   elapsed: number;
 };
+
+type UrlInfo = { name: string; url: string; type: string };
+
+type Report = {
+  added: Array<{ name: string; version: string }>;
+  removed: Array<{ name: string; version: string }>;
+  updated: Array<
+    | {
+        name: string;
+        version: string;
+        previousVersion: string;
+      }
+    | {
+        name: string;
+        version: string;
+        previousVersion: string;
+        severity: string;
+        title: string;
+        url: string;
+      }
+  >;
+  packageCount: number;
+  packageUrls: { [name: string]: UrlInfo };
+};
