@@ -7,7 +7,7 @@ inputs:
   branch:
     description: "Created branch"
     required: false
-    default: "npm-audit-fix-action/fix-packages"
+    default: "npm-audit-fix-action/fix"
   default_branch:
     description: "Default branch"
     required: false
