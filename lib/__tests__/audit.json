@@ -1,0 +1,182 @@
+{
+  "actions": [
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1500,
+          "path": "ybiq>@commitlint/cli>@commitlint/lint>@commitlint/parse>conventional-commits-parser>meow>yargs-parser",
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1500,
+          "path": "ybiq>standard-version>conventional-recommended-bump>conventional-commits-parser>meow>yargs-parser",
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "conventional-commits-parser",
+      "target": "3.1.0",
+      "depth": 5
+    },
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1500,
+          "path": "ybiq>standard-version>conventional-changelog>conventional-changelog-core>conventional-commits-parser>meow>yargs-parser",
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1500,
+          "path": "ybiq>standard-version>conventional-changelog>conventional-changelog-core>conventional-changelog-writer>meow>yargs-parser",
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1500,
+          "path": "ybiq>standard-version>conventional-changelog>conventional-changelog-core>git-semver-tags>meow>yargs-parser",
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "conventional-changelog-core",
+      "target": "4.1.7",
+      "depth": 4
+    },
+    {
+      "action": "update",
+      "resolves": [
+        {
+          "id": 1500,
+          "path": "ybiq>@commitlint/cli>@commitlint/read>git-raw-commits>meow>yargs-parser",
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        }
+      ],
+      "module": "git-raw-commits",
+      "target": "2.0.7",
+      "depth": 4
+    },
+    {
+      "action": "review",
+      "module": "yargs-parser",
+      "resolves": [
+        {
+          "id": 1500,
+          "path": "ybiq>@commitlint/cli>meow>yargs-parser",
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1500,
+          "path": "ybiq>standard-version>conventional-recommended-bump>git-semver-tags>meow>yargs-parser",
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1500,
+          "path": "ybiq>standard-version>git-semver-tags>meow>yargs-parser",
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1500,
+          "path": "ybiq>standard-version>conventional-recommended-bump>meow>yargs-parser",
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        },
+        {
+          "id": 1500,
+          "path": "ybiq>standard-version>yargs>yargs-parser",
+          "dev": true,
+          "optional": false,
+          "bundled": false
+        }
+      ]
+    }
+  ],
+  "advisories": {
+    "1500": {
+      "findings": [
+        {
+          "version": "10.1.0",
+          "paths": [
+            "ybiq>@commitlint/cli>@commitlint/lint>@commitlint/parse>conventional-commits-parser>meow>yargs-parser",
+            "ybiq>standard-version>conventional-changelog>conventional-changelog-core>conventional-commits-parser>meow>yargs-parser",
+            "ybiq>standard-version>conventional-recommended-bump>conventional-commits-parser>meow>yargs-parser",
+            "ybiq>@commitlint/cli>@commitlint/read>git-raw-commits>meow>yargs-parser",
+            "ybiq>@commitlint/cli>meow>yargs-parser",
+            "ybiq>standard-version>conventional-changelog>conventional-changelog-core>conventional-changelog-writer>meow>yargs-parser",
+            "ybiq>standard-version>conventional-changelog>conventional-changelog-core>git-semver-tags>meow>yargs-parser",
+            "ybiq>standard-version>conventional-recommended-bump>git-semver-tags>meow>yargs-parser",
+            "ybiq>standard-version>git-semver-tags>meow>yargs-parser",
+            "ybiq>standard-version>conventional-recommended-bump>meow>yargs-parser"
+          ]
+        },
+        {
+          "version": "16.1.0",
+          "paths": ["ybiq>standard-version>yargs>yargs-parser"]
+        }
+      ],
+      "id": 1500,
+      "created": "2020-03-26T19:21:50.174Z",
+      "updated": "2020-05-01T01:05:15.020Z",
+      "deleted": null,
+      "title": "Prototype Pollution",
+      "found_by": {
+        "link": "",
+        "name": "Snyk Security Team",
+        "email": ""
+      },
+      "reported_by": {
+        "link": "",
+        "name": "Snyk Security Team",
+        "email": ""
+      },
+      "module_name": "yargs-parser",
+      "cves": [],
+      "vulnerable_versions": "<13.1.2 || >=14.0.0 <15.0.1 || >=16.0.0 <18.1.2",
+      "patched_versions": ">=13.1.2 <14.0.0 || >=15.0.1 <16.0.0 || >=18.1.2",
+      "overview": "Affected versions of `yargs-parser` are vulnerable to prototype pollution. Arguments are not properly sanitized, allowing an attacker to modify the prototype of `Object`, causing the addition or modification of an existing property that will exist on all objects.  \nParsing the argument `--foo.__proto__.bar baz'` adds a `bar` property with value `baz` to all objects. This is only exploitable if attackers have control over the arguments being passed to `yargs-parser`.\n",
+      "recommendation": "Upgrade to versions 13.1.2, 15.0.1, 18.1.1 or later.",
+      "references": "- [Snyk Report](https://snyk.io/vuln/SNYK-JS-YARGSPARSER-560381)",
+      "access": "public",
+      "severity": "low",
+      "cwe": "CWE-471",
+      "metadata": {
+        "module_type": "",
+        "exploitability": 1,
+        "affected_components": ""
+      },
+      "url": "https://npmjs.com/advisories/1500"
+    }
+  },
+  "muted": [],
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 11,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0
+    },
+    "dependencies": 236,
+    "devDependencies": 271130,
+    "optionalDependencies": 100,
+    "totalDependencies": 271366
+  },
+  "runId": "8d6661b9-fb71-42c3-adc4-fd39a3727af0"
+}

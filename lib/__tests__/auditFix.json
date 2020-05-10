@@ -1,0 +1,635 @@
+{
+  "added": [
+    {
+      "action": "add",
+      "name": "@types/minimist",
+      "version": "1.2.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/@types/minimist"
+    },
+    {
+      "action": "add",
+      "name": "arrify",
+      "version": "2.0.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/arrify"
+    },
+    {
+      "action": "add",
+      "name": "arrify",
+      "version": "1.0.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/git-semver-tags/node_modules/minimist-options/node_modules/arrify"
+    },
+    {
+      "action": "add",
+      "name": "minimist-options",
+      "version": "4.0.2",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/git-semver-tags/node_modules/minimist-options"
+    },
+    {
+      "action": "add",
+      "name": "type-fest",
+      "version": "0.8.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/git-semver-tags/node_modules/read-pkg-up/node_modules/type-fest"
+    },
+    {
+      "action": "add",
+      "name": "type-fest",
+      "version": "0.6.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/git-semver-tags/node_modules/read-pkg/node_modules/type-fest"
+    },
+    {
+      "action": "add",
+      "name": "trim-newlines",
+      "version": "3.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/git-semver-tags/node_modules/trim-newlines"
+    },
+    {
+      "action": "add",
+      "name": "indent-string",
+      "version": "4.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/indent-string"
+    },
+    {
+      "action": "add",
+      "name": "map-obj",
+      "version": "4.1.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/map-obj"
+    },
+    {
+      "action": "add",
+      "name": "p-locate",
+      "version": "4.1.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/p-locate"
+    },
+    {
+      "action": "add",
+      "name": "locate-path",
+      "version": "5.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/locate-path"
+    },
+    {
+      "action": "add",
+      "name": "parse-json",
+      "version": "5.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/parse-json"
+    },
+    {
+      "action": "add",
+      "name": "read-pkg",
+      "version": "5.2.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/git-semver-tags/node_modules/read-pkg"
+    },
+    {
+      "action": "add",
+      "name": "path-exists",
+      "version": "4.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/path-exists"
+    },
+    {
+      "action": "add",
+      "name": "find-up",
+      "version": "4.1.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/find-up"
+    },
+    {
+      "action": "add",
+      "name": "read-pkg-up",
+      "version": "7.0.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/git-semver-tags/node_modules/read-pkg-up"
+    },
+    {
+      "action": "add",
+      "name": "quick-lru",
+      "version": "4.0.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/quick-lru"
+    },
+    {
+      "action": "add",
+      "name": "camelcase-keys",
+      "version": "6.2.2",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/git-semver-tags/node_modules/camelcase-keys"
+    },
+    {
+      "action": "add",
+      "name": "semver",
+      "version": "6.3.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/semver"
+    },
+    {
+      "action": "add",
+      "name": "type-fest",
+      "version": "0.13.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/type-fest"
+    },
+    {
+      "action": "add",
+      "name": "yargs-parser",
+      "version": "18.1.3",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/yargs-parser"
+    },
+    {
+      "action": "add",
+      "name": "arrify",
+      "version": "2.0.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/arrify"
+    },
+    {
+      "action": "add",
+      "name": "conventional-commits-filter",
+      "version": "2.0.6",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/conventional-commits-filter"
+    },
+    {
+      "action": "add",
+      "name": "indent-string",
+      "version": "4.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/indent-string"
+    },
+    {
+      "action": "add",
+      "name": "map-obj",
+      "version": "4.1.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/map-obj"
+    },
+    {
+      "action": "add",
+      "name": "arrify",
+      "version": "1.0.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/minimist-options/node_modules/arrify"
+    },
+    {
+      "action": "add",
+      "name": "minimist-options",
+      "version": "4.0.2",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/minimist-options"
+    },
+    {
+      "action": "add",
+      "name": "p-locate",
+      "version": "4.1.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/p-locate"
+    },
+    {
+      "action": "add",
+      "name": "locate-path",
+      "version": "5.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/locate-path"
+    },
+    {
+      "action": "add",
+      "name": "parse-json",
+      "version": "5.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/parse-json"
+    },
+    {
+      "action": "add",
+      "name": "path-exists",
+      "version": "4.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/path-exists"
+    },
+    {
+      "action": "add",
+      "name": "find-up",
+      "version": "4.1.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/find-up"
+    },
+    {
+      "action": "add",
+      "name": "quick-lru",
+      "version": "4.0.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/quick-lru"
+    },
+    {
+      "action": "add",
+      "name": "camelcase-keys",
+      "version": "6.2.2",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/camelcase-keys"
+    },
+    {
+      "action": "add",
+      "name": "type-fest",
+      "version": "0.8.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/read-pkg-up/node_modules/type-fest"
+    },
+    {
+      "action": "add",
+      "name": "type-fest",
+      "version": "0.6.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/read-pkg/node_modules/type-fest"
+    },
+    {
+      "action": "add",
+      "name": "read-pkg",
+      "version": "5.2.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/read-pkg"
+    },
+    {
+      "action": "add",
+      "name": "read-pkg-up",
+      "version": "7.0.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/read-pkg-up"
+    },
+    {
+      "action": "add",
+      "name": "trim-newlines",
+      "version": "3.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/trim-newlines"
+    },
+    {
+      "action": "add",
+      "name": "type-fest",
+      "version": "0.13.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/type-fest"
+    },
+    {
+      "action": "add",
+      "name": "yargs-parser",
+      "version": "18.1.3",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/yargs-parser"
+    },
+    {
+      "action": "add",
+      "name": "arrify",
+      "version": "2.0.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/arrify"
+    },
+    {
+      "action": "add",
+      "name": "indent-string",
+      "version": "4.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/indent-string"
+    },
+    {
+      "action": "add",
+      "name": "map-obj",
+      "version": "4.1.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/map-obj"
+    },
+    {
+      "action": "add",
+      "name": "arrify",
+      "version": "1.0.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/minimist-options/node_modules/arrify"
+    },
+    {
+      "action": "add",
+      "name": "minimist-options",
+      "version": "4.0.2",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/minimist-options"
+    },
+    {
+      "action": "add",
+      "name": "p-locate",
+      "version": "4.1.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/p-locate"
+    },
+    {
+      "action": "add",
+      "name": "locate-path",
+      "version": "5.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/locate-path"
+    },
+    {
+      "action": "add",
+      "name": "parse-json",
+      "version": "5.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/parse-json"
+    },
+    {
+      "action": "add",
+      "name": "path-exists",
+      "version": "4.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/path-exists"
+    },
+    {
+      "action": "add",
+      "name": "find-up",
+      "version": "4.1.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/find-up"
+    },
+    {
+      "action": "add",
+      "name": "quick-lru",
+      "version": "4.0.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/quick-lru"
+    },
+    {
+      "action": "add",
+      "name": "camelcase-keys",
+      "version": "6.2.2",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/camelcase-keys"
+    },
+    {
+      "action": "add",
+      "name": "type-fest",
+      "version": "0.8.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/read-pkg-up/node_modules/type-fest"
+    },
+    {
+      "action": "add",
+      "name": "type-fest",
+      "version": "0.6.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/read-pkg/node_modules/type-fest"
+    },
+    {
+      "action": "add",
+      "name": "read-pkg",
+      "version": "5.2.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/read-pkg"
+    },
+    {
+      "action": "add",
+      "name": "read-pkg-up",
+      "version": "7.0.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/read-pkg-up"
+    },
+    {
+      "action": "add",
+      "name": "trim-newlines",
+      "version": "3.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/trim-newlines"
+    },
+    {
+      "action": "add",
+      "name": "type-fest",
+      "version": "0.13.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/type-fest"
+    },
+    {
+      "action": "add",
+      "name": "yargs-parser",
+      "version": "18.1.3",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/yargs-parser"
+    },
+    {
+      "action": "add",
+      "name": "arrify",
+      "version": "2.0.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/arrify"
+    },
+    {
+      "action": "add",
+      "name": "dargs",
+      "version": "7.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/dargs"
+    },
+    {
+      "action": "add",
+      "name": "indent-string",
+      "version": "4.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/indent-string"
+    },
+    {
+      "action": "add",
+      "name": "map-obj",
+      "version": "4.1.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/map-obj"
+    },
+    {
+      "action": "add",
+      "name": "arrify",
+      "version": "1.0.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/minimist-options/node_modules/arrify"
+    },
+    {
+      "action": "add",
+      "name": "minimist-options",
+      "version": "4.0.2",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/minimist-options"
+    },
+    {
+      "action": "add",
+      "name": "p-locate",
+      "version": "4.1.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/p-locate"
+    },
+    {
+      "action": "add",
+      "name": "locate-path",
+      "version": "5.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/locate-path"
+    },
+    {
+      "action": "add",
+      "name": "parse-json",
+      "version": "5.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/parse-json"
+    },
+    {
+      "action": "add",
+      "name": "path-exists",
+      "version": "4.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/path-exists"
+    },
+    {
+      "action": "add",
+      "name": "find-up",
+      "version": "4.1.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/find-up"
+    },
+    {
+      "action": "add",
+      "name": "quick-lru",
+      "version": "4.0.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/quick-lru"
+    },
+    {
+      "action": "add",
+      "name": "camelcase-keys",
+      "version": "6.2.2",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/camelcase-keys"
+    },
+    {
+      "action": "add",
+      "name": "type-fest",
+      "version": "0.8.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/read-pkg-up/node_modules/type-fest"
+    },
+    {
+      "action": "add",
+      "name": "type-fest",
+      "version": "0.6.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/read-pkg/node_modules/type-fest"
+    },
+    {
+      "action": "add",
+      "name": "read-pkg",
+      "version": "5.2.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/read-pkg"
+    },
+    {
+      "action": "add",
+      "name": "read-pkg-up",
+      "version": "7.0.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/read-pkg-up"
+    },
+    {
+      "action": "add",
+      "name": "trim-newlines",
+      "version": "3.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/trim-newlines"
+    },
+    {
+      "action": "add",
+      "name": "type-fest",
+      "version": "0.13.1",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/type-fest"
+    },
+    {
+      "action": "add",
+      "name": "yargs-parser",
+      "version": "18.1.3",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/yargs-parser"
+    },
+    {
+      "action": "add",
+      "name": "hard-rejection",
+      "version": "2.1.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/hard-rejection"
+    },
+    {
+      "action": "add",
+      "name": "interpret",
+      "version": "1.2.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/interpret"
+    },
+    {
+      "action": "add",
+      "name": "min-indent",
+      "version": "1.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/min-indent"
+    },
+    {
+      "action": "add",
+      "name": "strip-indent",
+      "version": "3.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/strip-indent"
+    },
+    {
+      "action": "add",
+      "name": "redent",
+      "version": "3.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/git-semver-tags/node_modules/redent"
+    },
+    {
+      "action": "add",
+      "name": "meow",
+      "version": "7.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/git-semver-tags/node_modules/meow"
+    },
+    {
+      "action": "add",
+      "name": "git-semver-tags",
+      "version": "4.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core/node_modules/git-semver-tags"
+    },
+    {
+      "action": "add",
+      "name": "strip-indent",
+      "version": "3.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/strip-indent"
+    },
+    {
+      "action": "add",
+      "name": "redent",
+      "version": "3.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/redent"
+    },
+    {
+      "action": "add",
+      "name": "meow",
+      "version": "7.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer/node_modules/meow"
+    },
+    {
+      "action": "add",
+      "name": "strip-indent",
+      "version": "3.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/strip-indent"
+    },
+    {
+      "action": "add",
+      "name": "redent",
+      "version": "3.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/redent"
+    },
+    {
+      "action": "add",
+      "name": "meow",
+      "version": "7.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser/node_modules/meow"
+    },
+    {
+      "action": "add",
+      "name": "strip-indent",
+      "version": "3.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/strip-indent"
+    },
+    {
+      "action": "add",
+      "name": "redent",
+      "version": "3.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/redent"
+    },
+    {
+      "action": "add",
+      "name": "meow",
+      "version": "7.0.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits/node_modules/meow"
+    },
+    {
+      "action": "add",
+      "name": "rechoir",
+      "version": "0.6.2",
+      "path": "/tmp/npm-audit-fix-action/node_modules/rechoir"
+    },
+    {
+      "action": "add",
+      "name": "shelljs",
+      "version": "0.8.4",
+      "path": "/tmp/npm-audit-fix-action/node_modules/shelljs"
+    }
+  ],
+  "removed": [],
+  "updated": [
+    {
+      "action": "update",
+      "name": "conventional-changelog-writer",
+      "version": "4.0.16",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-writer",
+      "previousVersion": "4.0.11"
+    },
+    {
+      "action": "update",
+      "name": "conventional-commits-parser",
+      "version": "3.1.0",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-commits-parser",
+      "previousVersion": "3.0.8"
+    },
+    {
+      "action": "update",
+      "name": "git-raw-commits",
+      "version": "2.0.7",
+      "path": "/tmp/npm-audit-fix-action/node_modules/git-raw-commits",
+      "previousVersion": "2.0.3"
+    },
+    {
+      "action": "update",
+      "name": "conventional-changelog-core",
+      "version": "4.1.7",
+      "path": "/tmp/npm-audit-fix-action/node_modules/conventional-changelog-core",
+      "previousVersion": "4.1.4"
+    },
+    {
+      "action": "update",
+      "name": "uglify-js",
+      "version": "3.9.2",
+      "path": "/tmp/npm-audit-fix-action/node_modules/uglify-js",
+      "previousVersion": "3.9.0"
+    }
+  ],
+  "moved": [],
+  "failed": [],
+  "warnings": [],
+  "funding": "120 packages are looking for funding",
+  "elapsed": 8581
+}
