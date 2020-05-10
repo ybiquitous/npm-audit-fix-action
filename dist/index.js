@@ -8678,7 +8678,7 @@ async function run() {
 
       return createOrUpdatePullRequest({
         branch: core.getInput("branch"),
-        token: core.getInput("github_token"),
+        token: core.getInput("github_token") || process.env.GITHUB_TOKEN,
         defaultBranch: core.getInput("default_branch"),
         title: core.getInput("commit_title"),
         body: buildPullRequestBody(auditReport, fix, allUrls),
