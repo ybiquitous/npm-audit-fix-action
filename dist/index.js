@@ -9745,6 +9745,7 @@ module.exports = async function createOrUpdatePullRequest({
 
 const capitalize = __webpack_require__(203);
 const newAdvisories = __webpack_require__(687);
+const semverToNumber = __webpack_require__(915);
 const packageRepoUrls = __webpack_require__(405);
 
 /**
@@ -9754,11 +9755,18 @@ const packageRepoUrls = __webpack_require__(405);
  */
 module.exports = async function aggregateReport(audit, fix) {
   /**
-   * @param {{ name: string }} a
-   * @param {{ name: string }} b
+   * @param {{ name: string, version: string }} a
+   * @param {{ name: string, version: string }} b
    * @returns {number}
    */
-  const byNameOrder = (a, b) => a.name.localeCompare(b.name);
+  const byNameAndVersion = (a, b) => {
+    const res = a.name.localeCompare(b.name);
+    if (res === 0) {
+      return res;
+    }
+
+    return semverToNumber(a.version) - semverToNumber(b.version);
+  };
 
   /** @type {Report["added"]} */
   const added = [];
@@ -9770,7 +9778,7 @@ module.exports = async function aggregateReport(audit, fix) {
       added.push({ name, version });
     }
   });
-  added.sort(byNameOrder);
+  added.sort(byNameAndVersion);
 
   /** @type {Report["removed"]} */
   const removed = [];
@@ -9782,7 +9790,7 @@ module.exports = async function aggregateReport(audit, fix) {
       removed.push({ name, version });
     }
   });
-  removed.sort(byNameOrder);
+  removed.sort(byNameAndVersion);
 
   const advisories = newAdvisories(audit);
 
@@ -9810,7 +9818,7 @@ module.exports = async function aggregateReport(audit, fix) {
       }
     }
   });
-  updated.sort(byNameOrder);
+  updated.sort(byNameAndVersion);
 
   const allPackageNames = Array.from(
     new Set([
@@ -27370,6 +27378,28 @@ module.exports = async function auditFix() {
     silent: true,
   });
   return JSON.parse(stdout);
+};
+
+
+/***/ }),
+
+/***/ 915:
+/***/ (function(module) {
+
+/**
+ * @param {string} version
+ * @returns {number}
+ */
+module.exports = function semverToNumber(version) {
+  return version
+    .split(".")
+    .slice(0, 3)
+    .reverse()
+    .map((str) => parseInt(str, 10))
+    .reduce((sum, num, idx) => {
+      const added = num * 10 ** (idx * 2) || 0;
+      return sum + added;
+    }, 0);
 };
 
 
