@@ -5,9 +5,9 @@ inputs:
     description: "GitHub token"
     required: false
   branch:
-    description: "New Branch"
+    description: "Created branch"
     required: false
-    default: "npm-audit-fix"
+    default: "npm-audit-fix-action/fix"
   default_branch:
     description: "Default branch"
     required: false

@@ -23,7 +23,7 @@ jobs:
       - uses: ybiquitous/npm-audit-fix-action@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # branch: "npm-audit-fix"
+          # branch: "npm-audit-fix-action/fix"
           # default_branch: "master"
           # commit_title: "build(deps): npm audit fix"
         # or
