@@ -118,7 +118,10 @@
         ],
         "extends": [
           "ybiquitous/typescript"
-        ]
+        ],
+        "parserOptions": {
+          "project": "tsconfig.json"
+        }
       }
     ]
   }
