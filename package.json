@@ -51,7 +51,7 @@
     "eslint-config-ybiquitous": "^10.11.0",
     "eslint-plugin-jest": "^23.10.0",
     "jest": "^26.0.1",
-    "typescript": "^3.8.3",
+    "typescript": "^3.9.2",
     "ybiq": "^11.0.0"
   },
   "husky": {
