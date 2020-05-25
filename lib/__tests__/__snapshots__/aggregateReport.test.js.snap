@@ -297,7 +297,7 @@ Object {
     "uglify-js": Object {
       "name": "uglify-js",
       "type": "github",
-      "url": "https://github.com/mishoo/UglifyJS2",
+      "url": "https://github.com/mishoo/UglifyJS",
     },
     "yargs-parser": Object {
       "name": "yargs-parser",
