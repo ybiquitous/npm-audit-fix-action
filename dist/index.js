@@ -1109,6 +1109,16 @@ module.exports._enoent = enoent;
 
 /***/ }),
 
+/***/ 32:
+/***/ (function(module) {
+
+module.exports.PACKAGE_NAME = "npm-audit-fix-action";
+module.exports.PACKAGE_URL = "https://github.com/ybiquitous/npm-audit-fix-action";
+module.exports.NPM_VERSION = "6.14.5";
+
+
+/***/ }),
+
 /***/ 39:
 /***/ (function(module) {
 
@@ -1915,8 +1925,7 @@ function parseGitUrl (giturl) {
 
 const { exec } = __webpack_require__(986);
 const npmArgs = __webpack_require__(510);
-
-const NPM_VERSION = "6.14.5";
+const { NPM_VERSION } = __webpack_require__(32);
 
 module.exports = async function updateNpm() {
   await exec("sudo", ["npm", ...npmArgs("install", "--global", `npm@${NPM_VERSION}`)]);
@@ -6959,13 +6968,11 @@ module.exports = resolveCommand;
 /***/ 510:
 /***/ (function(module) {
 
-const DEFAULT_OPTIONS = Object.freeze(["--ignore-scripts", "--no-progress"]);
-
 /**
  * @param {string[]} args
  */
 module.exports = function npmArgs(...args) {
-  return [...args, ...DEFAULT_OPTIONS];
+  return [...args, "--ignore-scripts", "--no-progress"];
 };
 
 
@@ -8190,7 +8197,9 @@ module.exports = async function aggregateReport(audit, fix) {
 /***/ }),
 
 /***/ 603:
-/***/ (function(module) {
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+const { PACKAGE_NAME, PACKAGE_URL, NPM_VERSION } = __webpack_require__(32);
 
 /**
  * @param {Report} report
@@ -8267,8 +8276,10 @@ module.exports = function buildPullRequestBody(report) {
   }
 
   lines.push("");
+  lines.push("***");
+  lines.push("");
   lines.push(
-    "*This pull request is created by [npm-audit-fix-action](https://github.com/ybiquitous/npm-audit-fix-action).*"
+    `This pull request is created by [${PACKAGE_NAME}](${PACKAGE_URL}). The used npm version is **${NPM_VERSION}**.`
   );
 
   return lines.join("\n").trim();
