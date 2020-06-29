@@ -17,7 +17,7 @@
   "main": "lib/index.js",
   "scripts": {
     "package": "ncc build lib/index.js -o dist",
-    "test": "jest --testTimeout 10000",
+    "test": "jest --testTimeout 30000",
     "test:watch": "jest --watch",
     "test:coverage": "echo \"unsupported.\" && exit 1",
     "prettier": "prettier --ignore-path .gitignore .",
