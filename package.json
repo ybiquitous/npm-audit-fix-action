@@ -17,7 +17,7 @@
   "main": "lib/index.js",
   "scripts": {
     "package": "ncc build lib/index.js -o dist",
-    "test": "jest --testTimeout 10000",
+    "test": "jest --testTimeout 30000",
     "test:watch": "jest --watch",
     "test:coverage": "echo \"unsupported.\" && exit 1",
     "prettier": "prettier --ignore-path .gitignore .",
@@ -43,14 +43,14 @@
   },
   "devDependencies": {
     "@types/hosted-git-info": "^3.0.0",
-    "@types/jest": "^26.0.0",
+    "@types/jest": "^26.0.3",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
     "@zeit/ncc": "^0.22.3",
     "eslint": "^6.8.0",
     "eslint-config-ybiquitous": "^10.11.0",
-    "eslint-plugin-jest": "^23.16.0",
-    "jest": "^26.0.1",
+    "eslint-plugin-jest": "^23.17.1",
+    "jest": "^26.1.0",
     "typescript": "^3.9.5",
     "ybiq": "^11.0.0"
   },
