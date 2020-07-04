@@ -4394,14 +4394,27 @@ async function fetchUrl(packageName) {
   }
 
   let stdout = "";
-  await exec("npm", ["view", packageName, "repository.url"], {
-    listeners: {
-      stdout: (data) => {
-        stdout += data.toString();
+  let stderr = "";
+  try {
+    await exec("npm", ["view", packageName, "repository.url"], {
+      listeners: {
+        stdout: (data) => {
+          stdout += data.toString();
+        },
+        stderr: (data) => {
+          stderr += data.toString();
+        },
       },
-    },
-    silent: true,
-  });
+      silent: true,
+    });
+  } catch (err) {
+    // code E404 means the package does not exist on npm
+    // which means it is a file: or git: dependency
+    // We are fine with 404 errors, but not with any other errors
+    if (!stderr.includes("code E404")) {
+      throw new Error(stderr);
+    }
+  }
   stdout = stdout.trim();
 
   if (!stdout) {
@@ -7161,8 +7174,9 @@ async function run() {
       return res;
     });
 
-    const report = await core.group("Aggregate report", () => {
-      return aggregateReport(auditReport, fixReport);
+    const report = await core.group("Aggregate report", async () => {
+      const res = await aggregateReport(auditReport, fixReport);
+      return res;
     });
 
     if (report.packageCount === 0) {
