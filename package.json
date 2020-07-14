@@ -1,6 +1,6 @@
 {
   "name": "npm-audit-fix-action",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "A GitHub Action for `npm audit fix`",
   "author": "Masafumi Koba",
   "license": "MIT",
