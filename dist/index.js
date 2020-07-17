@@ -8109,12 +8109,13 @@ module.exports = async function createOrUpdatePullRequest({
     });
     console.log(`The pull request was created successfully: ${newPull.data.html_url}`);
 
-    octokit.issues.addLabels({
+    const newLabels = await octokit.issues.addLabels({
       owner,
       repo,
       issue_number: newPull.data.number,
       labels,
     });
+    console.log(`The labels were added successfully: ${newLabels.data.join(", ")}`);
   }
 };
 
