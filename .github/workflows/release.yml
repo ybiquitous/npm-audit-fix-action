@@ -1,14 +1,24 @@
 name: Release
 
 on:
-  push:
-    tags: ["**"]
+  workflow_dispatch:
+    branches: ["master"]
+    inputs:
+      dry-run:
+        description: Set `true` if you do not release it yet
+        required: false
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - run: npm run release:dry-run
+        if: github.event.inputs.dry-run == "true"
+      - run: npm run release
+        if: github.event.inputs.dry-run == ""
       - uses: softprops/action-gh-release@v1
         with:
           body: |
