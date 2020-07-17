@@ -16,12 +16,13 @@ jobs:
         with:
           fetch-depth: 0
       - run: npm run release:dry-run
-        if: github.event.inputs.dry-run == "true"
+        if: ${{ github.event.inputs.dry-run == "true" }}
       - run: npm run release
-        if: github.event.inputs.dry-run == ""
+        if: ${{ github.event.inputs.dry-run == "" }}
+      - run: echo "::set-output name=head-sha::$(git rev-parse HEAD)"
       - uses: softprops/action-gh-release@v1
         with:
           body: |
-            For details, see the [changelog](https://github.com/${{ github.repository }}/blob/${{ github.sha }}/CHANGELOG.md).
+            See the [changelog](https://github.com/${{ github.repository }}/blob/${{ jobs.release.outputs.head-sha }}/CHANGELOG.md) for more details.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
