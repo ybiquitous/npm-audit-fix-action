@@ -1,10 +1,10 @@
 name: commitlint
 
 on:
-  pull_request:
   push:
-    branches: [master]
-    tags: ["**"]
+    branches: ["master"]
+  pull_request:
+    branches: ["**"]
 
 jobs:
   commitlint:

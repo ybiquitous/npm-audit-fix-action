@@ -2,10 +2,10 @@ name: npm audit fix
 
 on:
   schedule:
-    - cron: 0 0/3 * * *
+    - cron: 0 0 * * *
 
 jobs:
-  run:
+  npm-audit-fix:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

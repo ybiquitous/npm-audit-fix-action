@@ -3,7 +3,7 @@ type Finding = {
 };
 
 type Advisory = {
-  module_name: string;
+  module_name: string; // eslint-disable-line camelcase
   title: string;
   severity: string;
   cwe: string;

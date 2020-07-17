@@ -1,10 +1,11 @@
-name: test
+name: Test
+
 on:
-  pull_request:
   push:
-    branches:
-      - master
-      - "releases/*"
+    branches: ["master"]
+  pull_request:
+    branches: ["**"]
+    tags: ["**"]
 
 jobs:
   lint:
