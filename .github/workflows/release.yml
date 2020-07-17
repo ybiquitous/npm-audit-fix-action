@@ -23,13 +23,13 @@ jobs:
           git config user.email "actions@github.com"
       - run: npm run release
         if: ${{ github.event.inputs.dry-run == '' }}
-      - run: echo "::set-output name=head-sha::$(git rev-parse HEAD)"
-        if: ${{ github.event.inputs.dry-run == '' }}
-        id: set-head-sha
+      - run: echo "::set-output name=tag::$(git describe --abbrev=0)"
+        id: set-tag
       - uses: softprops/action-gh-release@v1
         if: ${{ github.event.inputs.dry-run == '' }}
         with:
           body: |
-            See the [changelog](https://github.com/${{ github.repository }}/blob/${{ steps.set-head-sha.outputs.head-sha }}/CHANGELOG.md) for more details.
+            See the [changelog](https://github.com/${{ github.repository }}/blob/${{ steps.set-tag.outputs.tag }}/CHANGELOG.md) for more details.
+          tag_name: ${{ steps.set-tag.outputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
