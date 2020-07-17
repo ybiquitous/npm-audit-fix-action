@@ -100,7 +100,10 @@
     ],
     "rules": {
       "max-lines-per-function": "warn",
-      "max-statements": "warn",
+      "max-statements": [
+        "warn",
+        20
+      ],
       "no-console": "warn"
     },
     "overrides": [
