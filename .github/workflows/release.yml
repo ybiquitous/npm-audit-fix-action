@@ -21,10 +21,11 @@ jobs:
         if: ${{ github.event.inputs.dry-run == '' }}
       - run: echo "::set-output name=head-sha::$(git rev-parse HEAD)"
         if: ${{ github.event.inputs.dry-run == '' }}
+        id: set-head-sha
       - uses: softprops/action-gh-release@v1
         if: ${{ github.event.inputs.dry-run == '' }}
         with:
           body: |
-            See the [changelog](https://github.com/${{ github.repository }}/blob/${{ jobs.release.outputs.head-sha }}/CHANGELOG.md) for more details.
+            See the [changelog](https://github.com/${{ github.repository }}/blob/${{ steps.set-head-sha.outputs.head-sha }}/CHANGELOG.md) for more details.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
