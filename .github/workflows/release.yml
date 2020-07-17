@@ -20,7 +20,9 @@ jobs:
       - run: npm run release
         if: ${{ github.event.inputs.dry-run == "" }}
       - run: echo "::set-output name=head-sha::$(git rev-parse HEAD)"
+        if: ${{ github.event.inputs.dry-run == "" }}
       - uses: softprops/action-gh-release@v1
+        if: ${{ github.event.inputs.dry-run == "" }}
         with:
           body: |
             See the [changelog](https://github.com/${{ github.repository }}/blob/${{ jobs.release.outputs.head-sha }}/CHANGELOG.md) for more details.
