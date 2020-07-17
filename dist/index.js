@@ -7126,6 +7126,7 @@ const updateNpm = __webpack_require__(193);
 const aggregateReport = __webpack_require__(599);
 const buildPullRequestBody = __webpack_require__(603);
 const createOrUpdatePullRequest = __webpack_require__(583);
+const commaSeparatedList = __webpack_require__(604);
 
 /**
  * @returns {Promise<boolean>}
@@ -7200,6 +7201,7 @@ async function run() {
         repository: getFromEnv("GITHUB_REPOSITORY"),
         actor: getFromEnv("GITHUB_ACTOR"),
         email: "actions@github.com",
+        labels: commaSeparatedList(core.getInput("labels")),
       });
     });
   } catch (error) {
@@ -8050,6 +8052,7 @@ const github = __webpack_require__(469);
  *  repository: string,
  *  actor: string,
  *  email: string,
+ *  labels: string[],
  * }} params
  */
 module.exports = async function createOrUpdatePullRequest({
@@ -8061,6 +8064,7 @@ module.exports = async function createOrUpdatePullRequest({
   repository,
   actor,
   email,
+  labels,
 }) {
   const remote = `https://${actor}:${token}@github.com/${repository}.git`;
   const [owner, repo] = repository.split("/");
@@ -8076,7 +8080,7 @@ module.exports = async function createOrUpdatePullRequest({
     direction: "desc",
     per_page: 100,
   });
-  const pull = await pulls.data.find(({ head }) => head.ref === branch);
+  const pull = pulls.data.find(({ head }) => head.ref === branch);
 
   await exec("git", ["config", "user.name", actor]);
   await exec("git", ["config", "user.email", email]);
@@ -8104,6 +8108,14 @@ module.exports = async function createOrUpdatePullRequest({
       base: defaultBranch,
     });
     console.log(`The pull request was created successfully: ${newPull.data.html_url}`);
+
+    const newLabels = await octokit.issues.addLabels({
+      owner,
+      repo,
+      issue_number: newPull.data.number,
+      labels,
+    });
+    console.log(`The labels were added successfully: ${newLabels.data.join(", ")}`);
   }
 };
 
@@ -8295,6 +8307,23 @@ module.exports = function buildPullRequestBody(report) {
   );
 
   return lines.join("\n").trim();
+};
+
+
+/***/ }),
+
+/***/ 604:
+/***/ (function(module) {
+
+/**
+ * @param {string} str
+ * @returns {string[]}
+ */
+module.exports = function commaSeparatedList(str) {
+  return str
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
 };
 
 

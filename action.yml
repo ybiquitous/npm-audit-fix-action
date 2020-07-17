@@ -1,5 +1,6 @@
 name: "npm audit fix"
 description: "Run `npm audit fix` and create a pull request"
+author: "Masafumi Koba"
 inputs:
   github_token:
     description: "GitHub token"
@@ -16,6 +17,10 @@ inputs:
     description: "Commit title"
     required: false
     default: "build(deps): npm audit fix"
+  labels:
+    description: ""
+    required: false
+    default: "dependencies, security"
 runs:
   using: "node12"
   main: "dist/index.js"
