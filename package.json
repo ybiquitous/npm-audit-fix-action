@@ -30,8 +30,7 @@
     "lint:md": "remark . --frail",
     "lint:md:fix": "remark . --output",
     "lint:types": "tsc --noEmit",
-    "prerelease": "git checkout master && git pull origin master && npm ci && npm test && npm run package && git diff --exit-code dist/",
-    "postrelease": "git push --follow-tags origin master && git tag --force --annotate --message \"Release v1\" v1 && git push --tags --force origin v1",
+    "prerelease": "npm test && npm run package && git diff --exit-code dist/",
     "release": "standard-version",
     "release:dry-run": "standard-version --dry-run"
   },

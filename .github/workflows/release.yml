@@ -25,6 +25,12 @@ jobs:
         if: ${{ github.event.inputs.dry-run == '' }}
       - run: echo "::set-output name=tag::$(git describe --abbrev=0)"
         id: set-tag
+      - run: |
+          git push --follow-tags
+          git tag --force --annotate --message "Release ${MAJOR_VERSION_TAG}" ${MAJOR_VERSION_TAG}
+          git push --tags --force origin ${MAJOR_VERSION_TAG}
+        env:
+          MAJOR_VERSION_TAG: v1
       - uses: softprops/action-gh-release@v1
         if: ${{ github.event.inputs.dry-run == '' }}
         with:
