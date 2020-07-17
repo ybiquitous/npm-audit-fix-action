@@ -8115,7 +8115,9 @@ module.exports = async function createOrUpdatePullRequest({
       issue_number: newPull.data.number,
       labels,
     });
-    console.log(`The labels were added successfully: ${newLabels.data.join(", ")}`);
+    console.log(
+      `The labels were added successfully: ${newLabels.data.map((l) => l.name).join(", ")}`
+    );
   }
 };
 
