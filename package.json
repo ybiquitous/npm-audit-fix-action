@@ -18,14 +18,14 @@
   "scripts": {
     "package": "ncc build lib/index.js -o dist",
     "test": "jest --testTimeout 30000",
-    "test:watch": "jest --watch",
+    "test:watch": "jest --testTimeout 30000 --watch",
     "test:coverage": "echo \"unsupported.\" && exit 1",
     "prettier": "prettier --ignore-path .gitignore .",
     "prettier:check": "npm run prettier -- --check",
     "prettier:write": "npm run prettier -- --write",
     "format": "npm-run-all --print-label --parallel lint:*:fix prettier:write",
     "lint": "npm-run-all --print-label --parallel lint:*",
-    "lint:js": "eslint --ignore-path .gitignore --ext .js,.jsx,.mjs,.ts,.tsx .",
+    "lint:js": "eslint .",
     "lint:js:fix": "npm run lint:js -- --fix",
     "lint:md": "remark . --frail",
     "lint:md:fix": "remark . --output",
@@ -44,15 +44,15 @@
   "devDependencies": {
     "@types/hosted-git-info": "^3.0.0",
     "@types/jest": "^26.0.4",
-    "@typescript-eslint/eslint-plugin": "^2.34.0",
-    "@typescript-eslint/parser": "^2.34.0",
+    "@typescript-eslint/eslint-plugin": "^3.6.1",
+    "@typescript-eslint/parser": "^3.6.1",
     "@zeit/ncc": "^0.22.3",
-    "eslint": "^6.8.0",
-    "eslint-config-ybiquitous": "^10.11.0",
+    "eslint": "^7.4.0",
+    "eslint-config-ybiquitous": "^11.0.0",
     "eslint-plugin-jest": "^23.18.0",
     "jest": "^26.1.0",
-    "typescript": "^3.9.6",
-    "ybiq": "^11.0.0"
+    "typescript": "^3.9.7",
+    "ybiq": "^11.3.0"
   },
   "husky": {
     "hooks": {
@@ -92,11 +92,12 @@
     ]
   },
   "eslintConfig": {
+    "root": true,
     "extends": [
       "ybiquitous/node"
     ],
     "ignorePatterns": [
-      "dist/"
+      "**/dist/**"
     ],
     "rules": {
       "max-lines-per-function": "warn",
