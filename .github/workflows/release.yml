@@ -5,7 +5,7 @@ on:
     branches: ["master"]
     inputs:
       dry-run:
-        description: Set `true` if you do not release it yet
+        description: Set `true` if you want to dry-run
         required: false
 
 jobs:
