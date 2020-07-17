@@ -18,6 +18,9 @@ jobs:
       - run: npm ci
       - run: npm run release:dry-run
         if: ${{ github.event.inputs.dry-run == 'true' }}
+      - run: |
+          git config user.name "${{ GITHUB_ACTOR }}"
+          git config user.email "actions@github.com"
       - run: npm run release
         if: ${{ github.event.inputs.dry-run == '' }}
       - run: echo "::set-output name=head-sha::$(git rev-parse HEAD)"
