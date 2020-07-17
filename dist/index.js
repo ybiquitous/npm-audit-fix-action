@@ -8268,7 +8268,7 @@ module.exports = function buildPullRequestBody(report) {
   const lines = [];
   if (report.updated.length > 0) {
     lines.push("");
-    lines.push("### Updated");
+    lines.push(`### Updated (${report.updated.length})`);
     lines.push("");
     lines.push(...header);
 
@@ -8284,7 +8284,7 @@ module.exports = function buildPullRequestBody(report) {
   }
   if (report.added.length > 0) {
     lines.push("");
-    lines.push("### Added");
+    lines.push(`### Added (${report.added.length})`);
     lines.push("");
     lines.push(...header);
     report.added.forEach(({ name, version }) => {
@@ -8293,7 +8293,7 @@ module.exports = function buildPullRequestBody(report) {
   }
   if (report.removed.length > 0) {
     lines.push("");
-    lines.push("### Removed");
+    lines.push(`### Removed (${report.removed.length})`);
     lines.push("");
     lines.push(...header);
     report.removed.forEach(({ name, version }) => {
