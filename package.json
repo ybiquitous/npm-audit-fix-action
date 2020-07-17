@@ -20,7 +20,7 @@
     "test": "jest --testTimeout 30000",
     "test:watch": "jest --testTimeout 30000 --watch",
     "test:coverage": "echo \"unsupported.\" && exit 1",
-    "prettier": "prettier --ignore-path .gitignore .",
+    "prettier": "prettier .",
     "prettier:check": "npm run prettier -- --check",
     "prettier:write": "npm run prettier -- --write",
     "format": "npm-run-all --print-label --parallel lint:*:fix prettier:write",
