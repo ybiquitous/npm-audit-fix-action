@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.2.3...v1.3.0) (2020-07-17)
+
+### Features
+
+- add labels option ([#153](https://github.com/ybiquitous/npm-audit-fix-action/issues/153)) ([ebce344](https://github.com/ybiquitous/npm-audit-fix-action/commit/ebce344964256fabfe4c9dc26cd8870d1a148401))
+- show the number of packages in PR body ([#161](https://github.com/ybiquitous/npm-audit-fix-action/issues/161)) ([7011bef](https://github.com/ybiquitous/npm-audit-fix-action/commit/7011befd69f57cc0948773a5132958db0b5ec653))
+- split column for repo link in PR body ([#163](https://github.com/ybiquitous/npm-audit-fix-action/issues/163)) ([42afd87](https://github.com/ybiquitous/npm-audit-fix-action/commit/42afd87a78ee34ea45985a8186f79b9065073517))
+
 ### [1.2.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.2.2...v1.2.3) (2020-07-14)
 
 ### Bug Fixes
