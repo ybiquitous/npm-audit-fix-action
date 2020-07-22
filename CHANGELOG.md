@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.3.2...v1.3.3) (2020-07-22)
+
+### Bug Fixes
+
+- **deps:** bump npm from 6.14.6 to 6.14.7 ([#167](https://github.com/ybiquitous/npm-audit-fix-action/issues/167)) ([239201b](https://github.com/ybiquitous/npm-audit-fix-action/commit/239201b71b5360303a98aa2d1bf6d8a556f9bad2))
+
 ### [1.3.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.3.1...v1.3.2) (2020-07-17)
 
 ### [1.3.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.3.0...v1.3.1) (2020-07-17)
