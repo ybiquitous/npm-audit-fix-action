@@ -49,3 +49,7 @@ const message = `fix(deps): bump npm from ${oldVersion} to ${newVersion}
 - https://github.com/npm/cli/compare/v${oldVersion}...v${newVersion}
 `;
 execFileSync("git", ["commit", "-m", message]);
+
+process.stdout.write(`
+!!! Run: \`npm test\` !!!
+`);
