@@ -20,9 +20,9 @@ if (!oldVersion) {
   throw new Error("No npm version. See `engines` in `package.json`.");
 }
 
-execFileSync("git", ["diff", "--exit-code"]);
-execFileSync("git", ["diff", "--exit-code", "--staged"]);
-execFileSync("git", ["checkout", "-b", `bump-npm-${newVersion}`]);
+// execFileSync("git", ["diff", "--exit-code"]);
+// execFileSync("git", ["diff", "--exit-code", "--staged"]);
+// execFileSync("git", ["checkout", "-b", `bump-npm-${newVersion}`]);
 
 const packageJson = "package.json";
 process.stdout.write(`Updating ${packageJson}...\n`);
@@ -40,7 +40,8 @@ const constantsContent = readFileSync(constants, "utf8").replace(
 );
 writeFileSync(constants, constantsContent, "utf8");
 
-execFileSync("git", ["add", packageJson, constants]);
+execFileSync("npm", ["run", "package"]);
+execFileSync("git", ["add", "."]);
 
 const message = `fix(deps): bump npm from ${oldVersion} to ${newVersion}
 
