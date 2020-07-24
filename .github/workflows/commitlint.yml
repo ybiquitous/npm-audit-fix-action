@@ -2,7 +2,7 @@ name: commitlint
 
 on:
   push:
-    branches: ["master"]
+    branches: [$default-branch]
   pull_request:
     branches: ["**"]
 
