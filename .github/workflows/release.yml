@@ -2,7 +2,7 @@ name: Release
 
 on:
   workflow_dispatch:
-    branches: [$default-branch]
+    branches: ["master"]
     inputs:
       dry-run:
         description: Set `true` if you want to dry-run
