@@ -6,7 +6,7 @@ This action runs [`npm audit fix`](https://docs.npmjs.com/cli/audit) and creates
 
 ## Usage
 
-For example, you can add a new workflow via [`.github/workflows/npm-audit-fix.yml`](.github/workflows/npm-audit-fix.yml):
+For example, you can add this action by creating `.github/workflows/npm-audit-fix.yml` as follows:
 
 ```yaml
 name: npm audit fix
@@ -29,12 +29,14 @@ jobs:
           # labels: "dependencies, security"
         # or
         # env:
-        #  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
+
+Here is a [sample](.github/workflows/npm-audit-fix.yml).
 
 ## Screenshot
 
-![A pull request](screenshot.png)
+![A pull request created by npm-audit-fix-action](screenshot.png)
 
 ## License
 
