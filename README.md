@@ -13,7 +13,9 @@ name: npm audit fix
 
 on:
   schedule:
-    - cron: 0 0 * * * # Runs at 00:00 UTC every day
+    - cron: 0 0 * * * # Run at 00:00 UTC every day
+  workflow_dispatch: # Trigger manually
+    branches: ["master"]
 
 jobs:
   run:
@@ -33,6 +35,20 @@ jobs:
 ```
 
 Here is a [sample](.github/workflows/npm-audit-fix.yml).
+
+### Using a personal access token
+
+If you want to run your CI with pull requests created by this action, you may need to set your [personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) instead of `secrets.GITHUB_TOKEN`:
+
+For example:
+
+```yaml
+with:
+  github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+```
+
+The reason is that `GITHUB_TOKEN` does not have enough permissions to trigger CI.
+See also the [GitHub document](https://docs.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token#permissions-for-the-github_token) about the `GITHUB_TOKEN` permissions.
 
 ## Screenshot
 
