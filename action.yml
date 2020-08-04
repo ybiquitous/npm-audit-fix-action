@@ -5,6 +5,7 @@ inputs:
   github_token:
     description: "GitHub token"
     required: false
+    default: ${{ github.token }}
   branch:
     description: "Created branch"
     required: false
