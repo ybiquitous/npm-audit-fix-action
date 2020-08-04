@@ -49,7 +49,7 @@
     "@zeit/ncc": "^0.22.3",
     "eslint": "^7.4.0",
     "eslint-config-ybiquitous": "^11.0.0",
-    "eslint-plugin-jest": "^23.18.0",
+    "eslint-plugin-jest": "^23.20.0",
     "jest": "^26.2.2",
     "typescript": "^3.9.7",
     "ybiq": "^11.3.0"
