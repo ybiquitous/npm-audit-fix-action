@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.3.3...v2.0.0) (2020-08-05)
+
+### ⚠ BREAKING CHANGES
+
+- with.github_token is no longer required and env.GITHUB_TOKEN is ignored.
+
+### Features
+
+- add `github_token` default and remove `env.GITHUB_TOKEN` ([#186](https://github.com/ybiquitous/npm-audit-fix-action/issues/186)) ([8bfd346](https://github.com/ybiquitous/npm-audit-fix-action/commit/8bfd3462e5c7e3f4e39785a03d3e1e975dd4b252))
+- change default branch from `master` to `main` ([#190](https://github.com/ybiquitous/npm-audit-fix-action/issues/190)) ([135de4c](https://github.com/ybiquitous/npm-audit-fix-action/commit/135de4ce82cb3827c4748bb30159ea2efbbe3500)), closes [#175](https://github.com/ybiquitous/npm-audit-fix-action/issues/175)
+- set default branch automatically ([#192](https://github.com/ybiquitous/npm-audit-fix-action/issues/192)) ([8ab3e33](https://github.com/ybiquitous/npm-audit-fix-action/commit/8ab3e335273ae2aabda3e563ed6a7e77b89b9c75))
+
 ### [1.3.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.3.2...v1.3.3) (2020-07-22)
 
 ### Bug Fixes
