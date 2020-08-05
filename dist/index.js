@@ -7126,6 +7126,7 @@ const updateNpm = __webpack_require__(193);
 const aggregateReport = __webpack_require__(599);
 const buildPullRequestBody = __webpack_require__(603);
 const createOrUpdatePullRequest = __webpack_require__(583);
+const getDefaultBranch = __webpack_require__(686);
 const commaSeparatedList = __webpack_require__(604);
 
 /**
@@ -7191,14 +7192,22 @@ async function run() {
       return;
     }
 
-    await core.group("Create or update a pull request", () => {
+    await core.group("Create or update a pull request", async () => {
+      const token = core.getInput("github_token");
+      const repository = getFromEnv("GITHUB_REPOSITORY");
+
+      let baseBranch = core.getInput("default_branch");
+      if (!baseBranch) {
+        baseBranch = await getDefaultBranch({ token, repository });
+      }
+
       return createOrUpdatePullRequest({
         branch: core.getInput("branch"),
-        token: core.getInput("github_token"),
-        defaultBranch: core.getInput("default_branch"),
+        token,
+        baseBranch,
         title: core.getInput("commit_title"),
         body: buildPullRequestBody(report),
-        repository: getFromEnv("GITHUB_REPOSITORY"),
+        repository,
         actor: getFromEnv("GITHUB_ACTOR"),
         email: "actions@github.com",
         labels: commaSeparatedList(core.getInput("labels")),
@@ -8044,21 +8053,21 @@ const github = __webpack_require__(469);
 
 /**
  * @param {{
- *  token: string,
- *  branch: string,
- *  defaultBranch: string,
- *  title: string,
- *  body: string,
- *  repository: string,
- *  actor: string,
- *  email: string,
- *  labels: string[],
+ *   token: string,
+ *   branch: string,
+ *   baseBranch: string,
+ *   title: string,
+ *   body: string,
+ *   repository: string,
+ *   actor: string,
+ *   email: string,
+ *   labels: string[],
  * }} params
  */
 module.exports = async function createOrUpdatePullRequest({
   token,
   branch,
-  defaultBranch,
+  baseBranch,
   title,
   body,
   repository,
@@ -8075,7 +8084,7 @@ module.exports = async function createOrUpdatePullRequest({
     owner,
     repo,
     state: "open",
-    base: defaultBranch,
+    base: baseBranch,
     sort: "updated",
     direction: "desc",
     per_page: 100,
@@ -8105,7 +8114,7 @@ module.exports = async function createOrUpdatePullRequest({
       title,
       body,
       head: branch,
-      base: defaultBranch,
+      base: baseBranch,
     });
     console.log(`The pull request was created successfully: ${newPull.data.html_url}`);
 
@@ -9161,6 +9170,25 @@ function isUnixExecutable(stats) {
         ((stats.mode & 64) > 0 && stats.uid === process.getuid()));
 }
 //# sourceMappingURL=io-util.js.map
+
+/***/ }),
+
+/***/ 686:
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+const github = __webpack_require__(469);
+
+/**
+ * @param {{token: string, repository: string}} params
+ * @returns {Promise<string>}
+ */
+module.exports = async function getDefaultBranch({ token, repository }) {
+  const octokit = github.getOctokit(token);
+  const [owner, repo] = repository.split("/");
+  const res = await octokit.repos.get({ owner, repo });
+  return res.data.default_branch;
+};
+
 
 /***/ }),
 

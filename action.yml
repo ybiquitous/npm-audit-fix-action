@@ -13,7 +13,6 @@ inputs:
   default_branch:
     description: "Default branch"
     required: false
-    default: "master"
   commit_title:
     description: "Commit title"
     required: false
