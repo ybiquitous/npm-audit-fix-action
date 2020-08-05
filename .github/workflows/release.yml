@@ -31,6 +31,7 @@ jobs:
           git push --tags --force origin ${MAJOR_VERSION_TAG}
         env:
           MAJOR_VERSION_TAG: v2
+        if: ${{ github.event.inputs.dry-run == '' }}
       - uses: softprops/action-gh-release@v1
         if: ${{ github.event.inputs.dry-run == '' }}
         with:
