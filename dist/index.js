@@ -7194,20 +7194,20 @@ async function run() {
 
     await core.group("Create or update a pull request", async () => {
       const token = core.getInput("github_token");
-      const repository =  getFromEnv("GITHUB_REPOSITORY");
+      const repository = getFromEnv("GITHUB_REPOSITORY");
 
       let baseBranch = core.getInput("default_branch");
       if (!baseBranch) {
-        baseBranch = await getDefaultBranch({token, repository})
+        baseBranch = await getDefaultBranch({ token, repository });
       }
 
       return createOrUpdatePullRequest({
         branch: core.getInput("branch"),
-        token: token,
-        baseBranch: baseBranch,
+        token,
+        baseBranch,
         title: core.getInput("commit_title"),
         body: buildPullRequestBody(report),
-        repository: repository,
+        repository,
         actor: getFromEnv("GITHUB_ACTOR"),
         email: "actions@github.com",
         labels: commaSeparatedList(core.getInput("labels")),
