@@ -30,7 +30,7 @@ jobs:
           git tag --force --annotate --message "Release ${MAJOR_VERSION_TAG}" ${MAJOR_VERSION_TAG}
           git push --tags --force origin ${MAJOR_VERSION_TAG}
         env:
-          MAJOR_VERSION_TAG: v1
+          MAJOR_VERSION_TAG: v2
       - uses: softprops/action-gh-release@v1
         if: ${{ github.event.inputs.dry-run == '' }}
         with:
