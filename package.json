@@ -52,7 +52,7 @@
     "eslint-plugin-jest": "^23.20.0",
     "jest": "^26.2.2",
     "typescript": "^3.9.7",
-    "ybiq": "^11.3.0"
+    "ybiq": "^11.4.3"
   },
   "husky": {
     "hooks": {
