@@ -1395,7 +1395,7 @@ module.exports = require("child_process");
 
 var net = __webpack_require__(631);
 var tls = __webpack_require__(16);
-var http = __webpack_require__(605);
+var http = __webpack_require__(876);
 var https = __webpack_require__(211);
 var events = __webpack_require__(614);
 var assert = __webpack_require__(357);
@@ -4894,7 +4894,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var Stream = _interopDefault(__webpack_require__(794));
-var http = _interopDefault(__webpack_require__(605));
+var http = _interopDefault(__webpack_require__(876));
 var Url = _interopDefault(__webpack_require__(835));
 var https = _interopDefault(__webpack_require__(211));
 var zlib = _interopDefault(__webpack_require__(761));
@@ -7125,6 +7125,7 @@ const npmArgs = __webpack_require__(510);
 const updateNpm = __webpack_require__(193);
 const aggregateReport = __webpack_require__(599);
 const buildPullRequestBody = __webpack_require__(603);
+const buildCommitBody = __webpack_require__(605);
 const createOrUpdatePullRequest = __webpack_require__(583);
 const getDefaultBranch = __webpack_require__(686);
 const commaSeparatedList = __webpack_require__(604);
@@ -7206,7 +7207,8 @@ async function run() {
         token,
         baseBranch,
         title: core.getInput("commit_title"),
-        body: buildPullRequestBody(report),
+        pullBody: buildPullRequestBody(report),
+        commitBody: buildCommitBody(report),
         repository,
         actor: getFromEnv("GITHUB_ACTOR"),
         email: "actions@github.com",
@@ -7230,7 +7232,7 @@ run();
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const url = __webpack_require__(835);
-const http = __webpack_require__(605);
+const http = __webpack_require__(876);
 const https = __webpack_require__(211);
 const pm = __webpack_require__(950);
 let tunnel;
@@ -8057,7 +8059,8 @@ const github = __webpack_require__(469);
  *   branch: string,
  *   baseBranch: string,
  *   title: string,
- *   body: string,
+ *   pullBody: string,
+ *   commitBody: string,
  *   repository: string,
  *   actor: string,
  *   email: string,
@@ -8069,7 +8072,8 @@ module.exports = async function createOrUpdatePullRequest({
   branch,
   baseBranch,
   title,
-  body,
+  pullBody,
+  commitBody,
   repository,
   actor,
   email,
@@ -8094,7 +8098,7 @@ module.exports = async function createOrUpdatePullRequest({
   await exec("git", ["config", "user.name", actor]);
   await exec("git", ["config", "user.email", email]);
   await exec("git", ["add", "package-lock.json"]);
-  await exec("git", ["commit", "--message", `${title}\n\n${body}`]);
+  await exec("git", ["commit", "--message", `${title}\n\n${commitBody}`]);
   await exec("git", ["checkout", "-B", branch]);
   await exec("git", ["push", remote, `HEAD:${branch}`, ...(pull ? ["--force"] : [])]);
 
@@ -8104,7 +8108,7 @@ module.exports = async function createOrUpdatePullRequest({
       repo,
       pull_number: pull.number,
       title,
-      body,
+      body: pullBody,
     });
     console.log(`The pull request was updated successfully: ${pull.html_url}`);
   } else {
@@ -8112,7 +8116,7 @@ module.exports = async function createOrUpdatePullRequest({
       owner,
       repo,
       title,
-      body,
+      body: pullBody,
       head: branch,
       base: baseBranch,
     });
@@ -8238,7 +8242,7 @@ const { PACKAGE_NAME, PACKAGE_URL, NPM_VERSION } = __webpack_require__(32);
 
 /**
  * @param {Report} report
- * @returns {String}
+ * @returns {string}
  */
 module.exports = function buildPullRequestBody(report) {
   /**
@@ -8342,7 +8346,33 @@ module.exports = function commaSeparatedList(str) {
 /***/ 605:
 /***/ (function(module) {
 
-module.exports = require("http");
+/**
+ * @param {Report} report
+ * @returns {string}
+ */
+module.exports = function buildCommitBody(report) {
+  const lines = [];
+
+  lines.push("Summary:");
+  lines.push(`- Updated packages: ${report.updated.length}`);
+  lines.push(`- Added packages: ${report.added.length}`);
+  lines.push(`- Removed packages: ${report.removed.length}`);
+
+  lines.push("");
+  if (report.updated.length > 0) {
+    lines.push("Fixed vulnerabilities:");
+    report.updated.forEach((e) => {
+      if ("severity" in e) {
+        lines.push(`- ${e.name}: "${e.title}" (${e.url})`);
+      }
+    });
+  } else {
+    lines.push("No fixed vulnerabilities.");
+  }
+
+  return lines.map((line) => `${line}\n`).join("");
+};
+
 
 /***/ }),
 
@@ -11487,6 +11517,13 @@ module.exports = function (str) {
 	);
 };
 
+
+/***/ }),
+
+/***/ 876:
+/***/ (function(module) {
+
+module.exports = require("http");
 
 /***/ }),
 
