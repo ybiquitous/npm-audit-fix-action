@@ -67,7 +67,7 @@
     "!(CHANGELOG).md": "remark --frail"
   },
   "standard-version": {
-    "sign": true,
+    "sign": false,
     "scripts": {
       "postchangelog": "prettier --write CHANGELOG.md"
     }
