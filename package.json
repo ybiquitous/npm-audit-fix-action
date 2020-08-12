@@ -24,13 +24,13 @@
     "prettier:check": "npm run prettier -- --check",
     "prettier:write": "npm run prettier -- --write",
     "format": "npm-run-all --print-label --parallel lint:*:fix prettier:write",
-    "lint": "npm-run-all --print-label --parallel lint:*",
+    "lint": "npm-run-all --print-label --parallel lint:* prettier:check",
     "lint:js": "eslint .",
     "lint:js:fix": "npm run lint:js -- --fix",
     "lint:md": "remark . --frail",
     "lint:md:fix": "remark . --output",
     "lint:types": "tsc --noEmit",
-    "prerelease": "npm test && npm run package && git diff --exit-code dist/",
+    "prerelease": "git switch main && git pull && npm ci && npm test && npm run package && git diff --exit-code dist",
     "release": "standard-version",
     "release:dry-run": "standard-version --dry-run",
     "bump:npm": "node scripts/bump-npm.js"
@@ -57,7 +57,8 @@
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged",
+      "post-commit": "npm run release:dry-run"
     }
   },
   "lint-staged": {
@@ -66,6 +67,7 @@
     "!(CHANGELOG).md": "remark --frail"
   },
   "standard-version": {
+    "sign": true,
     "scripts": {
       "postchangelog": "prettier --write CHANGELOG.md"
     }
