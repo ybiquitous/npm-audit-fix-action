@@ -7168,13 +7168,13 @@ async function run() {
 
     const auditReport = await core.group("Get audit report", async () => {
       const res = await audit();
-      core.info(JSON.stringify(res));
+      core.info(JSON.stringify(res, null, 2));
       return res;
     });
 
     const fixReport = await core.group("Fix vulnerabilities", async () => {
       const res = await auditFix();
-      core.info(JSON.stringify(res));
+      core.info(JSON.stringify(res, null, 2));
       return res;
     });
 
