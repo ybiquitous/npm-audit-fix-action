@@ -112,8 +112,7 @@
       "max-statements": [
         "warn",
         20
-      ],
-      "no-console": "warn"
+      ]
     },
     "overrides": [
       {
