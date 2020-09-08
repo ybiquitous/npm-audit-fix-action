@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.1...v2.1.2) (2020-09-08)
+
+### Bug Fixes
+
+- use `info()` of `@actions/core` instead of `console.log()` ([#227](https://github.com/ybiquitous/npm-audit-fix-action/issues/227)) ([4941c8b](https://github.com/ybiquitous/npm-audit-fix-action/commit/4941c8b418e8e567a4eaa7b757b0b6ae39ffc3be))
+
 ### [2.1.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.0...v2.1.1) (2020-08-19)
 
 ### Bug Fixes
