@@ -4375,6 +4375,7 @@ module.exports = function (Yallist) {
 /***/ 405:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
+const { info } = __webpack_require__(470);
 const { exec } = __webpack_require__(986);
 const hostedGitInfo = __webpack_require__(190);
 
@@ -4418,13 +4419,13 @@ async function fetchUrl(packageName) {
   stdout = stdout.trim();
 
   if (!stdout) {
-    console.log(`No repository URL for '${packageName}'`);
+    info(`No repository URL for '${packageName}'`);
     return null;
   }
 
   const url = hostedGitInfo.fromUrl(stdout);
   if (!url) {
-    console.log(`No repository URL for '${packageName}'`);
+    info(`No repository URL for '${packageName}'`);
     return null;
   }
   const urlInfo = { name: packageName, url: url.browse(), type: url.type };
@@ -7167,13 +7168,13 @@ async function run() {
 
     const auditReport = await core.group("Get audit report", async () => {
       const res = await audit();
-      console.log(res);
+      core.info(JSON.stringify(res));
       return res;
     });
 
     const fixReport = await core.group("Fix vulnerabilities", async () => {
       const res = await auditFix();
-      console.log(res);
+      core.info(JSON.stringify(res));
       return res;
     });
 
@@ -7183,13 +7184,13 @@ async function run() {
     });
 
     if (report.packageCount === 0) {
-      console.log("No update.");
+      core.info("No update.");
       return;
     }
 
     const changed = await core.group("Check file changes", filesChanged);
     if (changed) {
-      console.log("No file changes.");
+      core.info("No file changes.");
       return;
     }
 
@@ -8050,6 +8051,7 @@ module.exports = parse;
 /***/ 583:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
+const { info } = __webpack_require__(470);
 const { exec } = __webpack_require__(986);
 const github = __webpack_require__(469);
 
@@ -8110,7 +8112,7 @@ module.exports = async function createOrUpdatePullRequest({
       title,
       body: pullBody,
     });
-    console.log(`The pull request was updated successfully: ${pull.html_url}`);
+    info(`The pull request was updated successfully: ${pull.html_url}`);
   } else {
     const newPull = await octokit.pulls.create({
       owner,
@@ -8120,7 +8122,7 @@ module.exports = async function createOrUpdatePullRequest({
       head: branch,
       base: baseBranch,
     });
-    console.log(`The pull request was created successfully: ${newPull.data.html_url}`);
+    info(`The pull request was created successfully: ${newPull.data.html_url}`);
 
     const newLabels = await octokit.issues.addLabels({
       owner,
@@ -8128,9 +8130,7 @@ module.exports = async function createOrUpdatePullRequest({
       issue_number: newPull.data.number,
       labels,
     });
-    console.log(
-      `The labels were added successfully: ${newLabels.data.map((l) => l.name).join(", ")}`
-    );
+    info(`The labels were added successfully: ${newLabels.data.map((l) => l.name).join(", ")}`);
   }
 };
 
