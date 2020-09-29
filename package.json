@@ -30,9 +30,10 @@
     "lint:md": "remark . --frail",
     "lint:md:fix": "remark . --output",
     "lint:types": "tsc --noEmit",
-    "prerelease": "npm ci && npm test && npm run package && git diff --exit-code dist",
+    "prerelease": "git switch main && git pull && npm ci && npm run clean && npm test && npm run lint && npm run clean",
     "release": "standard-version",
     "release:dry-run": "standard-version --dry-run",
+    "clean": "git clean -dx --force --exclude=node_modules",
     "bump:npm": "node scripts/bump-npm.js"
   },
   "dependencies": {
