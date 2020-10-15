@@ -16,7 +16,7 @@ type Advisories = {
 };
 
 type AuditReport = {
-  advisories: { [id: string]: Advisory };
+  advisories: Record<string, Advisory>;
 };
 
 type FixEntry = {
@@ -57,5 +57,5 @@ type Report = {
       }
   >;
   packageCount: number;
-  packageUrls: { [name: string]: UrlInfo };
+  packageUrls: Record<string, UrlInfo>;
 };
