@@ -40,7 +40,7 @@
     "@actions/core": "^1.2.6",
     "@actions/exec": "^1.0.4",
     "@actions/github": "^4.0.0",
-    "hosted-git-info": "^3.0.5"
+    "hosted-git-info": "^3.0.7"
   },
   "devDependencies": {
     "@types/hosted-git-info": "^3.0.1",
