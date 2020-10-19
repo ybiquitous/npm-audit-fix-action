@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.4...v2.1.5) (2020-10-19)
+
+### Bug Fixes
+
+- **deps:** bump hosted-git-info from 3.0.5 to 3.0.7 ([#256](https://github.com/ybiquitous/npm-audit-fix-action/issues/256)) ([7b275b4](https://github.com/ybiquitous/npm-audit-fix-action/commit/7b275b48342dda47d3a664590b885eaa7a06cc15))
+- **deps-dev:** bump eslint-config-ybiquitous from 12.0.0 to 12.1.0 ([#249](https://github.com/ybiquitous/npm-audit-fix-action/issues/249)) ([cb67358](https://github.com/ybiquitous/npm-audit-fix-action/commit/cb673587f1d00d9b40eddc8ad2776080a7fb8627))
+
 ### [2.1.4](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.3...v2.1.4) (2020-09-29)
 
 ### Bug Fixes
