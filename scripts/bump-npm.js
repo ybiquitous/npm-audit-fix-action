@@ -45,11 +45,13 @@ execFileSync("git", ["add", "."]);
 
 const message = `fix(deps): bump npm from ${oldVersion} to ${newVersion}
 
+Via \`$ npm run npm:version ${newVersion}\`.
+
 - https://github.com/npm/cli/releases/tag/v${newVersion}
 - https://github.com/npm/cli/compare/v${oldVersion}...v${newVersion}
 `;
 execFileSync("git", ["commit", "-m", message]);
 
 process.stdout.write(`
-!!! Run: \`npm test\` !!!
+!!! Run \`npm test\` !!!
 `);
