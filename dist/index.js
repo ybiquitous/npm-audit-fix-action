@@ -8340,9 +8340,7 @@ module.exports = function buildPullRequestBody(report) {
    * @param {string} version
    * @returns {string}
    */
-  const versionLabel = (version) => {
-    return `\`${version}\``;
-  };
+  const versionLabel = (version) => `\`${version}\``;
 
   const header = [];
   header.push("| Package | Version | Source | Detail |");
@@ -9305,11 +9303,8 @@ module.exports = function advisories(audit) {
   const list = Object.values(audit.advisories);
 
   return {
-    find: (name, version) => {
-      return list.find(
-        (a) => a.module_name === name && a.findings.find((f) => f.version === version)
-      );
-    },
+    find: (name, version) =>
+      list.find((a) => a.module_name === name && a.findings.find((f) => f.version === version)),
   };
 };
 
