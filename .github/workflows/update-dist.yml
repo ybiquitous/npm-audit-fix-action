@@ -13,6 +13,6 @@ jobs:
       - run: git config --local user.name "${GITHUB_ACTOR}"
       - run: git config --local user.email "${GITHUB_ACTOR}@users.noreply.github.com"
       - run: git add dist/
-      - run: |
-          git commit --message 'build: update dist' && git push
+      - run: "git commit --message 'build: update dist'"
+      - run: git push
         if: ${{ success() }}
