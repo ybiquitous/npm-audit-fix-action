@@ -1,3 +1,6 @@
+ignore:
+  - dist/**
+
 branches:
   exclude:
     - npm-audit-fix-action/fix
