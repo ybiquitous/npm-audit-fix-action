@@ -1,0 +1,24 @@
+name: Update dist
+
+on:
+  pull_request:
+    types: [assigned]
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - run: npm ci
+      - run: git config --local user.name '${{ github.actor }}'
+      - run: git config --local user.email '${{ github.actor }}@users.noreply.github.com'
+      - run: git add dist/
+      - run: |
+          git commit --message 'build: update dist'
+        continue-on-error: true
+        id: commit
+      - run: git push
+        if: ${{ steps.commit.outcome == 'success' }}
