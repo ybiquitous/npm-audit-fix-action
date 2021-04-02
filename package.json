@@ -19,7 +19,7 @@
     "prepare": "husky install && ncc build lib/index.js -o dist",
     "test": "jest --testTimeout 30000",
     "test:watch": "jest --testTimeout 30000 --watch",
-    "test:coverage": "echo \"unsupported.\" && exit 1",
+    "test:coverage": "jest --testTimeout 30000 --coverage",
     "prettier": "prettier .",
     "prettier:check": "npm run prettier -- --check",
     "prettier:write": "npm run prettier -- --write",
@@ -96,27 +96,26 @@
   "eslintConfig": {
     "root": true,
     "extends": [
-      "ybiquitous/node"
+      "ybiquitous/node",
+      "plugin:jest/recommended"
     ],
     "ignorePatterns": [
-      "**/dist/**"
+      "coverage",
+      "dist"
     ],
     "rules": {
       "max-lines-per-function": "warn",
       "max-statements": [
         "warn",
         20
+      ],
+      "import/no-internal-modules": [
+        "error", {
+          "allow": ["**/utils/*"]
+        }
       ]
     },
     "overrides": [
-      {
-        "files": [
-          "**/*.test.js"
-        ],
-        "extends": [
-          "plugin:jest/recommended"
-        ]
-      },
       {
         "files": [
           "**/*.ts"
