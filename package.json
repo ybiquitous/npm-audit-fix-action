@@ -110,8 +110,11 @@
         20
       ],
       "import/no-internal-modules": [
-        "error", {
-          "allow": ["**/utils/*"]
+        "error",
+        {
+          "allow": [
+            "**/utils/*"
+          ]
         }
       ]
     },
