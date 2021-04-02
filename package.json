@@ -16,7 +16,7 @@
   },
   "main": "lib/index.js",
   "scripts": {
-    "package": "ncc build lib/index.js -o dist",
+    "prepare": "husky install && ncc build lib/index.js -o dist",
     "test": "jest --testTimeout 30000",
     "test:watch": "jest --testTimeout 30000 --watch",
     "test:coverage": "echo \"unsupported.\" && exit 1",
@@ -34,8 +34,7 @@
     "release": "standard-version",
     "release:dry-run": "standard-version --dry-run",
     "clean": "git clean -dx --force --exclude=node_modules --exclude=.husky",
-    "bump:npm": "node scripts/bump-npm.js",
-    "prepare": "husky install"
+    "bump:npm": "node scripts/bump-npm.js"
   },
   "dependencies": {
     "@actions/core": "^1.2.6",
