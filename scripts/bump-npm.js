@@ -40,7 +40,7 @@ const constantsContent = readFileSync(constants, "utf8").replace(
 );
 writeFileSync(constants, constantsContent, "utf8");
 
-execFileSync("npm", ["run", "package"]);
+execFileSync("npm", ["ci"]);
 execFileSync("git", ["add", "."]);
 
 const message = `fix(deps): bump npm from ${oldVersion} to ${newVersion}
