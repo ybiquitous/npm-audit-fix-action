@@ -2084,7 +2084,8 @@ module.exports = async function updateNpm() {
   await exec("sudo", ["npm", ...npmArgs("install", "--global", `npm@${NPM_VERSION}`)]);
 
   // HACK: Fix the error "npm update check failed".
-  return exec("sudo", ["chown", "-R", `${process.env.USER}:`, `${process.env.HOME}/.config`]);
+  // eslint-disable-next-line dot-notation -- Prevent TS4111
+  return exec("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
 };
 
 
@@ -6681,6 +6682,24 @@ exports.FetchError = FetchError;
 
 /***/ }),
 
+/***/ 461:
+/***/ (function(module) {
+
+/**
+ * @param {string} repository
+ * @returns {{ owner: string, repo: string }}
+ */
+module.exports = function splitRepo(repository) {
+  const [owner, repo] = repository.split("/");
+  if (owner && repo) {
+    return { owner, repo };
+  }
+  throw new TypeError(`invalid repository: "${repository}"`);
+};
+
+
+/***/ }),
+
 /***/ 462:
 /***/ (function(module) {
 
@@ -8217,6 +8236,7 @@ module.exports = parse;
 const { info } = __webpack_require__(470);
 const { exec } = __webpack_require__(986);
 const github = __webpack_require__(469);
+const splitRepo = __webpack_require__(461);
 
 /**
  * @param {{
@@ -8245,7 +8265,7 @@ module.exports = async function createOrUpdatePullRequest({
   labels,
 }) {
   const remote = `https://${actor}:${token}@github.com/${repository}.git`;
-  const [owner, repo] = repository.split("/");
+  const { owner, repo } = splitRepo(repository);
   const octokit = github.getOctokit(token);
 
   // Find pull request
@@ -9368,6 +9388,7 @@ function isUnixExecutable(stats) {
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
 const github = __webpack_require__(469);
+const splitRepo = __webpack_require__(461);
 
 /**
  * @param {{token: string, repository: string}} params
@@ -9375,8 +9396,7 @@ const github = __webpack_require__(469);
  */
 module.exports = async function getDefaultBranch({ token, repository }) {
   const octokit = github.getOctokit(token);
-  const [owner, repo] = repository.split("/");
-  const res = await octokit.repos.get({ owner, repo });
+  const res = await octokit.repos.get(splitRepo(repository));
   return res.data.default_branch;
 };
 
