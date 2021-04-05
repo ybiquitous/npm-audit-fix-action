@@ -2116,7 +2116,7 @@ module.exports = async function updateNpm(version) {
   // eslint-disable-next-line dot-notation -- Prevent TS4111
   await exec("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
 
-  return actualVersion;
+  return actualVersion.trim();
 };
 
 
@@ -8521,9 +8521,14 @@ module.exports = function buildPullRequestBody(report, npmVersion) {
   header.push("|:--------|:-------:|:------:|:-------|");
 
   const lines = [];
+  lines.push(
+    `This pull request fixes vulnerabilities of the packages via npm [${npmVersion}](https://github.com/npm/cli/releases/tag/v${npmVersion}).`
+  );
+
   if (report.updated.length > 0) {
     lines.push("");
-    lines.push(`### Updated (${report.updated.length})`);
+    lines.push("<details open>");
+    lines.push(`<summary><strong>Updated (${report.updated.length})</strong></summary>`);
     lines.push("");
     lines.push(...header);
 
@@ -8541,32 +8546,41 @@ module.exports = function buildPullRequestBody(report, npmVersion) {
         )
       );
     });
+
+    lines.push("");
+    lines.push("</details>");
   }
+
   if (report.added.length > 0) {
     lines.push("");
-    lines.push(`### Added (${report.added.length})`);
+    lines.push("<details open>");
+    lines.push(`<summary><strong>Added (${report.added.length})</strong></summary>`);
     lines.push("");
     lines.push(...header);
     report.added.forEach(({ name, version }) => {
       lines.push(buildTableRow(npmPackage(name), versionLabel(version), repoLink(name), EMPTY));
     });
+    lines.push("");
+    lines.push("</details>");
   }
+
   if (report.removed.length > 0) {
     lines.push("");
-    lines.push(`### Removed (${report.removed.length})`);
+    lines.push("<details open>");
+    lines.push(`<summary><strong>Removed (${report.removed.length})</strong></summary>`);
     lines.push("");
     lines.push(...header);
     report.removed.forEach(({ name, version }) => {
       lines.push(buildTableRow(npmPackage(name), versionLabel(version), repoLink(name), EMPTY));
     });
+    lines.push("");
+    lines.push("</details>");
   }
 
   lines.push("");
   lines.push("***");
   lines.push("");
-  lines.push(
-    `This pull request is created by [${PACKAGE_NAME}](${PACKAGE_URL}) via npm ${npmVersion}.`
-  );
+  lines.push(`Created by [${PACKAGE_NAME}](${PACKAGE_URL})`);
 
   return lines.join("\n").trim();
 };
