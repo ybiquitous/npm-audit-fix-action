@@ -1114,7 +1114,7 @@ module.exports._enoent = enoent;
 
 module.exports.PACKAGE_NAME = "npm-audit-fix-action";
 module.exports.PACKAGE_URL = "https://github.com/ybiquitous/npm-audit-fix-action";
-module.exports.NPM_VERSION = "7.8.0";
+module.exports.NPM_VERSION = "7";
 
 
 /***/ }),
@@ -2085,9 +2085,20 @@ const npmArgs = __webpack_require__(510);
 module.exports = async function updateNpm(version) {
   await exec("sudo", ["npm", ...npmArgs("install", "--global", `npm@${version}`)]);
 
+  let actualVersion = "";
+  exec("npm", ["--version"], {
+    listeners: {
+      stdout: (data) => {
+        actualVersion += data.toString();
+      },
+    },
+  });
+
   // HACK: Fix the error "npm update check failed".
   // eslint-disable-next-line dot-notation -- Prevent TS4111
-  return exec("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
+  await exec("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
+
+  return actualVersion;
 };
 
 
@@ -7342,9 +7353,9 @@ function getFromEnv(name) {
 
 async function run() {
   try {
-    await core.group(`Update npm to ${NPM_VERSION}`, async () => {
-      await updateNpm(NPM_VERSION);
-    });
+    const npmVersion = await core.group(`Update npm to ${NPM_VERSION}`, () =>
+      updateNpm(NPM_VERSION)
+    );
 
     await core.group("Install user packages", async () => {
       await exec("npm", npmArgs("install", "--package-lock-only"));
@@ -7393,7 +7404,7 @@ async function run() {
         token,
         baseBranch,
         title: core.getInput("commit_title"),
-        pullBody: buildPullRequestBody(report),
+        pullBody: buildPullRequestBody(report, npmVersion),
         commitBody: buildCommitBody(report),
         repository,
         actor: getFromEnv("GITHUB_ACTOR"),
@@ -8424,13 +8435,14 @@ module.exports = async function aggregateReport(audit, fix) {
 /***/ 603:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
-const { PACKAGE_NAME, PACKAGE_URL, NPM_VERSION } = __webpack_require__(32);
+const { PACKAGE_NAME, PACKAGE_URL } = __webpack_require__(32);
 
 /**
  * @param {Report} report
+ * @param {string} npmVersion
  * @returns {string}
  */
-module.exports = function buildPullRequestBody(report) {
+module.exports = function buildPullRequestBody(report, npmVersion) {
   /**
    * @param {string} name
    */
@@ -8501,7 +8513,7 @@ module.exports = function buildPullRequestBody(report) {
   lines.push("***");
   lines.push("");
   lines.push(
-    `This pull request is created by [${PACKAGE_NAME}](${PACKAGE_URL}). The used npm version is **${NPM_VERSION}**.`
+    `This pull request is created by [${PACKAGE_NAME}](${PACKAGE_URL}). The used npm version is **${npmVersion}**.`
   );
 
   return lines.join("\n").trim();
