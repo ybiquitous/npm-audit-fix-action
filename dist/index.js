@@ -2104,7 +2104,7 @@ module.exports = async function updateNpm(version) {
   await exec("sudo", ["npm", ...npmArgs("install", "--global", `npm@${version}`)]);
 
   let actualVersion = "";
-  exec("npm", ["--version"], {
+  await exec("npm", ["--version"], {
     listeners: {
       stdout: (data) => {
         actualVersion += data.toString();
@@ -2116,7 +2116,7 @@ module.exports = async function updateNpm(version) {
   // eslint-disable-next-line dot-notation -- Prevent TS4111
   await exec("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
 
-  return actualVersion;
+  return actualVersion.trim();
 };
 
 
@@ -4052,27 +4052,45 @@ const npmArgs = __webpack_require__(510);
 /**
  * @returns {Promise<Map<string, string>>}
  */
-module.exports = async function listPackages() {
+module.exports = async function listPackages({ silent } = { silent: false }) {
   let lines = "";
-  await exec("npm", npmArgs("ls", "--parseable", "--long"), {
+  let stderr = "";
+  const returnCode = await exec("npm", npmArgs("ls", "--parseable", "--long", "--all"), {
     listeners: {
       stdout: (data) => {
         lines += data.toString();
       },
+      stderr: (data) => {
+        stderr += data.toString();
+      },
     },
+    silent,
+    ignoreReturnCode: true,
   });
+
+  // NOTE: Ignore missing peer deps error.
+  if (returnCode !== 0 && !stderr.includes("npm ERR! missing:")) {
+    throw new Error(`"npm ls" failed`);
+  }
 
   const packages = /** @type {Map<string, string>} */ new Map();
   lines
     .split("\n")
-    .filter(Boolean)
+    .filter((line) => line.trim())
     .forEach((line) => {
-      const [, pkg] = line.split(":");
+      const [, pkg] = line.split(":", 2);
       if (pkg == null) {
         throw new Error(`Invalid line: "${line}"`);
       }
 
-      const [name, version] = pkg.split("@");
+      const match = /^(?<name>@?\S+)@(?<version>\S+)$/u.exec(pkg);
+      if (match == null || match.groups == null) {
+        throw new Error(`Invalid line: "${line}"`);
+      }
+      /* eslint-disable dot-notation, prefer-destructuring -- Prevent TS4111 */
+      const name = match.groups["name"];
+      const version = match.groups["version"];
+      /* eslint-enable */
       if (name == null || version == null) {
         throw new Error(`Invalid name and version: "${line}"`);
       }
@@ -7418,7 +7436,6 @@ async function run() {
     );
 
     await core.group("Install user packages", async () => {
-      await exec("npm", npmArgs("install", "--package-lock-only"));
       await exec("npm", npmArgs("ci"));
     });
 
@@ -8445,7 +8462,7 @@ module.exports = async function aggregateReport(audit, beforePackages, afterPack
   const updated = [];
   afterPackages.forEach((version, name) => {
     const previousVersion = beforePackages.get(name);
-    if (previousVersion != null) {
+    if (version !== previousVersion && previousVersion != null) {
       const info = audit.get(name);
       const severity = info == null ? null : capitalize(info.severity);
       const title = info == null ? null : info.title;
@@ -8486,8 +8503,10 @@ const EMPTY = "-";
 module.exports = function buildPullRequestBody(report, npmVersion) {
   /**
    * @param {string} name
+   * @param {string} version
    */
-  const npmPackage = (name) => `[${name}](https://npm.im/${name})`;
+  const npmPackage = (name, version) =>
+    `[${name}](https://www.npmjs.com/package/${name}/v/${version})`;
 
   /**
    * @param {...string} items
@@ -8514,9 +8533,14 @@ module.exports = function buildPullRequestBody(report, npmVersion) {
   header.push("|:--------|:-------:|:------:|:-------|");
 
   const lines = [];
+  lines.push(
+    `This pull request fixes the vulnerable packages via npm [${npmVersion}](https://github.com/npm/cli/releases/tag/v${npmVersion}).`
+  );
+
   if (report.updated.length > 0) {
     lines.push("");
-    lines.push(`### Updated (${report.updated.length})`);
+    lines.push("<details open>");
+    lines.push(`<summary><strong>Updated (${report.updated.length})</strong></summary>`);
     lines.push("");
     lines.push(...header);
 
@@ -8527,39 +8551,52 @@ module.exports = function buildPullRequestBody(report, npmVersion) {
       }
       lines.push(
         buildTableRow(
-          npmPackage(name),
+          npmPackage(name, version),
           `${versionLabel(previousVersion)} → ${versionLabel(version)}`,
           repoLink(name),
           extra
         )
       );
     });
+
+    lines.push("");
+    lines.push("</details>");
   }
+
   if (report.added.length > 0) {
     lines.push("");
-    lines.push(`### Added (${report.added.length})`);
+    lines.push("<details open>");
+    lines.push(`<summary><strong>Added (${report.added.length})</strong></summary>`);
     lines.push("");
     lines.push(...header);
     report.added.forEach(({ name, version }) => {
-      lines.push(buildTableRow(npmPackage(name), versionLabel(version), repoLink(name), EMPTY));
+      lines.push(
+        buildTableRow(npmPackage(name, version), versionLabel(version), repoLink(name), EMPTY)
+      );
     });
+    lines.push("");
+    lines.push("</details>");
   }
+
   if (report.removed.length > 0) {
     lines.push("");
-    lines.push(`### Removed (${report.removed.length})`);
+    lines.push("<details open>");
+    lines.push(`<summary><strong>Removed (${report.removed.length})</strong></summary>`);
     lines.push("");
     lines.push(...header);
     report.removed.forEach(({ name, version }) => {
-      lines.push(buildTableRow(npmPackage(name), versionLabel(version), repoLink(name), EMPTY));
+      lines.push(
+        buildTableRow(npmPackage(name, version), versionLabel(version), repoLink(name), EMPTY)
+      );
     });
+    lines.push("");
+    lines.push("</details>");
   }
 
   lines.push("");
   lines.push("***");
   lines.push("");
-  lines.push(
-    `This pull request is created by [${PACKAGE_NAME}](${PACKAGE_URL}) via npm ${npmVersion}.`
-  );
+  lines.push(`Created by [${PACKAGE_NAME}](${PACKAGE_URL})`);
 
   return lines.join("\n").trim();
 };
