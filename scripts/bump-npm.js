@@ -7,10 +7,10 @@ const [main, sub, newVersion] = process.argv;
 if (!newVersion) {
   process.stdout.write(`
 Usage:
-    ${basename(main)} ${basename(sub)} <new npm version>
+    ${basename(main || "")} ${basename(sub || "")} <new npm version>
 
 Example:
-    ${basename(main)} ${basename(sub)} 6.2.5
+    ${basename(main || "")} ${basename(sub || "")} 6.2.5
 `);
   process.exit(); // eslint-disable-line no-process-exit
 }
@@ -40,7 +40,7 @@ const constantsContent = readFileSync(constants, "utf8").replace(
 );
 writeFileSync(constants, constantsContent, "utf8");
 
-execFileSync("npm", ["run", "package"]);
+execFileSync("npm", ["ci"]);
 execFileSync("git", ["add", "."]);
 
 const message = `fix(deps): bump npm from ${oldVersion} to ${newVersion}

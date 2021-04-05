@@ -3,10 +3,6 @@ name: Release
 on:
   workflow_dispatch:
     branches: ["main"]
-    inputs:
-      dry-run:
-        description: Set `true` if you want to dry-run
-        required: false
 
 jobs:
   release:
@@ -16,27 +12,14 @@ jobs:
         with:
           fetch-depth: 0
       - run: npm ci
-      - run: npm run release:dry-run
-        if: ${{ github.event.inputs.dry-run == 'true' }}
-      - run: |
-          git config user.name "${GITHUB_ACTOR}"
-          git config user.email "actions@github.com"
+      - run: git config --local user.name '${{ github.actor }}'
+      - run: git config --local user.email '${{ github.actor }}@users.noreply.github.com'
       - run: npm run release
-        if: ${{ github.event.inputs.dry-run == '' }}
-      - run: echo "::set-output name=tag::$(git describe --abbrev=0)"
-        id: set-tag
-      - run: |
-          git push --follow-tags
-          git tag --force --annotate --message "Release ${MAJOR_VERSION_TAG}" ${MAJOR_VERSION_TAG}
-          git push --tags --force origin ${MAJOR_VERSION_TAG}
-        env:
-          MAJOR_VERSION_TAG: v2
-        if: ${{ github.event.inputs.dry-run == '' }}
-      - uses: softprops/action-gh-release@v1
-        if: ${{ github.event.inputs.dry-run == '' }}
-        with:
-          body: |
-            See the [changelog](https://github.com/${{ github.repository }}/blob/${{ steps.set-tag.outputs.tag }}/CHANGELOG.md) for more details.
-          tag_name: ${{ steps.set-tag.outputs.tag }}
+      - run: echo ::set-output name=tag::$(git describe --abbrev=0)
+        id: get_tag
+      - run: git push --follow-tags
+      - run: git tag --force --annotate --message 'Release v2' v2
+      - run: git push --tags --force origin v2
+      - run: gh release create '${{ steps.get_tag.outputs.tag }}' --notes 'See the [changelog](https://github.com/${{ github.repository }}/blob/${{ steps.get_tag.outputs.tag }}/CHANGELOG.md) for more details.'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

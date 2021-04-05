@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.12](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.11...v2.1.12) (2021-04-05)
+
+### Bug Fixes
+
+- **actions:** fix releasing ([75eb03a](https://github.com/ybiquitous/npm-audit-fix-action/commit/75eb03aaf046c521bce1126ac768708c12d6844c))
+
+### [2.1.11](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.10...v2.1.11) (2021-04-05)
+
+### Bug Fixes
+
+- **actions:** fix releasing ([222416c](https://github.com/ybiquitous/npm-audit-fix-action/commit/222416c72907b9e3696bc81aab99273a2f67f61a))
+
+### [2.1.10](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.9...v2.1.10) (2021-04-05)
+
+### Bug Fixes
+
+- **actions:** fix releasing ([cc5f387](https://github.com/ybiquitous/npm-audit-fix-action/commit/cc5f387da2e7a8c88da35dced7e1a4e45c298cf8))
+
+### [2.1.9](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.8...v2.1.9) (2021-04-05)
+
+### Bug Fixes
+
+- **actions:** fix releasing ([#365](https://github.com/ybiquitous/npm-audit-fix-action/issues/365)) ([be44457](https://github.com/ybiquitous/npm-audit-fix-action/commit/be444570f3df1ce1bc172d3605bbf12d4427d402))
+
+### [2.1.8](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.7...v2.1.8) (2021-04-05)
+
+### [2.1.7](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.6...v2.1.7) (2021-04-05)
+
+### Bug Fixes
+
+- **deps:** bump hosted-git-info from 3.0.8 to 4.0.0 ([#341](https://github.com/ybiquitous/npm-audit-fix-action/issues/341)) ([8050e4d](https://github.com/ybiquitous/npm-audit-fix-action/commit/8050e4d05350a9f82af82708a3a55cc3fee6d226))
+- **deps:** bump hosted-git-info from 4.0.0 to 4.0.2 ([#350](https://github.com/ybiquitous/npm-audit-fix-action/issues/350)) ([eb8f0bb](https://github.com/ybiquitous/npm-audit-fix-action/commit/eb8f0bbd3285f2aef0b9fa68f8f83b3e7dbf8bf3))
+
 ### [2.1.6](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.5...v2.1.6) (2021-01-11)
 
 ### Bug Fixes
