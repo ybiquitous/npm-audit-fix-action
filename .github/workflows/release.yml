@@ -15,9 +15,7 @@ jobs:
       - run: git config --local user.name '${{ github.actor }}'
       - run: git config --local user.email '${{ github.actor }}@users.noreply.github.com'
       - run: npm run release
-      - run: |
-          tag=$(git describe --abbrev=0)
-          echo ::set-output name=tag::${tag}
+      - run: echo ::set-output name=tag::v$(jq --raw-output .version < package.json)
         id: get-tag
       - run: git push --follow-tags
       - run: git tag --force --annotate --message 'Release v2' v2
