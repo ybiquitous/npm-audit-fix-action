@@ -1112,7 +1112,7 @@ module.exports._enoent = enoent;
 /***/ 32:
 /***/ (function(module) {
 
-module.exports.PACKAGE_NAME = "npm-audit-fix-action";
+module.exports.PACKAGE_NAME = "ybiquitous/npm-audit-fix-action";
 module.exports.PACKAGE_URL = "https://github.com/ybiquitous/npm-audit-fix-action";
 module.exports.NPM_VERSION = "7";
 
@@ -8558,7 +8558,7 @@ module.exports = function buildPullRequestBody(report, npmVersion) {
   lines.push("***");
   lines.push("");
   lines.push(
-    `This pull request is created by [${PACKAGE_NAME}](${PACKAGE_URL}). The used npm version is **${npmVersion}**.`
+    `This pull request is created by [${PACKAGE_NAME}](${PACKAGE_URL}) via npm ${npmVersion}.`
   );
 
   return lines.join("\n").trim();
