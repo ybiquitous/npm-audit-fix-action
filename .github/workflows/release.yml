@@ -16,7 +16,7 @@ jobs:
       - run: git config --local user.email '${{ github.actor }}@users.noreply.github.com'
       - run: npm run release
       - run: echo "::set-output name=tag::$(git describe --abbrev=0)"
-        id: set-tag
+        id: get-tag
       - run: git push --follow-tags
       - run: git tag --force --annotate --message 'Release v2' v2
       - run: git push --tags --force origin v2
