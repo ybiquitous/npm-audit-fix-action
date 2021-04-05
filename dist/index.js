@@ -8503,8 +8503,10 @@ const EMPTY = "-";
 module.exports = function buildPullRequestBody(report, npmVersion) {
   /**
    * @param {string} name
+   * @param {string} version
    */
-  const npmPackage = (name) => `[${name}](https://npm.im/${name})`;
+  const npmPackage = (name, version) =>
+    `[${name}](https://www.npmjs.com/package/${name}/v/${version})`;
 
   /**
    * @param {...string} items
@@ -8549,7 +8551,7 @@ module.exports = function buildPullRequestBody(report, npmVersion) {
       }
       lines.push(
         buildTableRow(
-          npmPackage(name),
+          npmPackage(name, version),
           `${versionLabel(previousVersion)} → ${versionLabel(version)}`,
           repoLink(name),
           extra
@@ -8568,7 +8570,9 @@ module.exports = function buildPullRequestBody(report, npmVersion) {
     lines.push("");
     lines.push(...header);
     report.added.forEach(({ name, version }) => {
-      lines.push(buildTableRow(npmPackage(name), versionLabel(version), repoLink(name), EMPTY));
+      lines.push(
+        buildTableRow(npmPackage(name, version), versionLabel(version), repoLink(name), EMPTY)
+      );
     });
     lines.push("");
     lines.push("</details>");
@@ -8581,7 +8585,9 @@ module.exports = function buildPullRequestBody(report, npmVersion) {
     lines.push("");
     lines.push(...header);
     report.removed.forEach(({ name, version }) => {
-      lines.push(buildTableRow(npmPackage(name), versionLabel(version), repoLink(name), EMPTY));
+      lines.push(
+        buildTableRow(npmPackage(name, version), versionLabel(version), repoLink(name), EMPTY)
+      );
     });
     lines.push("");
     lines.push("</details>");
