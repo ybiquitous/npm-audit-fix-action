@@ -18,8 +18,8 @@ jobs:
       - run: echo ::set-output name=tag::$(git describe --abbrev=0)
         id: get_tag
       - run: git push --follow-tags
-      - run: git tag --force --annotate --message 'Release v2' v2
-      - run: git push --tags --force origin v2
+      - run: git tag --force --annotate --message 'Release v3' v3
+      - run: git push --tags --force origin v3
       - run: gh release create '${{ steps.get_tag.outputs.tag }}' --notes 'See the [changelog](https://github.com/${{ github.repository }}/blob/${{ steps.get_tag.outputs.tag }}/CHANGELOG.md) for more details.'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
