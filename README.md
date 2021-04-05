@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: ybiquitous/npm-audit-fix-action@v2
+      - uses: ybiquitous/npm-audit-fix-action@v3
         # with:
         #   github_token: ${{ github.token }}
         #   branch: "npm-audit-fix-action/fix"
