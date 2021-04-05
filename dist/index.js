@@ -11988,7 +11988,7 @@ const { exec } = __webpack_require__(986);
 const npmArgs = __webpack_require__(510);
 
 module.exports = function auditFix() {
-  return exec("npm", npmArgs("audit", "fix", "--json"));
+  return exec("npm", npmArgs("audit", "fix"));
 };
 
 
