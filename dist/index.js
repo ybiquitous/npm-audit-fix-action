@@ -4054,14 +4054,24 @@ const npmArgs = __webpack_require__(510);
  */
 module.exports = async function listPackages({ silent } = { silent: false }) {
   let lines = "";
-  await exec("npm", npmArgs("ls", "--parseable", "--long", "--all"), {
+  let stderr = "";
+  const returnCode = await exec("npm", npmArgs("ls", "--parseable", "--long", "--all"), {
     listeners: {
       stdout: (data) => {
         lines += data.toString();
       },
+      stderr: (data) => {
+        stderr += data.toString();
+      },
     },
     silent,
+    ignoreReturnCode: true,
   });
+
+  // NOTE: Ignore missing peer deps error.
+  if (returnCode !== 0 && !stderr.includes("npm ERR! missing:")) {
+    throw new Error(`"npm ls" failed`);
+  }
 
   const packages = /** @type {Map<string, string>} */ new Map();
   lines
