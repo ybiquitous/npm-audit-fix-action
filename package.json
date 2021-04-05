@@ -12,7 +12,7 @@
   "repository": "ybiquitous/npm-audit-fix-action",
   "engines": {
     "node": ">=12.13.0",
-    "npm": "6.14.11"
+    "npm": ">=7 <8"
   },
   "main": "lib/index.js",
   "scripts": {
@@ -105,7 +105,8 @@
         "error",
         {
           "allow": [
-            "**/utils/*"
+            "**/utils/*",
+            "**/fixtures/*"
           ]
         }
       ]

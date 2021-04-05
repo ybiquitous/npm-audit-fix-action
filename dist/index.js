@@ -1112,9 +1112,9 @@ module.exports._enoent = enoent;
 /***/ 32:
 /***/ (function(module) {
 
-module.exports.PACKAGE_NAME = "npm-audit-fix-action";
+module.exports.PACKAGE_NAME = "ybiquitous/npm-audit-fix-action";
 module.exports.PACKAGE_URL = "https://github.com/ybiquitous/npm-audit-fix-action";
-module.exports.NPM_VERSION = "6.14.11";
+module.exports.NPM_VERSION = "7";
 
 
 /***/ }),
@@ -1207,20 +1207,38 @@ const { exec } = __webpack_require__(986);
 const npmArgs = __webpack_require__(510);
 
 /**
+ * @param {typeof exec} execFn
  * @returns {Promise<AuditReport>}
  */
-module.exports = async function audit() {
-  let stdout = "";
-  await exec("npm", npmArgs("audit", "--json"), {
+module.exports = async function audit(execFn = exec) {
+  let report = "";
+  await execFn("npm", npmArgs("audit", "--json"), {
     listeners: {
       stdout: (data) => {
-        stdout += data.toString();
+        report += data.toString();
       },
     },
-    silent: true,
     ignoreReturnCode: true,
   });
-  return JSON.parse(stdout);
+  const { vulnerabilities } = JSON.parse(report);
+
+  if (vulnerabilities != null && typeof vulnerabilities === "object") {
+    const map = /** @type {AuditReport} */ new Map();
+    Object.values(vulnerabilities).forEach(({ name, severity, via }) => {
+      if (Array.isArray(via)) {
+        const [{ title, url }] = via;
+        if (typeof title === "string" && typeof url === "string") {
+          map.set(name, { name, severity, title, url });
+        } else {
+          throw new Error(`"via" of "${name}" is invalid`);
+        }
+      } else {
+        throw new Error('"via" is not an array');
+      }
+    });
+    return map;
+  }
+  throw new Error('"vulnerabilities" is missing');
 };
 
 
@@ -2078,14 +2096,27 @@ const parseGitUrl = (giturl) => {
 
 const { exec } = __webpack_require__(986);
 const npmArgs = __webpack_require__(510);
-const { NPM_VERSION } = __webpack_require__(32);
 
-module.exports = async function updateNpm() {
-  await exec("sudo", ["npm", ...npmArgs("install", "--global", `npm@${NPM_VERSION}`)]);
+/**
+ * @param {string} version
+ */
+module.exports = async function updateNpm(version) {
+  await exec("sudo", ["npm", ...npmArgs("install", "--global", `npm@${version}`)]);
+
+  let actualVersion = "";
+  exec("npm", ["--version"], {
+    listeners: {
+      stdout: (data) => {
+        actualVersion += data.toString();
+      },
+    },
+  });
 
   // HACK: Fix the error "npm update check failed".
   // eslint-disable-next-line dot-notation -- Prevent TS4111
-  return exec("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
+  await exec("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
+
+  return actualVersion;
 };
 
 
@@ -4008,6 +4039,47 @@ paginateRest.VERSION = VERSION;
 
 exports.paginateRest = paginateRest;
 //# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ 302:
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+const { exec } = __webpack_require__(986);
+const npmArgs = __webpack_require__(510);
+
+/**
+ * @returns {Promise<Map<string, string>>}
+ */
+module.exports = async function listPackages() {
+  let lines = "";
+  await exec("npm", npmArgs("ls", "--parseable", "--long"), {
+    listeners: {
+      stdout: (data) => {
+        lines += data.toString();
+      },
+    },
+  });
+
+  const packages = /** @type {Map<string, string>} */ new Map();
+  lines
+    .split("\n")
+    .filter(Boolean)
+    .forEach((line) => {
+      const [, pkg] = line.split(":");
+      if (pkg == null) {
+        throw new Error(`Invalid line: "${line}"`);
+      }
+
+      const [name, version] = pkg.split("@");
+      if (name == null || version == null) {
+        throw new Error(`Invalid name and version: "${line}"`);
+      }
+      packages.set(name.trim(), version.trim());
+    });
+  return packages;
+};
 
 
 /***/ }),
@@ -7302,10 +7374,12 @@ module.exports.Collection = Hook.Collection
 
 const core = __webpack_require__(470);
 const { exec } = __webpack_require__(986);
+const { NPM_VERSION } = __webpack_require__(32);
 const audit = __webpack_require__(50);
 const auditFix = __webpack_require__(905);
 const npmArgs = __webpack_require__(510);
 const updateNpm = __webpack_require__(193);
+const listPackages = __webpack_require__(302);
 const aggregateReport = __webpack_require__(599);
 const buildPullRequestBody = __webpack_require__(603);
 const buildCommitBody = __webpack_require__(605);
@@ -7339,9 +7413,9 @@ function getFromEnv(name) {
 
 async function run() {
   try {
-    await core.group("Update npm", async () => {
-      await updateNpm();
-    });
+    const npmVersion = await core.group(`Update npm to ${NPM_VERSION}`, () =>
+      updateNpm(NPM_VERSION)
+    );
 
     await core.group("Install user packages", async () => {
       await exec("npm", npmArgs("install", "--package-lock-only"));
@@ -7354,16 +7428,15 @@ async function run() {
       return res;
     });
 
-    const fixReport = await core.group("Fix vulnerabilities", async () => {
-      const res = await auditFix();
-      core.info(JSON.stringify(res, null, 2));
-      return res;
-    });
+    const beforePackages = await core.group("List packages before", () => listPackages());
 
-    const report = await core.group("Aggregate report", async () => {
-      const res = await aggregateReport(auditReport, fixReport);
-      return res;
-    });
+    await core.group("Fix vulnerabilities", () => auditFix());
+
+    const afterPackages = await core.group("List packages after", () => listPackages());
+
+    const report = await core.group("Aggregate report", () =>
+      aggregateReport(auditReport, beforePackages, afterPackages)
+    );
 
     if (report.packageCount === 0) {
       core.info("No update.");
@@ -7390,7 +7463,7 @@ async function run() {
         token,
         baseBranch,
         title: core.getInput("commit_title"),
-        pullBody: buildPullRequestBody(report),
+        pullBody: buildPullRequestBody(report, npmVersion),
         commitBody: buildCommitBody(report),
         repository,
         actor: getFromEnv("GITHUB_ACTOR"),
@@ -8324,39 +8397,36 @@ module.exports = async function createOrUpdatePullRequest({
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
 const capitalize = __webpack_require__(203);
-const newAdvisories = __webpack_require__(687);
 const semverToNumber = __webpack_require__(915);
 const packageRepoUrls = __webpack_require__(405);
 
 /**
+ * @param {{ name: string, version: string }} a
+ * @param {{ name: string, version: string }} b
+ * @returns {number}
+ */
+const byNameAndVersion = (a, b) => {
+  const res = a.name.localeCompare(b.name);
+  if (res > 0) {
+    return 1;
+  }
+  if (res < 0) {
+    return -1;
+  }
+  return semverToNumber(a.version) - semverToNumber(b.version);
+};
+
+/**
  * @param {AuditReport} audit
- * @param {AuditFix} fix
+ * @param {Map<string, string>} beforePackages
+ * @param {Map<string, string>} afterPackages
  * @returns {Promise<Report>}
  */
-module.exports = async function aggregateReport(audit, fix) {
-  /**
-   * @param {{ name: string, version: string }} a
-   * @param {{ name: string, version: string }} b
-   * @returns {number}
-   */
-  const byNameAndVersion = (a, b) => {
-    const res = a.name.localeCompare(b.name);
-    if (res > 0) {
-      return 1;
-    }
-    if (res < 0) {
-      return -1;
-    }
-    return semverToNumber(a.version) - semverToNumber(b.version);
-  };
-
+module.exports = async function aggregateReport(audit, beforePackages, afterPackages) {
   /** @type {Report["added"]} */
   const added = [];
-  const addedSet = new Set();
-  fix.added.forEach(({ name, version }) => {
-    const key = JSON.stringify({ name, version });
-    if (!addedSet.has(key)) {
-      addedSet.add(key);
+  afterPackages.forEach((version, name) => {
+    if (!beforePackages.has(name)) {
       added.push({ name, version });
     }
   });
@@ -8364,40 +8434,23 @@ module.exports = async function aggregateReport(audit, fix) {
 
   /** @type {Report["removed"]} */
   const removed = [];
-  const removedSet = new Set();
-  fix.removed.forEach(({ name, version }) => {
-    const key = JSON.stringify({ name, version });
-    if (!removedSet.has(key)) {
-      removedSet.add(key);
+  beforePackages.forEach((version, name) => {
+    if (!afterPackages.has(name)) {
       removed.push({ name, version });
     }
   });
   removed.sort(byNameAndVersion);
 
-  const advisories = newAdvisories(audit);
-
   /** @type {Report["updated"]} */
   const updated = [];
-  const updatedSet = new Set();
-  fix.updated.forEach(({ name, version, previousVersion }) => {
-    const key = JSON.stringify({ name, version, previousVersion });
-    if (!updatedSet.has(key)) {
-      updatedSet.add(key);
-
-      const advisory = advisories.find(name, previousVersion);
-      if (advisory) {
-        const { title, severity, url } = advisory;
-        updated.push({
-          name,
-          version,
-          previousVersion,
-          severity: capitalize(severity),
-          title,
-          url,
-        });
-      } else {
-        updated.push({ name, version, previousVersion });
-      }
+  afterPackages.forEach((version, name) => {
+    const previousVersion = beforePackages.get(name);
+    if (previousVersion != null) {
+      const info = audit.get(name);
+      const severity = info == null ? null : capitalize(info.severity);
+      const title = info == null ? null : info.title;
+      const url = info == null ? null : info.url;
+      updated.push({ name, version, previousVersion, severity, title, url });
     }
   });
   updated.sort(byNameAndVersion);
@@ -8421,13 +8474,16 @@ module.exports = async function aggregateReport(audit, fix) {
 /***/ 603:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
-const { PACKAGE_NAME, PACKAGE_URL, NPM_VERSION } = __webpack_require__(32);
+const { PACKAGE_NAME, PACKAGE_URL } = __webpack_require__(32);
+
+const EMPTY = "-";
 
 /**
  * @param {Report} report
+ * @param {string} npmVersion
  * @returns {string}
  */
-module.exports = function buildPullRequestBody(report) {
+module.exports = function buildPullRequestBody(report, npmVersion) {
   /**
    * @param {string} name
    */
@@ -8444,7 +8500,7 @@ module.exports = function buildPullRequestBody(report) {
    */
   const repoLink = (name) => {
     const url = report.packageUrls[name];
-    return url ? `[${url.type}](${url.url})` : "-";
+    return url ? `[${url.type}](${url.url})` : EMPTY;
   };
 
   /**
@@ -8464,13 +8520,17 @@ module.exports = function buildPullRequestBody(report) {
     lines.push("");
     lines.push(...header);
 
-    report.updated.forEach((e) => {
+    report.updated.forEach(({ name, version, previousVersion, severity, title, url }) => {
+      let extra = EMPTY;
+      if (severity != null && title != null && url != null) {
+        extra = `**[${severity}]** ${title} ([ref](${url}))`;
+      }
       lines.push(
         buildTableRow(
-          npmPackage(e.name),
-          `${versionLabel(e.previousVersion)} → ${versionLabel(e.version)}`,
-          repoLink(e.name),
-          "severity" in e ? `**[${e.severity}]** ${e.title} ([ref](${e.url}))` : "-"
+          npmPackage(name),
+          `${versionLabel(previousVersion)} → ${versionLabel(version)}`,
+          repoLink(name),
+          extra
         )
       );
     });
@@ -8481,7 +8541,7 @@ module.exports = function buildPullRequestBody(report) {
     lines.push("");
     lines.push(...header);
     report.added.forEach(({ name, version }) => {
-      lines.push(buildTableRow(npmPackage(name), versionLabel(version), repoLink(name), "-"));
+      lines.push(buildTableRow(npmPackage(name), versionLabel(version), repoLink(name), EMPTY));
     });
   }
   if (report.removed.length > 0) {
@@ -8490,7 +8550,7 @@ module.exports = function buildPullRequestBody(report) {
     lines.push("");
     lines.push(...header);
     report.removed.forEach(({ name, version }) => {
-      lines.push(buildTableRow(npmPackage(name), versionLabel(version), repoLink(name), "-"));
+      lines.push(buildTableRow(npmPackage(name), versionLabel(version), repoLink(name), EMPTY));
     });
   }
 
@@ -8498,7 +8558,7 @@ module.exports = function buildPullRequestBody(report) {
   lines.push("***");
   lines.push("");
   lines.push(
-    `This pull request is created by [${PACKAGE_NAME}](${PACKAGE_URL}). The used npm version is **${NPM_VERSION}**.`
+    `This pull request is created by [${PACKAGE_NAME}](${PACKAGE_URL}) via npm ${npmVersion}.`
   );
 
   return lines.join("\n").trim();
@@ -8542,9 +8602,9 @@ module.exports = function buildCommitBody(report) {
   lines.push("");
   if (report.updated.length > 0) {
     lines.push("Fixed vulnerabilities:");
-    report.updated.forEach((e) => {
-      if ("severity" in e) {
-        lines.push(`- ${e.name}: "${e.title}" (${e.url})`);
+    report.updated.forEach(({ name, severity, title, url }) => {
+      if (severity != null && title != null && url != null) {
+        lines.push(`- ${name}: "${title}" (${url})`);
       }
     });
   } else {
@@ -9398,25 +9458,6 @@ module.exports = async function getDefaultBranch({ token, repository }) {
   const octokit = github.getOctokit(token);
   const res = await octokit.repos.get(splitRepo(repository));
   return res.data.default_branch;
-};
-
-
-/***/ }),
-
-/***/ 687:
-/***/ (function(module) {
-
-/**
- * @param {AuditReport} audit
- * @returns {Advisories}
- */
-module.exports = function advisories(audit) {
-  const list = Object.values(audit.advisories);
-
-  return {
-    find: (name, version) =>
-      list.find((a) => a.module_name === name && a.findings.find((f) => f.version === version)),
-  };
 };
 
 
@@ -11946,20 +11987,8 @@ exports.withCustomRequest = withCustomRequest;
 const { exec } = __webpack_require__(986);
 const npmArgs = __webpack_require__(510);
 
-/**
- * @returns {Promise<AuditFix>}
- */
-module.exports = async function auditFix() {
-  let stdout = "";
-  await exec("npm", npmArgs("audit", "fix", "--json"), {
-    listeners: {
-      stdout: (data) => {
-        stdout += data.toString();
-      },
-    },
-    silent: true,
-  });
-  return JSON.parse(stdout);
+module.exports = function auditFix() {
+  return exec("npm", npmArgs("audit", "fix"));
 };
 
 

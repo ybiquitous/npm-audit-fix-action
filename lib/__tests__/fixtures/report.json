@@ -2,7 +2,14 @@
   "added": [{ "name": "xo", "version": "0.1.1" }],
   "removed": [{ "name": "@gitlab/ui", "version": "1.2.3" }],
   "updated": [
-    { "name": "minimist", "version": "1.2.4", "previousVersion": "1.2.1" },
+    {
+      "name": "minimist",
+      "version": "1.2.4",
+      "previousVersion": "1.2.1",
+      "severity": null,
+      "title": null,
+      "url": null
+    },
     {
       "name": "mocha",
       "version": "1.4.3",

@@ -1,0 +1,42 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "y18n": {
+      "name": "y18n",
+      "severity": "high",
+      "via": [
+        {
+          "source": 1654,
+          "name": "y18n",
+          "dependency": "y18n",
+          "title": "Prototype Pollution",
+          "url": "https://npmjs.com/advisories/1654",
+          "severity": "high",
+          "range": "<3.2.2||=4.0.0||>=5.0.0 <5.0.5"
+        }
+      ],
+      "effects": [],
+      "range": "<3.2.2||=4.0.0||>=5.0.0 <5.0.5",
+      "nodes": ["node_modules/y18n"],
+      "fixAvailable": true
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 1,
+      "critical": 0,
+      "total": 1
+    },
+    "dependencies": {
+      "prod": 1,
+      "dev": 1192,
+      "optional": 9,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 1192
+    }
+  }
+}
