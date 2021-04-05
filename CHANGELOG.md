@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.12...v3.0.0) (2021-04-05)
+
+### ⚠ BREAKING CHANGES
+
+- **deps:** The audit report format has been changed since npm 7.
+
+### Features
+
+- add version to npmjs.com link ([#373](https://github.com/ybiquitous/npm-audit-fix-action/issues/373)) ([50e55a3](https://github.com/ybiquitous/npm-audit-fix-action/commit/50e55a3f5e0c8a4576b4fbb680099b28fc655fbb))
+- improve PR body ([#368](https://github.com/ybiquitous/npm-audit-fix-action/issues/368)) ([c7aa57e](https://github.com/ybiquitous/npm-audit-fix-action/commit/c7aa57eaa91adebf1341cb630cd35cb8015b2489))
+- **deps:** bump npm from 6.14.11 to 7 ([#317](https://github.com/ybiquitous/npm-audit-fix-action/issues/317)) ([46f8a79](https://github.com/ybiquitous/npm-audit-fix-action/commit/46f8a79e7819bcec7fcecd5baa9f267b73e0bc99))
+
+### Bug Fixes
+
+- bugfix ([#367](https://github.com/ybiquitous/npm-audit-fix-action/issues/367)) ([35cc9be](https://github.com/ybiquitous/npm-audit-fix-action/commit/35cc9be45f671141c787cbfcea508046bb40aded))
+- incorrect updated packages list ([#372](https://github.com/ybiquitous/npm-audit-fix-action/issues/372)) ([7c502cc](https://github.com/ybiquitous/npm-audit-fix-action/commit/7c502ccbcf54561a1979e9ac6eabe62af139e77b))
+- remove needless `npm install` ([#371](https://github.com/ybiquitous/npm-audit-fix-action/issues/371)) ([6f268a5](https://github.com/ybiquitous/npm-audit-fix-action/commit/6f268a508986758b6af3541e49a2777842cf81f4))
+
 ### [2.1.12](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.11...v2.1.12) (2021-04-05)
 
 ### Bug Fixes
