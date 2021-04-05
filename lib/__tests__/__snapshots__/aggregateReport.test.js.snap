@@ -4,333 +4,42 @@ exports[`aggregateReport() 1`] = `
 Object {
   "added": Array [
     Object {
-      "name": "@types/minimist",
-      "version": "1.2.0",
-    },
-    Object {
-      "name": "arrify",
-      "version": "1.0.1",
-    },
-    Object {
       "name": "arrify",
       "version": "2.0.1",
     },
-    Object {
-      "name": "camelcase-keys",
-      "version": "6.2.2",
-    },
-    Object {
-      "name": "conventional-commits-filter",
-      "version": "2.0.6",
-    },
-    Object {
-      "name": "dargs",
-      "version": "7.0.0",
-    },
-    Object {
-      "name": "find-up",
-      "version": "4.1.0",
-    },
-    Object {
-      "name": "git-semver-tags",
-      "version": "4.0.0",
-    },
-    Object {
-      "name": "hard-rejection",
-      "version": "2.1.0",
-    },
-    Object {
-      "name": "indent-string",
-      "version": "4.0.0",
-    },
-    Object {
-      "name": "interpret",
-      "version": "1.2.0",
-    },
-    Object {
-      "name": "locate-path",
-      "version": "5.0.0",
-    },
-    Object {
-      "name": "map-obj",
-      "version": "4.1.0",
-    },
-    Object {
-      "name": "meow",
-      "version": "7.0.0",
-    },
-    Object {
-      "name": "min-indent",
-      "version": "1.0.0",
-    },
-    Object {
-      "name": "minimist-options",
-      "version": "4.0.2",
-    },
-    Object {
-      "name": "p-locate",
-      "version": "4.1.0",
-    },
-    Object {
-      "name": "parse-json",
-      "version": "5.0.0",
-    },
-    Object {
-      "name": "path-exists",
-      "version": "4.0.0",
-    },
-    Object {
-      "name": "quick-lru",
-      "version": "4.0.1",
-    },
-    Object {
-      "name": "read-pkg",
-      "version": "5.2.0",
-    },
-    Object {
-      "name": "read-pkg-up",
-      "version": "7.0.1",
-    },
-    Object {
-      "name": "rechoir",
-      "version": "0.6.2",
-    },
-    Object {
-      "name": "redent",
-      "version": "3.0.0",
-    },
-    Object {
-      "name": "semver",
-      "version": "6.3.0",
-    },
-    Object {
-      "name": "shelljs",
-      "version": "0.8.4",
-    },
-    Object {
-      "name": "strip-indent",
-      "version": "3.0.0",
-    },
-    Object {
-      "name": "trim-newlines",
-      "version": "3.0.0",
-    },
-    Object {
-      "name": "type-fest",
-      "version": "0.6.0",
-    },
-    Object {
-      "name": "type-fest",
-      "version": "0.8.1",
-    },
-    Object {
-      "name": "type-fest",
-      "version": "0.13.1",
-    },
-    Object {
-      "name": "yargs-parser",
-      "version": "18.1.3",
-    },
   ],
-  "packageCount": 34,
+  "packageCount": 3,
   "packageUrls": Object {
-    "@types/minimist": Object {
-      "name": "@types/minimist",
-      "type": "github",
-      "url": "https://github.com/DefinitelyTyped/DefinitelyTyped",
-    },
     "arrify": Object {
       "name": "arrify",
       "type": "github",
       "url": "https://github.com/sindresorhus/arrify",
     },
-    "camelcase-keys": Object {
-      "name": "camelcase-keys",
+    "xmldom": Object {
+      "name": "xmldom",
       "type": "github",
-      "url": "https://github.com/sindresorhus/camelcase-keys",
+      "url": "https://github.com/xmldom/xmldom",
     },
-    "conventional-changelog-core": Object {
-      "name": "conventional-changelog-core",
+    "y18n": Object {
+      "name": "y18n",
       "type": "github",
-      "url": "https://github.com/conventional-changelog/conventional-changelog",
-    },
-    "conventional-changelog-writer": Object {
-      "name": "conventional-changelog-writer",
-      "type": "github",
-      "url": "https://github.com/conventional-changelog/conventional-changelog",
-    },
-    "conventional-commits-filter": Object {
-      "name": "conventional-commits-filter",
-      "type": "github",
-      "url": "https://github.com/conventional-changelog/conventional-changelog",
-    },
-    "conventional-commits-parser": Object {
-      "name": "conventional-commits-parser",
-      "type": "github",
-      "url": "https://github.com/conventional-changelog/conventional-changelog",
-    },
-    "dargs": Object {
-      "name": "dargs",
-      "type": "github",
-      "url": "https://github.com/sindresorhus/dargs",
-    },
-    "find-up": Object {
-      "name": "find-up",
-      "type": "github",
-      "url": "https://github.com/sindresorhus/find-up",
-    },
-    "git-raw-commits": Object {
-      "name": "git-raw-commits",
-      "type": "github",
-      "url": "https://github.com/conventional-changelog/conventional-changelog",
-    },
-    "git-semver-tags": Object {
-      "name": "git-semver-tags",
-      "type": "github",
-      "url": "https://github.com/conventional-changelog/conventional-changelog",
-    },
-    "hard-rejection": Object {
-      "name": "hard-rejection",
-      "type": "github",
-      "url": "https://github.com/sindresorhus/hard-rejection",
-    },
-    "indent-string": Object {
-      "name": "indent-string",
-      "type": "github",
-      "url": "https://github.com/sindresorhus/indent-string",
-    },
-    "interpret": Object {
-      "name": "interpret",
-      "type": "github",
-      "url": "https://github.com/gulpjs/interpret",
-    },
-    "locate-path": Object {
-      "name": "locate-path",
-      "type": "github",
-      "url": "https://github.com/sindresorhus/locate-path",
-    },
-    "map-obj": Object {
-      "name": "map-obj",
-      "type": "github",
-      "url": "https://github.com/sindresorhus/map-obj",
-    },
-    "meow": Object {
-      "name": "meow",
-      "type": "github",
-      "url": "https://github.com/sindresorhus/meow",
-    },
-    "min-indent": Object {
-      "name": "min-indent",
-      "type": "github",
-      "url": "https://github.com/thejameskyle/min-indent",
-    },
-    "minimist-options": Object {
-      "name": "minimist-options",
-      "type": "github",
-      "url": "https://github.com/vadimdemedes/minimist-options",
-    },
-    "p-locate": Object {
-      "name": "p-locate",
-      "type": "github",
-      "url": "https://github.com/sindresorhus/p-locate",
-    },
-    "parse-json": Object {
-      "name": "parse-json",
-      "type": "github",
-      "url": "https://github.com/sindresorhus/parse-json",
-    },
-    "path-exists": Object {
-      "name": "path-exists",
-      "type": "github",
-      "url": "https://github.com/sindresorhus/path-exists",
-    },
-    "quick-lru": Object {
-      "name": "quick-lru",
-      "type": "github",
-      "url": "https://github.com/sindresorhus/quick-lru",
-    },
-    "read-pkg": Object {
-      "name": "read-pkg",
-      "type": "github",
-      "url": "https://github.com/sindresorhus/read-pkg",
-    },
-    "read-pkg-up": Object {
-      "name": "read-pkg-up",
-      "type": "github",
-      "url": "https://github.com/sindresorhus/read-pkg-up",
-    },
-    "rechoir": Object {
-      "name": "rechoir",
-      "type": "github",
-      "url": "https://github.com/gulpjs/rechoir",
-    },
-    "redent": Object {
-      "name": "redent",
-      "type": "github",
-      "url": "https://github.com/sindresorhus/redent",
-    },
-    "semver": Object {
-      "name": "semver",
-      "type": "github",
-      "url": "https://github.com/npm/node-semver",
-    },
-    "shelljs": Object {
-      "name": "shelljs",
-      "type": "github",
-      "url": "https://github.com/shelljs/shelljs",
-    },
-    "strip-indent": Object {
-      "name": "strip-indent",
-      "type": "github",
-      "url": "https://github.com/sindresorhus/strip-indent",
-    },
-    "trim-newlines": Object {
-      "name": "trim-newlines",
-      "type": "github",
-      "url": "https://github.com/sindresorhus/trim-newlines",
-    },
-    "type-fest": Object {
-      "name": "type-fest",
-      "type": "github",
-      "url": "https://github.com/sindresorhus/type-fest",
-    },
-    "uglify-js": Object {
-      "name": "uglify-js",
-      "type": "github",
-      "url": "https://github.com/mishoo/UglifyJS",
-    },
-    "yargs-parser": Object {
-      "name": "yargs-parser",
-      "type": "github",
-      "url": "https://github.com/yargs/yargs-parser",
+      "url": "https://github.com/yargs/y18n",
     },
   },
-  "removed": Array [],
+  "removed": Array [
+    Object {
+      "name": "xmldom",
+      "version": "0.5.0",
+    },
+  ],
   "updated": Array [
     Object {
-      "name": "conventional-changelog-core",
-      "previousVersion": "4.1.4",
-      "version": "4.1.7",
-    },
-    Object {
-      "name": "conventional-changelog-writer",
-      "previousVersion": "4.0.11",
-      "version": "4.0.16",
-    },
-    Object {
-      "name": "conventional-commits-parser",
-      "previousVersion": "3.0.8",
-      "version": "3.1.0",
-    },
-    Object {
-      "name": "git-raw-commits",
-      "previousVersion": "2.0.3",
-      "version": "2.0.7",
-    },
-    Object {
-      "name": "uglify-js",
-      "previousVersion": "3.9.0",
-      "version": "3.9.2",
+      "name": "y18n",
+      "previousVersion": "4.0.0",
+      "severity": "High",
+      "title": "Prototype Pollution",
+      "url": "https://npmjs.com/advisories/1654",
+      "version": "4.0.1",
     },
   ],
 }

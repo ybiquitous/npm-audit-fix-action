@@ -105,7 +105,8 @@
         "error",
         {
           "allow": [
-            "**/utils/*"
+            "**/utils/*",
+            "**/fixtures/*"
           ]
         }
       ]

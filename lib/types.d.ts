@@ -2,22 +2,13 @@ type Finding = {
   version: string;
 };
 
-type Advisory = {
-  module_name: string; // eslint-disable-line camelcase
-  title: string;
+type Vulnerability = {
+  name: string;
   severity: string;
-  cwe: string;
-  url: string;
-  findings: Finding[];
+  via: Array<{ title: string; url: string }>;
 };
 
-type Advisories = {
-  find: (name: string, version: string) => Advisory | undefined;
-};
-
-type AuditReport = {
-  advisories: Record<string, Advisory>;
-};
+type AuditReport = Map<string, { name: string; severity: string; title: string; url: string }>;
 
 type FixEntry = {
   name: string;
@@ -41,21 +32,14 @@ type UrlInfo = { name: string; url: string; type: string };
 type Report = {
   added: Array<{ name: string; version: string }>;
   removed: Array<{ name: string; version: string }>;
-  updated: Array<
-    | {
-        name: string;
-        version: string;
-        previousVersion: string;
-      }
-    | {
-        name: string;
-        version: string;
-        previousVersion: string;
-        severity: string;
-        title: string;
-        url: string;
-      }
-  >;
+  updated: Array<{
+    name: string;
+    version: string;
+    previousVersion: string;
+    severity: string | null;
+    title: string | null;
+    url: string | null;
+  }>;
   packageCount: number;
   packageUrls: Record<string, UrlInfo>;
 };
