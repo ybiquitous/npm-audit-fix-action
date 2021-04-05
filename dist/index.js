@@ -2078,10 +2078,12 @@ const parseGitUrl = (giturl) => {
 
 const { exec } = __webpack_require__(986);
 const npmArgs = __webpack_require__(510);
-const { NPM_VERSION } = __webpack_require__(32);
 
-module.exports = async function updateNpm() {
-  await exec("sudo", ["npm", ...npmArgs("install", "--global", `npm@${NPM_VERSION}`)]);
+/**
+ * @param {string} version
+ */
+module.exports = async function updateNpm(version) {
+  await exec("sudo", ["npm", ...npmArgs("install", "--global", `npm@${version}`)]);
 
   // HACK: Fix the error "npm update check failed".
   // eslint-disable-next-line dot-notation -- Prevent TS4111
@@ -7302,6 +7304,7 @@ module.exports.Collection = Hook.Collection
 
 const core = __webpack_require__(470);
 const { exec } = __webpack_require__(986);
+const { NPM_VERSION } = __webpack_require__(32);
 const audit = __webpack_require__(50);
 const auditFix = __webpack_require__(905);
 const npmArgs = __webpack_require__(510);
@@ -7339,8 +7342,8 @@ function getFromEnv(name) {
 
 async function run() {
   try {
-    await core.group("Update npm", async () => {
-      await updateNpm();
+    await core.group(`Update npm to ${NPM_VERSION}`, async () => {
+      await updateNpm(NPM_VERSION);
     });
 
     await core.group("Install user packages", async () => {
