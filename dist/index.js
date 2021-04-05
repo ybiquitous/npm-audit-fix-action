@@ -7384,7 +7384,6 @@ const { exec } = __webpack_require__(986);
 const { NPM_VERSION } = __webpack_require__(32);
 const audit = __webpack_require__(50);
 const auditFix = __webpack_require__(905);
-const npmArgs = __webpack_require__(510);
 const updateNpm = __webpack_require__(193);
 const listPackages = __webpack_require__(302);
 const aggregateReport = __webpack_require__(599);
@@ -7423,11 +7422,6 @@ async function run() {
     const npmVersion = await core.group(`Update npm to ${NPM_VERSION}`, () =>
       updateNpm(NPM_VERSION)
     );
-
-    await core.group("Install user packages", async () => {
-      await exec("npm", npmArgs("install", "--package-lock-only"));
-      await exec("npm", npmArgs("ci"));
-    });
 
     const auditReport = await core.group("Get audit report", async () => {
       const res = await audit();
