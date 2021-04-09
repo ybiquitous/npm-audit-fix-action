@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.0.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.0.0...v3.0.1) (2021-04-09)
+
+### Bug Fixes
+
+- fix an error when `via` is unexpected ([#375](https://github.com/ybiquitous/npm-audit-fix-action/issues/375)) ([d829d1e](https://github.com/ybiquitous/npm-audit-fix-action/commit/d829d1e80fee3575e45ea733f7772257c1cd1039)), closes [#374](https://github.com/ybiquitous/npm-audit-fix-action/issues/374)
+
 ## [3.0.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.12...v3.0.0) (2021-04-05)
 
 ### ⚠ BREAKING CHANGES
