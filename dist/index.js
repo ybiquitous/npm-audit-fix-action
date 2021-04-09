@@ -1224,20 +1224,25 @@ module.exports = async function audit(execFn = exec) {
 
   if (vulnerabilities != null && typeof vulnerabilities === "object") {
     const map = /** @type {AuditReport} */ new Map();
+
     Object.values(vulnerabilities).forEach(({ name, severity, via }) => {
       if (Array.isArray(via)) {
-        const [{ title, url }] = via;
-        if (typeof title === "string" && typeof url === "string") {
-          map.set(name, { name, severity, title, url });
+        const [viaFirst] = via;
+        if (typeof viaFirst.title === "string" && typeof viaFirst.url === "string") {
+          map.set(name, { name, severity, title: viaFirst.title, url: viaFirst.url });
+        } else if (typeof viaFirst === "string") {
+          // ignore
         } else {
-          throw new Error(`"via" of "${name}" is invalid`);
+          throw new Error(`"via" of "${name}" is invalid: ${JSON.stringify(via)}`);
         }
       } else {
         throw new Error('"via" is not an array');
       }
     });
+
     return map;
   }
+
   throw new Error('"vulnerabilities" is missing');
 };
 

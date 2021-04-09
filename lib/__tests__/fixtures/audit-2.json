@@ -1,0 +1,72 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "@financial-times/origami-image-set-tools": {
+      "name": "@financial-times/origami-image-set-tools",
+      "severity": "moderate",
+      "via": ["semvish"],
+      "effects": [],
+      "range": ">=1.4.2",
+      "nodes": ["node_modules/@financial-times/origami-image-set-tools"],
+      "fixAvailable": {
+        "name": "@financial-times/origami-image-set-tools",
+        "version": "1.4.1",
+        "isSemVerMajor": true
+      }
+    },
+    "semvish": {
+      "name": "semvish",
+      "severity": "moderate",
+      "via": ["underscore.string"],
+      "effects": ["@financial-times/origami-image-set-tools"],
+      "range": ">=0.3.0",
+      "nodes": ["node_modules/semvish"],
+      "fixAvailable": {
+        "name": "@financial-times/origami-image-set-tools",
+        "version": "1.4.1",
+        "isSemVerMajor": true
+      }
+    },
+    "underscore.string": {
+      "name": "underscore.string",
+      "severity": "moderate",
+      "via": [
+        {
+          "source": 745,
+          "name": "underscore.string",
+          "dependency": "underscore.string",
+          "title": "Regular Expression Denial of Service",
+          "url": "https://npmjs.com/advisories/745",
+          "severity": "moderate",
+          "range": "<=3.3.4"
+        }
+      ],
+      "effects": ["semvish"],
+      "range": "<=3.3.4",
+      "nodes": ["node_modules/underscore.string"],
+      "fixAvailable": {
+        "name": "@financial-times/origami-image-set-tools",
+        "version": "1.4.1",
+        "isSemVerMajor": true
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 3,
+      "high": 0,
+      "critical": 0,
+      "total": 3
+    },
+    "dependencies": {
+      "prod": 1,
+      "dev": 617,
+      "optional": 0,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 617
+    }
+  }
+}
