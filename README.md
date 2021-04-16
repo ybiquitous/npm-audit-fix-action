@@ -13,7 +13,7 @@ name: npm audit fix
 
 on:
   schedule:
-    - cron: 0 0 * * * # Run at 00:00 UTC every day
+    - cron: "0 0 * * *" # Run at 00:00 UTC every day
   workflow_dispatch: # Trigger manually
     branches: ["**"]
 
