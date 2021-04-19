@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "npm-audit-fix-action",
   "version": "3.0.1",
   "description": "A GitHub Action for `npm audit fix`",
