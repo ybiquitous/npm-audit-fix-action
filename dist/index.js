@@ -7478,6 +7478,7 @@ async function run() {
       baseBranch = await getDefaultBranch({ token, repository });
     }
 
+    const author = getFromEnv("GITHUB_ACTOR");
     return createOrUpdatePullRequest({
       branch: core.getInput("branch"),
       token,
@@ -7486,8 +7487,8 @@ async function run() {
       pullBody: buildPullRequestBody(report, npmVersion),
       commitBody: buildCommitBody(report),
       repository,
-      actor: getFromEnv("GITHUB_ACTOR"),
-      email: "actions@github.com",
+      author,
+      email: `${author}@users.noreply.github.com`,
       labels: commaSeparatedList(core.getInput("labels")),
     });
   });
@@ -8337,7 +8338,7 @@ const splitRepo = __webpack_require__(461);
  *   pullBody: string,
  *   commitBody: string,
  *   repository: string,
- *   actor: string,
+ *   author: string,
  *   email: string,
  *   labels: string[],
  * }} params
@@ -8350,11 +8351,11 @@ module.exports = async function createOrUpdatePullRequest({
   pullBody,
   commitBody,
   repository,
-  actor,
+  author,
   email,
   labels,
 }) {
-  const remote = `https://${actor}:${token}@github.com/${repository}.git`;
+  const remote = `https://${author}:${token}@github.com/${repository}.git`;
   const { owner, repo } = splitRepo(repository);
   const octokit = github.getOctokit(token);
 
@@ -8370,7 +8371,7 @@ module.exports = async function createOrUpdatePullRequest({
   });
   const pull = pulls.data.find(({ head }) => head.ref === branch);
 
-  await exec("git", ["config", "user.name", actor]);
+  await exec("git", ["config", "user.name", author]);
   await exec("git", ["config", "user.email", email]);
   await exec("git", ["add", "package-lock.json"]);
   await exec("git", ["commit", "--message", `${title}\n\n${commitBody}`]);
