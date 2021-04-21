@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.0.1...v3.1.0) (2021-04-21)
+
+### Features
+
+- update default `labels` parameter ([#390](https://github.com/ybiquitous/npm-audit-fix-action/issues/390)) ([ef459f9](https://github.com/ybiquitous/npm-audit-fix-action/commit/ef459f9e8c9291b377836c3d6210b0d5a6c4ee85))
+
 ### [3.0.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.0.0...v3.0.1) (2021-04-09)
 
 ### Bug Fixes
