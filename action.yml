@@ -20,7 +20,7 @@ inputs:
   labels:
     description: ""
     required: false
-    default: "dependencies, security"
+    default: "dependencies, javascript, security"
 runs:
   using: "node12"
   main: "dist/index.js"
