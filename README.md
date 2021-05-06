@@ -13,12 +13,11 @@ name: npm audit fix
 
 on:
   schedule:
-    - cron: "0 0 * * *" # Run at 00:00 UTC every day
-  workflow_dispatch: # Trigger manually
-    branches: ["**"]
+    - cron: "0 0 * * *"
+  workflow_dispatch:
 
 jobs:
-  run:
+  npm-audit-fix:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
