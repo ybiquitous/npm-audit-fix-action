@@ -4055,9 +4055,10 @@ const { exec } = __webpack_require__(986);
 const npmArgs = __webpack_require__(510);
 
 /**
+ * @param {import("@actions/exec").ExecOptions?} options
  * @returns {Promise<Map<string, string>>}
  */
-module.exports = async function listPackages({ silent } = { silent: false }) {
+module.exports = async function listPackages(options = {}) {
   let lines = "";
   let stderr = "";
   const returnCode = await exec("npm", npmArgs("ls", "--parseable", "--long", "--all"), {
@@ -4069,8 +4070,8 @@ module.exports = async function listPackages({ silent } = { silent: false }) {
         stderr += data.toString();
       },
     },
-    silent,
     ignoreReturnCode: true,
+    ...options,
   });
 
   // NOTE: Ignore missing peer deps error.
@@ -4090,15 +4091,18 @@ module.exports = async function listPackages({ silent } = { silent: false }) {
 
       const match = /^(?<name>@?\S+)@(?<version>\S+)$/u.exec(pkg);
       if (match == null || match.groups == null) {
-        throw new Error(`Invalid line: "${line}"`);
+        return; // skip
       }
+
       /* eslint-disable dot-notation, prefer-destructuring -- Prevent TS4111 */
       const name = match.groups["name"];
       const version = match.groups["version"];
       /* eslint-enable */
+
       if (name == null || version == null) {
         throw new Error(`Invalid name and version: "${line}"`);
       }
+
       packages.set(name.trim(), version.trim());
     });
   return packages;
