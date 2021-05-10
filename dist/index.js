@@ -7402,6 +7402,7 @@ module.exports.Collection = Hook.Collection
 
 const core = __webpack_require__(470);
 const { exec } = __webpack_require__(986);
+
 const { NPM_VERSION } = __webpack_require__(32);
 const audit = __webpack_require__(50);
 const auditFix = __webpack_require__(905);
@@ -7455,6 +7456,10 @@ async function run() {
   const beforePackages = await core.group("List packages before", () => listPackages());
 
   await core.group("Fix vulnerabilities", () => auditFix());
+
+  await core.group("Re-install user packages", async () => {
+    await exec("npm", npmArgs("ci"));
+  });
 
   const afterPackages = await core.group("List packages after", () => listPackages());
 
