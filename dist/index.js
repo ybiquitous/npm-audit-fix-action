@@ -5870,7 +5870,7 @@ module.exports = async function createOrUpdatePullRequest({
   const octokit = github.getOctokit(token);
 
   // Find pull request
-  const pulls = await octokit.pulls.list({
+  const pulls = await octokit.rest.pulls.list({
     owner,
     repo,
     state: "open",
@@ -5889,7 +5889,7 @@ module.exports = async function createOrUpdatePullRequest({
   await exec("git", ["push", remote, `HEAD:${branch}`, ...(pull ? ["--force"] : [])]);
 
   if (pull) {
-    await octokit.pulls.update({
+    await octokit.rest.pulls.update({
       owner,
       repo,
       pull_number: pull.number,
@@ -5898,7 +5898,7 @@ module.exports = async function createOrUpdatePullRequest({
     });
     info(`The pull request was updated successfully: ${pull.html_url}`);
   } else {
-    const newPull = await octokit.pulls.create({
+    const newPull = await octokit.rest.pulls.create({
       owner,
       repo,
       title,
@@ -5908,7 +5908,7 @@ module.exports = async function createOrUpdatePullRequest({
     });
     info(`The pull request was created successfully: ${newPull.data.html_url}`);
 
-    const newLabels = await octokit.issues.addLabels({
+    const newLabels = await octokit.rest.issues.addLabels({
       owner,
       repo,
       issue_number: newPull.data.number,
@@ -6841,7 +6841,7 @@ const splitRepo = __webpack_require__(461);
  */
 module.exports = async function getDefaultBranch({ token, repository }) {
   const octokit = github.getOctokit(token);
-  const res = await octokit.repos.get(splitRepo(repository));
+  const res = await octokit.rest.repos.get(splitRepo(repository));
   return res.data.default_branch;
 };
 
