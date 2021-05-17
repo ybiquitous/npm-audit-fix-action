@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.1.4...v3.1.5) (2021-05-17)
+
+### Bug Fixes
+
+- **deps:** bump @actions/github from 4.0.0 to 5.0.0 ([#407](https://github.com/ybiquitous/npm-audit-fix-action/issues/407)) ([606a6fc](https://github.com/ybiquitous/npm-audit-fix-action/commit/606a6fcb6dfa18ea6fa45d160f1764c9c443ef89))
+
 ### [3.1.4](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.1.3...v3.1.4) (2021-05-10)
 
 ### Bug Fixes
