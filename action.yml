@@ -22,5 +22,5 @@ inputs:
     required: false
     default: "dependencies, javascript, security"
 runs:
-  using: "node12"
+  using: "node14"
   main: "dist/index.js"
