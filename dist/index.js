@@ -9112,7 +9112,7 @@ module.exports = async function auditFix() {
   });
 
   if (error.includes("npm ERR!")) {
-    throw new Error("Unexpected error occured");
+    throw new Error("Unexpected error occurred");
   }
 };
 
