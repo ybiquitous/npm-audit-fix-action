@@ -9100,8 +9100,20 @@ exports.withCustomRequest = withCustomRequest;
 const { exec } = __webpack_require__(986);
 const npmArgs = __webpack_require__(510);
 
-module.exports = function auditFix() {
-  return exec("npm", npmArgs("audit", "fix"));
+module.exports = async function auditFix() {
+  let error = "";
+  await exec("npm", npmArgs("audit", "fix"), {
+    listeners: {
+      stderr: (data) => {
+        error += data.toString();
+      },
+    },
+    ignoreReturnCode: true,
+  });
+
+  if (error.includes("npm ERR!")) {
+    throw new Error("Unexpected error occured");
+  }
 };
 
 
