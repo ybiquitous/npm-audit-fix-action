@@ -11,8 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: nvm install --latest-npm --no-progress && echo "${NVM_BIN}" >> $GITHUB_PATH
-        shell: bash --login {0}
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - run: npm --global install npm@latest
       - run: npm ci
       - run: npm run lint
 
@@ -20,8 +22,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: nvm install --latest-npm --no-progress && echo "${NVM_BIN}" >> $GITHUB_PATH
-        shell: bash --login {0}
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+      - run: npm --global install npm@latest
       - run: npm ci
       - run: git diff --exit-code # check dist/
       - run: npm test
