@@ -1336,6 +1336,7 @@ async function fetchUrl(packageName) {
   if (cached) {
     return cached;
   }
+
   let stdout = "";
   let stderr = "";
   try {
@@ -1359,17 +1360,21 @@ async function fetchUrl(packageName) {
     }
   }
   stdout = stdout.trim();
+
   if (!stdout) {
     Object(core.info)(`No repository URL for '${packageName}'`);
     return null;
   }
+
   const url = Object(hosted_git_info.fromUrl)(stdout);
   if (!url) {
     Object(core.info)(`No repository URL for '${packageName}'`);
     return null;
   }
   const urlInfo = { name: packageName, url: url.browse(), type: url.type };
+
   cache.set(packageName, urlInfo);
+
   return urlInfo;
 }
 
@@ -1384,13 +1389,11 @@ async function packageRepoUrls(packageNames) {
    * @type {Record<string, UrlInfo>}
    */
   const map = {};
-
   for (const url of allUrls) {
     if (url) {
       map[url.name] = url;
     }
   }
-
   return map;
 }
 
@@ -1502,6 +1505,10 @@ function npmArgs(...args) {
 
 
 
+/**
+ * @param {typeof exec} execFn
+ * @returns {Promise<AuditReport>}
+ */
 async function audit_audit(execFn = exec.exec) {
   let report = "";
   await execFn("npm", npmArgs("audit", "--json"), {
@@ -1543,8 +1550,9 @@ async function audit_audit(execFn = exec.exec) {
 
 
 
-/* harmony default export */ var lib_auditFix = (async function auditFix() {
+async function auditFix() {
   let error = "";
+
   const returnCode = await Object(exec.exec)("npm", npmArgs("audit", "fix"), {
     listeners: {
       stderr: (data) => {
@@ -1553,23 +1561,30 @@ async function audit_audit(execFn = exec.exec) {
     },
     ignoreReturnCode: true,
   });
+
   if (error.includes("npm ERR!")) {
     throw new Error("Unexpected error occurred");
   }
+
   if (returnCode !== 0) {
     Object(core.warning)(error);
   }
-});
+}
 
 // CONCATENATED MODULE: ./lib/buildCommitBody.js
+/**
+ * @param {Report} report
+ * @returns {string}
+ */
 function buildCommitBody(report) {
   const lines = [];
+
   lines.push("Summary:");
   lines.push(`- Updated packages: ${report.updated.length}`);
   lines.push(`- Added packages: ${report.added.length}`);
   lines.push(`- Removed packages: ${report.removed.length}`);
-  lines.push("");
 
+  lines.push("");
   if (report.updated.length > 0) {
     lines.push("Fixed vulnerabilities:");
     report.updated.forEach(({ name, severity, title, url }) => {
@@ -1594,6 +1609,11 @@ const NPM_VERSION = "7";
 
 const EMPTY = "-";
 
+/**
+ * @param {Report} report
+ * @param {string} npmVersion
+ * @returns {string}
+ */
 function buildPullRequestBody(report, npmVersion) {
   /**
    * @param {string} name
@@ -1656,6 +1676,7 @@ function buildPullRequestBody(report, npmVersion) {
     lines.push("");
     lines.push("</details>");
   }
+
   if (report.added.length > 0) {
     lines.push("");
     lines.push("<details open>");
@@ -1672,6 +1693,7 @@ function buildPullRequestBody(report, npmVersion) {
     lines.push("");
     lines.push("</details>");
   }
+
   if (report.removed.length > 0) {
     lines.push("");
     lines.push("<details open>");
@@ -1688,6 +1710,7 @@ function buildPullRequestBody(report, npmVersion) {
     lines.push("");
     lines.push("</details>");
   }
+
   lines.push("");
   lines.push("***");
   lines.push("");
@@ -1849,20 +1872,23 @@ async function listPackages(options = {}) {
       if (pkg == null) {
         throw new Error(`Invalid line: "${line}"`);
       }
+
       const match = /^(?<name>@?\S+)@(?<version>\S+)$/u.exec(pkg);
       if (match == null || match.groups == null) {
         return; // skip
       }
+
       /* eslint-disable dot-notation, prefer-destructuring -- Prevent TS4111 */
       const name = match.groups["name"];
       const version = match.groups["version"];
       /* eslint-enable */
+
       if (name == null || version == null) {
         throw new Error(`Invalid name and version: "${line}"`);
       }
+
       packages.set(name.trim(), version.trim());
     });
-
   return packages;
 }
 
@@ -1959,7 +1985,7 @@ async function run() {
 
   const beforePackages = await Object(core.group)("List packages before", () => listPackages());
 
-  await Object(core.group)("Fix vulnerabilities", () => lib_auditFix());
+  await Object(core.group)("Fix vulnerabilities", () => auditFix());
 
   await Object(core.group)("Re-install user packages", async () => {
     await Object(exec.exec)("npm", npmArgs("ci"));
@@ -1985,8 +2011,8 @@ async function run() {
   await Object(core.group)("Create or update a pull request", async () => {
     const token = Object(core.getInput)("github_token");
     const repository = getFromEnv("GITHUB_REPOSITORY");
-    let baseBranch = Object(core.getInput)("default_branch");
 
+    let baseBranch = Object(core.getInput)("default_branch");
     if (!baseBranch) {
       baseBranch = await getDefaultBranch({ token, repository });
     }
