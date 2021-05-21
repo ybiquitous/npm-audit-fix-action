@@ -1689,13 +1689,11 @@ function buildPullRequestBody(report, npmVersion) {
     lines.push(`<summary><strong>Added (${report.added.length})</strong></summary>`);
     lines.push("");
     lines.push(...header);
-
     report.added.forEach(({ name, version }) => {
       lines.push(
         buildTableRow(npmPackage(name, version), versionLabel(version), repoLink(name), EMPTY)
       );
     });
-
     lines.push("");
     lines.push("</details>");
   }
@@ -1706,13 +1704,11 @@ function buildPullRequestBody(report, npmVersion) {
     lines.push(`<summary><strong>Removed (${report.removed.length})</strong></summary>`);
     lines.push("");
     lines.push(...header);
-
     report.removed.forEach(({ name, version }) => {
       lines.push(
         buildTableRow(npmPackage(name, version), versionLabel(version), repoLink(name), EMPTY)
       );
     });
-
     lines.push("");
     lines.push("</details>");
   }
