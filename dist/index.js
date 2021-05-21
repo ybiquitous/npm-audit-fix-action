@@ -9097,12 +9097,14 @@ exports.withCustomRequest = withCustomRequest;
 /***/ 905:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
+const { warning } = __webpack_require__(470);
 const { exec } = __webpack_require__(986);
 const npmArgs = __webpack_require__(510);
 
 module.exports = async function auditFix() {
   let error = "";
-  await exec("npm", npmArgs("audit", "fix"), {
+
+  const returnCode = await exec("npm", npmArgs("audit", "fix"), {
     listeners: {
       stderr: (data) => {
         error += data.toString();
@@ -9113,6 +9115,10 @@ module.exports = async function auditFix() {
 
   if (error.includes("npm ERR!")) {
     throw new Error("Unexpected error occurred");
+  }
+
+  if (returnCode !== 0) {
+    warning(error);
   }
 };
 
