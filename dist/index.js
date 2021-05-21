@@ -40,8 +40,10 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(526);
+/******/ 		return __webpack_require__(134);
 /******/ 	};
+/******/ 	// initialize runtime
+/******/ 	runtime(__webpack_require__);
 /******/
 /******/ 	// run startup
 /******/ 	return startup();
@@ -1054,16 +1056,6 @@ module.exports = eval("require")("encoding");
 
 /***/ }),
 
-/***/ 32:
-/***/ (function(module) {
-
-module.exports.PACKAGE_NAME = "ybiquitous/npm-audit-fix-action";
-module.exports.PACKAGE_URL = "https://github.com/ybiquitous/npm-audit-fix-action";
-module.exports.NPM_VERSION = "7";
-
-
-/***/ }),
-
 /***/ 49:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -1109,55 +1101,6 @@ function onceStrict (fn) {
   f.called = false
   return f
 }
-
-
-/***/ }),
-
-/***/ 50:
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-const { exec } = __webpack_require__(986);
-const npmArgs = __webpack_require__(510);
-
-/**
- * @param {typeof exec} execFn
- * @returns {Promise<AuditReport>}
- */
-module.exports = async function audit(execFn = exec) {
-  let report = "";
-  await execFn("npm", npmArgs("audit", "--json"), {
-    listeners: {
-      stdout: (data) => {
-        report += data.toString();
-      },
-    },
-    ignoreReturnCode: true,
-  });
-  const { vulnerabilities } = JSON.parse(report);
-
-  if (vulnerabilities != null && typeof vulnerabilities === "object") {
-    const map = /** @type {AuditReport} */ new Map();
-
-    Object.values(vulnerabilities).forEach(({ name, severity, via }) => {
-      if (Array.isArray(via)) {
-        const [viaFirst] = via;
-        if (typeof viaFirst.title === "string" && typeof viaFirst.url === "string") {
-          map.set(name, { name, severity, title: viaFirst.title, url: viaFirst.url });
-        } else if (typeof viaFirst === "string") {
-          // ignore
-        } else {
-          throw new Error(`"via" of "${name}" is invalid: ${JSON.stringify(via)}`);
-        }
-      } else {
-        throw new Error('"via" is not an array');
-      }
-    });
-
-    return map;
-  }
-
-  throw new Error('"vulnerabilities" is missing');
-};
 
 
 /***/ }),
@@ -1359,6 +1302,716 @@ module.exports = require("child_process");
 
 /***/ }),
 
+/***/ 134:
+/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __webpack_require__(470);
+
+// EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
+var exec = __webpack_require__(986);
+
+// EXTERNAL MODULE: ./node_modules/hosted-git-info/index.js
+var hosted_git_info = __webpack_require__(190);
+
+// CONCATENATED MODULE: ./lib/packageRepoUrls.js
+
+
+
+
+/**
+ * @type {Map<string, UrlInfo>}
+ */
+const cache = new Map();
+
+/**
+ * @param {string} packageName
+ * @returns {Promise<UrlInfo | null>}
+ */
+async function fetchUrl(packageName) {
+  const cached = cache.get(packageName);
+  if (cached) {
+    return cached;
+  }
+  let stdout = "";
+  let stderr = "";
+  try {
+    await Object(exec.exec)("npm", ["view", packageName, "repository.url"], {
+      listeners: {
+        stdout: (data) => {
+          stdout += data.toString();
+        },
+        stderr: (data) => {
+          stderr += data.toString();
+        },
+      },
+      silent: true,
+    });
+  } catch (err) {
+    // code E404 means the package does not exist on npm
+    // which means it is a file: or git: dependency
+    // We are fine with 404 errors, but not with any other errors
+    if (!stderr.includes("code E404")) {
+      throw new Error(stderr);
+    }
+  }
+  stdout = stdout.trim();
+  if (!stdout) {
+    Object(core.info)(`No repository URL for '${packageName}'`);
+    return null;
+  }
+  const url = Object(hosted_git_info.fromUrl)(stdout);
+  if (!url) {
+    Object(core.info)(`No repository URL for '${packageName}'`);
+    return null;
+  }
+  const urlInfo = { name: packageName, url: url.browse(), type: url.type };
+  cache.set(packageName, urlInfo);
+  return urlInfo;
+}
+
+/**
+ * @param {string[]} packageNames
+ * @returns {Promise<Record<string, UrlInfo>>}
+ */
+async function packageRepoUrls(packageNames) {
+  const allUrls = await Promise.all(packageNames.map(fetchUrl));
+
+  /**
+   * @type {Record<string, UrlInfo>}
+   */
+  const map = {};
+
+  for (const url of allUrls) {
+    if (url) {
+      map[url.name] = url;
+    }
+  }
+
+  return map;
+}
+
+// CONCATENATED MODULE: ./lib/utils/capitalize.js
+/**
+ * @param {string} str
+ * @returns {string}
+ */
+function capitalize(str) {
+  if (typeof str === "string") {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+  return "";
+}
+
+// CONCATENATED MODULE: ./lib/utils/semverToNumber.js
+/**
+ * @param {string} version
+ * @returns {number}
+ */
+function semverToNumber(version) {
+  return version
+    .split(".")
+    .slice(0, 3)
+    .reverse()
+    .map((str) => parseInt(str, 10))
+    .reduce((sum, num, idx) => {
+      const added = num * 10 ** (idx * 2) || 0;
+      return sum + added;
+    }, 0);
+}
+
+// CONCATENATED MODULE: ./lib/aggregateReport.js
+
+
+
+
+/**
+ * @param {{ name: string, version: string }} a
+ * @param {{ name: string, version: string }} b
+ * @returns {number}
+ */
+const byNameAndVersion = (a, b) => {
+  const res = a.name.localeCompare(b.name);
+  if (res > 0) {
+    return 1;
+  }
+  if (res < 0) {
+    return -1;
+  }
+  return semverToNumber(a.version) - semverToNumber(b.version);
+};
+
+async function aggregateReport(audit, beforePackages, afterPackages) {
+  /** @type {Report["added"]} */
+  const added = [];
+  afterPackages.forEach((version, name) => {
+    if (!beforePackages.has(name)) {
+      added.push({ name, version });
+    }
+  });
+  added.sort(byNameAndVersion);
+
+  /** @type {Report["removed"]} */
+  const removed = [];
+  beforePackages.forEach((version, name) => {
+    if (!afterPackages.has(name)) {
+      removed.push({ name, version });
+    }
+  });
+  removed.sort(byNameAndVersion);
+
+  /** @type {Report["updated"]} */
+  const updated = [];
+  afterPackages.forEach((version, name) => {
+    const previousVersion = beforePackages.get(name);
+    if (version !== previousVersion && previousVersion != null) {
+      const info = audit.get(name);
+      const severity = info == null ? null : capitalize(info.severity);
+      const title = info == null ? null : info.title;
+      const url = info == null ? null : info.url;
+      updated.push({ name, version, previousVersion, severity, title, url });
+    }
+  });
+  updated.sort(byNameAndVersion);
+
+  const allPackageNames = Array.from(
+    new Set([
+      ...added.map((e) => e.name),
+      ...updated.map((e) => e.name),
+      ...removed.map((e) => e.name),
+    ])
+  );
+  const packageCount = allPackageNames.length;
+  const packageUrls = await packageRepoUrls(allPackageNames);
+
+  return { added, removed, updated, packageCount, packageUrls };
+}
+
+// CONCATENATED MODULE: ./lib/npmArgs.js
+/**
+ * @param {string[]} args
+ */
+function npmArgs(...args) {
+  return [...args, "--ignore-scripts", "--no-progress"];
+}
+
+// CONCATENATED MODULE: ./lib/audit.js
+
+
+
+async function audit_audit(execFn = exec.exec) {
+  let report = "";
+  await execFn("npm", npmArgs("audit", "--json"), {
+    listeners: {
+      stdout: (data) => {
+        report += data.toString();
+      },
+    },
+    ignoreReturnCode: true,
+  });
+  const { vulnerabilities } = JSON.parse(report);
+
+  if (vulnerabilities != null && typeof vulnerabilities === "object") {
+    const map = /** @type {AuditReport} */ new Map();
+
+    Object.values(vulnerabilities).forEach(({ name, severity, via }) => {
+      if (Array.isArray(via)) {
+        const [viaFirst] = via;
+        if (typeof viaFirst.title === "string" && typeof viaFirst.url === "string") {
+          map.set(name, { name, severity, title: viaFirst.title, url: viaFirst.url });
+        } else if (typeof viaFirst === "string") {
+          // ignore
+        } else {
+          throw new Error(`"via" of "${name}" is invalid: ${JSON.stringify(via)}`);
+        }
+      } else {
+        throw new Error('"via" is not an array');
+      }
+    });
+
+    return map;
+  }
+
+  throw new Error('"vulnerabilities" is missing');
+}
+
+// CONCATENATED MODULE: ./lib/auditFix.js
+
+
+
+
+/* harmony default export */ var lib_auditFix = (async function auditFix() {
+  let error = "";
+  const returnCode = await Object(exec.exec)("npm", npmArgs("audit", "fix"), {
+    listeners: {
+      stderr: (data) => {
+        error += data.toString();
+      },
+    },
+    ignoreReturnCode: true,
+  });
+  if (error.includes("npm ERR!")) {
+    throw new Error("Unexpected error occurred");
+  }
+  if (returnCode !== 0) {
+    Object(core.warning)(error);
+  }
+});
+
+// CONCATENATED MODULE: ./lib/buildCommitBody.js
+function buildCommitBody(report) {
+  const lines = [];
+  lines.push("Summary:");
+  lines.push(`- Updated packages: ${report.updated.length}`);
+  lines.push(`- Added packages: ${report.added.length}`);
+  lines.push(`- Removed packages: ${report.removed.length}`);
+  lines.push("");
+
+  if (report.updated.length > 0) {
+    lines.push("Fixed vulnerabilities:");
+    report.updated.forEach(({ name, severity, title, url }) => {
+      if (severity != null && title != null && url != null) {
+        lines.push(`- ${name}: "${title}" (${url})`);
+      }
+    });
+  } else {
+    lines.push("No fixed vulnerabilities.");
+  }
+
+  return lines.map((line) => `${line}\n`).join("");
+}
+
+// CONCATENATED MODULE: ./lib/constants.js
+const PACKAGE_NAME = "ybiquitous/npm-audit-fix-action";
+const PACKAGE_URL = "https://github.com/ybiquitous/npm-audit-fix-action";
+const NPM_VERSION = "7";
+
+// CONCATENATED MODULE: ./lib/buildPullRequestBody.js
+
+
+const EMPTY = "-";
+
+function buildPullRequestBody(report, npmVersion) {
+  /**
+   * @param {string} name
+   * @param {string} version
+   */
+  const npmPackage = (name, version) =>
+    `[${name}](https://www.npmjs.com/package/${name}/v/${version})`;
+
+  /**
+   * @param {...string} items
+   */
+  const buildTableRow = (...items) => `| ${items.join(" | ")} |`;
+
+  /**
+   * @param {string} name
+   * @returns {string}
+   */
+  const repoLink = (name) => {
+    const url = report.packageUrls[name];
+    return url ? `[${url.type}](${url.url})` : EMPTY;
+  };
+
+  /**
+   * @param {string} version
+   * @returns {string}
+   */
+  const versionLabel = (version) => `\`${version}\``;
+
+  const header = [];
+  header.push("| Package | Version | Source | Detail |");
+  header.push("|:--------|:-------:|:------:|:-------|");
+
+  const lines = [];
+  lines.push(
+    `This pull request fixes the vulnerable packages via npm [${npmVersion}](https://github.com/npm/cli/releases/tag/v${npmVersion}).`
+  );
+
+  if (report.updated.length > 0) {
+    lines.push("");
+    lines.push("<details open>");
+    lines.push(`<summary><strong>Updated (${report.updated.length})</strong></summary>`);
+    lines.push("");
+    lines.push(...header);
+
+    report.updated.forEach(({ name, version, previousVersion, severity, title, url }) => {
+      let extra = EMPTY;
+      if (severity != null && title != null && url != null) {
+        extra = `**[${severity}]** ${title} ([ref](${url}))`;
+      }
+      lines.push(
+        buildTableRow(
+          npmPackage(name, version),
+          `${versionLabel(previousVersion)} → ${versionLabel(version)}`,
+          repoLink(name),
+          extra
+        )
+      );
+    });
+
+    lines.push("");
+    lines.push("</details>");
+  }
+  if (report.added.length > 0) {
+    lines.push("");
+    lines.push("<details open>");
+    lines.push(`<summary><strong>Added (${report.added.length})</strong></summary>`);
+    lines.push("");
+    lines.push(...header);
+
+    report.added.forEach(({ name, version }) => {
+      lines.push(
+        buildTableRow(npmPackage(name, version), versionLabel(version), repoLink(name), EMPTY)
+      );
+    });
+
+    lines.push("");
+    lines.push("</details>");
+  }
+  if (report.removed.length > 0) {
+    lines.push("");
+    lines.push("<details open>");
+    lines.push(`<summary><strong>Removed (${report.removed.length})</strong></summary>`);
+    lines.push("");
+    lines.push(...header);
+
+    report.removed.forEach(({ name, version }) => {
+      lines.push(
+        buildTableRow(npmPackage(name, version), versionLabel(version), repoLink(name), EMPTY)
+      );
+    });
+
+    lines.push("");
+    lines.push("</details>");
+  }
+  lines.push("");
+  lines.push("***");
+  lines.push("");
+  lines.push(`Created by [${PACKAGE_NAME}](${PACKAGE_URL})`);
+
+  return lines.join("\n").trim();
+}
+
+// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
+var github = __webpack_require__(469);
+
+// CONCATENATED MODULE: ./lib/utils/splitRepo.js
+/**
+ * @param {string} repository
+ * @returns {{ owner: string, repo: string }}
+ */
+function splitRepo(repository) {
+  const [owner, repo] = repository.split("/");
+  if (owner && repo) {
+    return { owner, repo };
+  }
+  throw new TypeError(`invalid repository: "${repository}"`);
+}
+
+// CONCATENATED MODULE: ./lib/createOrUpdatePullRequest.js
+
+
+
+
+
+/**
+ * @param {{
+ *   token: string,
+ *   branch: string,
+ *   baseBranch: string,
+ *   title: string,
+ *   pullBody: string,
+ *   commitBody: string,
+ *   repository: string,
+ *   author: string,
+ *   email: string,
+ *   labels: string[],
+ * }} params
+ */
+async function createOrUpdatePullRequest({
+  token,
+  branch,
+  baseBranch,
+  title,
+  pullBody,
+  commitBody,
+  repository,
+  author,
+  email,
+  labels,
+}) {
+  const remote = `https://${author}:${token}@github.com/${repository}.git`;
+  const { owner, repo } = splitRepo(repository);
+  const octokit = Object(github.getOctokit)(token);
+
+  // Find pull request
+  const pulls = await octokit.rest.pulls.list({
+    owner,
+    repo,
+    state: "open",
+    base: baseBranch,
+    sort: "updated",
+    direction: "desc",
+    per_page: 100,
+  });
+  const pull = pulls.data.find(({ head }) => head.ref === branch);
+
+  await Object(exec.exec)("git", ["config", "user.name", author]);
+  await Object(exec.exec)("git", ["config", "user.email", email]);
+  await Object(exec.exec)("git", ["add", "package-lock.json"]);
+  await Object(exec.exec)("git", ["commit", "--message", `${title}\n\n${commitBody}`]);
+  await Object(exec.exec)("git", ["checkout", "-B", branch]);
+  await Object(exec.exec)("git", ["push", remote, `HEAD:${branch}`, ...(pull ? ["--force"] : [])]);
+
+  if (pull) {
+    await octokit.rest.pulls.update({
+      owner,
+      repo,
+      pull_number: pull.number,
+      title,
+      body: pullBody,
+    });
+    Object(core.info)(`The pull request was updated successfully: ${pull.html_url}`);
+  } else {
+    const newPull = await octokit.rest.pulls.create({
+      owner,
+      repo,
+      title,
+      body: pullBody,
+      head: branch,
+      base: baseBranch,
+    });
+    Object(core.info)(`The pull request was created successfully: ${newPull.data.html_url}`);
+
+    const newLabels = await octokit.rest.issues.addLabels({
+      owner,
+      repo,
+      issue_number: newPull.data.number,
+      labels,
+    });
+    Object(core.info)(`The labels were added successfully: ${newLabels.data.map((l) => l.name).join(", ")}`);
+  }
+}
+
+// CONCATENATED MODULE: ./lib/getDefaultBranch.js
+
+
+
+/**
+ * @param {{token: string, repository: string}} params
+ * @returns {Promise<string>}
+ */
+async function getDefaultBranch({ token, repository }) {
+  const octokit = Object(github.getOctokit)(token);
+  const res = await octokit.rest.repos.get(splitRepo(repository));
+  return res.data.default_branch;
+}
+
+// CONCATENATED MODULE: ./lib/listPackages.js
+
+
+
+/**
+ * @param {import("@actions/exec").ExecOptions?} options
+ * @returns {Promise<Map<string, string>>}
+ */
+async function listPackages(options = {}) {
+  let lines = "";
+  let stderr = "";
+  const returnCode = await Object(exec.exec)("npm", npmArgs("ls", "--parseable", "--long", "--all"), {
+    listeners: {
+      stdout: (data) => {
+        lines += data.toString();
+      },
+      stderr: (data) => {
+        stderr += data.toString();
+      },
+    },
+    ignoreReturnCode: true,
+    ...options,
+  });
+
+  // NOTE: Ignore missing peer deps error.
+  if (returnCode !== 0 && !stderr.includes("npm ERR! missing:")) {
+    throw new Error(`"npm ls" failed`);
+  }
+
+  const packages = /** @type {Map<string, string>} */ new Map();
+  lines
+    .split("\n")
+    .filter((line) => line.trim())
+    .forEach((line) => {
+      const [, pkg] = line.split(":", 2);
+      if (pkg == null) {
+        throw new Error(`Invalid line: "${line}"`);
+      }
+      const match = /^(?<name>@?\S+)@(?<version>\S+)$/u.exec(pkg);
+      if (match == null || match.groups == null) {
+        return; // skip
+      }
+      /* eslint-disable dot-notation, prefer-destructuring -- Prevent TS4111 */
+      const name = match.groups["name"];
+      const version = match.groups["version"];
+      /* eslint-enable */
+      if (name == null || version == null) {
+        throw new Error(`Invalid name and version: "${line}"`);
+      }
+      packages.set(name.trim(), version.trim());
+    });
+
+  return packages;
+}
+
+// CONCATENATED MODULE: ./lib/updateNpm.js
+
+
+
+/**
+ * @param {string} version
+ */
+async function updateNpm(version) {
+  await Object(exec.exec)("sudo", ["npm", ...npmArgs("install", "--global", `npm@${version}`)]);
+
+  let actualVersion = "";
+  await Object(exec.exec)("npm", ["--version"], {
+    listeners: {
+      stdout: (data) => {
+        actualVersion += data.toString();
+      },
+    },
+  });
+
+  // HACK: Fix the error "npm update check failed".
+  // eslint-disable-next-line dot-notation -- Prevent TS4111
+  await Object(exec.exec)("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
+
+  return actualVersion.trim();
+}
+
+// CONCATENATED MODULE: ./lib/utils/commaSeparatedList.js
+/**
+ * @param {string} str
+ * @returns {string[]}
+ */
+function commaSeparatedList(str) {
+  return str
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+// CONCATENATED MODULE: ./lib/index.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * @returns {Promise<boolean>}
+ */
+async function filesChanged() {
+  try {
+    const exitCode = await Object(exec.exec)("git", ["diff", "--exit-code"]);
+    return exitCode === 0;
+  } catch (err) {
+    return false;
+  }
+}
+
+/**
+ * @param {string} name
+ * @returns {string}
+ */
+function getFromEnv(name) {
+  const value = process.env[name];
+  if (value) {
+    return value;
+  }
+  throw new Error(`Not found '${name}' in the environment variables`);
+}
+
+async function run() {
+  const npmVersion = await Object(core.group)(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
+
+  await Object(core.group)("Install user packages", async () => {
+    await Object(exec.exec)("npm", npmArgs("ci"));
+  });
+
+  const auditReport = await Object(core.group)("Get audit report", async () => {
+    const res = await audit_audit();
+    Object(core.info)(JSON.stringify(res, null, 2));
+    return res;
+  });
+
+  const beforePackages = await Object(core.group)("List packages before", () => listPackages());
+
+  await Object(core.group)("Fix vulnerabilities", () => lib_auditFix());
+
+  await Object(core.group)("Re-install user packages", async () => {
+    await Object(exec.exec)("npm", npmArgs("ci"));
+  });
+
+  const afterPackages = await Object(core.group)("List packages after", () => listPackages());
+
+  const report = await Object(core.group)("Aggregate report", () =>
+    aggregateReport(auditReport, beforePackages, afterPackages)
+  );
+
+  if (report.packageCount === 0) {
+    Object(core.info)("No update.");
+    return;
+  }
+
+  const changed = await Object(core.group)("Check file changes", filesChanged);
+  if (changed) {
+    Object(core.info)("No file changes.");
+    return;
+  }
+
+  await Object(core.group)("Create or update a pull request", async () => {
+    const token = Object(core.getInput)("github_token");
+    const repository = getFromEnv("GITHUB_REPOSITORY");
+    let baseBranch = Object(core.getInput)("default_branch");
+
+    if (!baseBranch) {
+      baseBranch = await getDefaultBranch({ token, repository });
+    }
+
+    const author = getFromEnv("GITHUB_ACTOR");
+    return createOrUpdatePullRequest({
+      branch: Object(core.getInput)("branch"),
+      token,
+      baseBranch,
+      title: Object(core.getInput)("commit_title"),
+      pullBody: buildPullRequestBody(report, npmVersion),
+      commitBody: buildCommitBody(report),
+      repository,
+      author,
+      email: `${author}@users.noreply.github.com`,
+      labels: commaSeparatedList(Object(core.getInput)("labels")),
+    });
+  });
+}
+
+run().catch((e) => Object(core.setFailed)(e.message));
+
+
+/***/ }),
+
 /***/ 141:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -1367,7 +2020,7 @@ module.exports = require("child_process");
 
 var net = __webpack_require__(631);
 var tls = __webpack_require__(16);
-var http = __webpack_require__(876);
+var http = __webpack_require__(605);
 var https = __webpack_require__(211);
 var events = __webpack_require__(614);
 var assert = __webpack_require__(357);
@@ -1638,7 +2291,7 @@ exports.debug = debug; // for test
 
 const url = __webpack_require__(835)
 const gitHosts = __webpack_require__(813)
-const GitHost = module.exports = __webpack_require__(982)
+const GitHost = module.exports = __webpack_require__(599)
 const LRU = __webpack_require__(702)
 const cache = new LRU({ max: 1000 })
 
@@ -1872,54 +2525,6 @@ const parseGitUrl = (giturl) => {
 
   return result
 }
-
-
-/***/ }),
-
-/***/ 193:
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-const { exec } = __webpack_require__(986);
-const npmArgs = __webpack_require__(510);
-
-/**
- * @param {string} version
- */
-module.exports = async function updateNpm(version) {
-  await exec("sudo", ["npm", ...npmArgs("install", "--global", `npm@${version}`)]);
-
-  let actualVersion = "";
-  await exec("npm", ["--version"], {
-    listeners: {
-      stdout: (data) => {
-        actualVersion += data.toString();
-      },
-    },
-  });
-
-  // HACK: Fix the error "npm update check failed".
-  // eslint-disable-next-line dot-notation -- Prevent TS4111
-  await exec("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
-
-  return actualVersion.trim();
-};
-
-
-/***/ }),
-
-/***/ 203:
-/***/ (function(module) {
-
-/**
- * @param {string} str
- * @returns {string}
- */
-module.exports = function capitalize(str) {
-  if (typeof str === "string") {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-  return "";
-};
 
 
 /***/ }),
@@ -2174,69 +2779,6 @@ exports.isPaginatingEndpoint = isPaginatingEndpoint;
 exports.paginateRest = paginateRest;
 exports.paginatingEndpoints = paginatingEndpoints;
 //# sourceMappingURL=index.js.map
-
-
-/***/ }),
-
-/***/ 302:
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-const { exec } = __webpack_require__(986);
-const npmArgs = __webpack_require__(510);
-
-/**
- * @param {import("@actions/exec").ExecOptions?} options
- * @returns {Promise<Map<string, string>>}
- */
-module.exports = async function listPackages(options = {}) {
-  let lines = "";
-  let stderr = "";
-  const returnCode = await exec("npm", npmArgs("ls", "--parseable", "--long", "--all"), {
-    listeners: {
-      stdout: (data) => {
-        lines += data.toString();
-      },
-      stderr: (data) => {
-        stderr += data.toString();
-      },
-    },
-    ignoreReturnCode: true,
-    ...options,
-  });
-
-  // NOTE: Ignore missing peer deps error.
-  if (returnCode !== 0 && !stderr.includes("npm ERR! missing:")) {
-    throw new Error(`"npm ls" failed`);
-  }
-
-  const packages = /** @type {Map<string, string>} */ new Map();
-  lines
-    .split("\n")
-    .filter((line) => line.trim())
-    .forEach((line) => {
-      const [, pkg] = line.split(":", 2);
-      if (pkg == null) {
-        throw new Error(`Invalid line: "${line}"`);
-      }
-
-      const match = /^(?<name>@?\S+)@(?<version>\S+)$/u.exec(pkg);
-      if (match == null || match.groups == null) {
-        return; // skip
-      }
-
-      /* eslint-disable dot-notation, prefer-destructuring -- Prevent TS4111 */
-      const name = match.groups["name"];
-      const version = match.groups["version"];
-      /* eslint-enable */
-
-      if (name == null || version == null) {
-        throw new Error(`Invalid name and version: "${line}"`);
-      }
-
-      packages.set(name.trim(), version.trim());
-    });
-  return packages;
-};
 
 
 /***/ }),
@@ -2662,91 +3204,6 @@ module.exports = function (Yallist) {
 
 /***/ }),
 
-/***/ 405:
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-const { info } = __webpack_require__(470);
-const { exec } = __webpack_require__(986);
-const hostedGitInfo = __webpack_require__(190);
-
-/**
- * @type {Map<string, UrlInfo>}
- */
-const cache = new Map();
-
-/**
- * @param {string} packageName
- * @returns {Promise<UrlInfo | null>}
- */
-async function fetchUrl(packageName) {
-  const cached = cache.get(packageName);
-  if (cached) {
-    return cached;
-  }
-
-  let stdout = "";
-  let stderr = "";
-  try {
-    await exec("npm", ["view", packageName, "repository.url"], {
-      listeners: {
-        stdout: (data) => {
-          stdout += data.toString();
-        },
-        stderr: (data) => {
-          stderr += data.toString();
-        },
-      },
-      silent: true,
-    });
-  } catch (err) {
-    // code E404 means the package does not exist on npm
-    // which means it is a file: or git: dependency
-    // We are fine with 404 errors, but not with any other errors
-    if (!stderr.includes("code E404")) {
-      throw new Error(stderr);
-    }
-  }
-  stdout = stdout.trim();
-
-  if (!stdout) {
-    info(`No repository URL for '${packageName}'`);
-    return null;
-  }
-
-  const url = hostedGitInfo.fromUrl(stdout);
-  if (!url) {
-    info(`No repository URL for '${packageName}'`);
-    return null;
-  }
-  const urlInfo = { name: packageName, url: url.browse(), type: url.type };
-
-  cache.set(packageName, urlInfo);
-
-  return urlInfo;
-}
-
-/**
- * @param {string[]} packageNames
- * @returns {Promise<Record<string, UrlInfo>>}
- */
-module.exports = async function packageRepoUrls(packageNames) {
-  const allUrls = await Promise.all(packageNames.map(fetchUrl));
-
-  /**
-   * @type {Record<string, UrlInfo>}
-   */
-  const map = {};
-  for (const url of allUrls) {
-    if (url) {
-      map[url.name] = url;
-    }
-  }
-  return map;
-};
-
-
-/***/ }),
-
 /***/ 413:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -3048,7 +3505,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var Stream = _interopDefault(__webpack_require__(794));
-var http = _interopDefault(__webpack_require__(876));
+var http = _interopDefault(__webpack_require__(605));
 var Url = _interopDefault(__webpack_require__(835));
 var https = _interopDefault(__webpack_require__(211));
 var zlib = _interopDefault(__webpack_require__(761));
@@ -4694,24 +5151,6 @@ exports.FetchError = FetchError;
 
 /***/ }),
 
-/***/ 461:
-/***/ (function(module) {
-
-/**
- * @param {string} repository
- * @returns {{ owner: string, repo: string }}
- */
-module.exports = function splitRepo(repository) {
-  const [owner, repo] = repository.split("/");
-  if (owner && repo) {
-    return { owner, repo };
-  }
-  throw new TypeError(`invalid repository: "${repository}"`);
-};
-
-
-/***/ }),
-
 /***/ 463:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -5107,12 +5546,52 @@ exports.getState = getState;
 /***/ 510:
 /***/ (function(module) {
 
-/**
- * @param {string[]} args
- */
-module.exports = function npmArgs(...args) {
-  return [...args, "--ignore-scripts", "--no-progress"];
-};
+module.exports = addHook;
+
+function addHook(state, kind, name, hook) {
+  var orig = hook;
+  if (!state.registry[name]) {
+    state.registry[name] = [];
+  }
+
+  if (kind === "before") {
+    hook = function (method, options) {
+      return Promise.resolve()
+        .then(orig.bind(null, options))
+        .then(method.bind(null, options));
+    };
+  }
+
+  if (kind === "after") {
+    hook = function (method, options) {
+      var result;
+      return Promise.resolve()
+        .then(method.bind(null, options))
+        .then(function (result_) {
+          result = result_;
+          return orig(result, options);
+        })
+        .then(function () {
+          return result;
+        });
+    };
+  }
+
+  if (kind === "error") {
+    hook = function (method, options) {
+      return Promise.resolve()
+        .then(method.bind(null, options))
+        .catch(function (error) {
+          return orig(error, options);
+        });
+    };
+  }
+
+  state.registry[name].push({
+    hook: hook,
+    orig: orig,
+  });
+}
 
 
 /***/ }),
@@ -5182,7 +5661,7 @@ exports.getOctokitOptions = getOctokitOptions;
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
 var register = __webpack_require__(280)
-var addHook = __webpack_require__(838)
+var addHook = __webpack_require__(510)
 var removeHook = __webpack_require__(866)
 
 // bind with array of arguments: https://stackoverflow.com/a/21792913
@@ -5242,124 +5721,13 @@ module.exports.Collection = Hook.Collection
 
 /***/ }),
 
-/***/ 526:
-/***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
-
-const core = __webpack_require__(470);
-const { exec } = __webpack_require__(986);
-
-const { NPM_VERSION } = __webpack_require__(32);
-const audit = __webpack_require__(50);
-const auditFix = __webpack_require__(905);
-const npmArgs = __webpack_require__(510);
-const updateNpm = __webpack_require__(193);
-const listPackages = __webpack_require__(302);
-const aggregateReport = __webpack_require__(599);
-const buildPullRequestBody = __webpack_require__(603);
-const buildCommitBody = __webpack_require__(605);
-const createOrUpdatePullRequest = __webpack_require__(583);
-const getDefaultBranch = __webpack_require__(686);
-const commaSeparatedList = __webpack_require__(604);
-
-/**
- * @returns {Promise<boolean>}
- */
-async function filesChanged() {
-  try {
-    const exitCode = await exec("git", ["diff", "--exit-code"]);
-    return exitCode === 0;
-  } catch (err) {
-    return false;
-  }
-}
-
-/**
- * @param {string} name
- * @returns {string}
- */
-function getFromEnv(name) {
-  const value = process.env[name];
-  if (value) {
-    return value;
-  }
-  throw new Error(`Not found '${name}' in the environment variables`);
-}
-
-async function run() {
-  const npmVersion = await core.group(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
-
-  await core.group("Install user packages", async () => {
-    await exec("npm", npmArgs("ci"));
-  });
-
-  const auditReport = await core.group("Get audit report", async () => {
-    const res = await audit();
-    core.info(JSON.stringify(res, null, 2));
-    return res;
-  });
-
-  const beforePackages = await core.group("List packages before", () => listPackages());
-
-  await core.group("Fix vulnerabilities", () => auditFix());
-
-  await core.group("Re-install user packages", async () => {
-    await exec("npm", npmArgs("ci"));
-  });
-
-  const afterPackages = await core.group("List packages after", () => listPackages());
-
-  const report = await core.group("Aggregate report", () =>
-    aggregateReport(auditReport, beforePackages, afterPackages)
-  );
-
-  if (report.packageCount === 0) {
-    core.info("No update.");
-    return;
-  }
-
-  const changed = await core.group("Check file changes", filesChanged);
-  if (changed) {
-    core.info("No file changes.");
-    return;
-  }
-
-  await core.group("Create or update a pull request", async () => {
-    const token = core.getInput("github_token");
-    const repository = getFromEnv("GITHUB_REPOSITORY");
-
-    let baseBranch = core.getInput("default_branch");
-    if (!baseBranch) {
-      baseBranch = await getDefaultBranch({ token, repository });
-    }
-
-    const author = getFromEnv("GITHUB_ACTOR");
-    return createOrUpdatePullRequest({
-      branch: core.getInput("branch"),
-      token,
-      baseBranch,
-      title: core.getInput("commit_title"),
-      pullBody: buildPullRequestBody(report, npmVersion),
-      commitBody: buildCommitBody(report),
-      repository,
-      author,
-      email: `${author}@users.noreply.github.com`,
-      labels: commaSeparatedList(core.getInput("labels")),
-    });
-  });
-}
-
-run().catch((e) => core.setFailed(e.message));
-
-
-/***/ }),
-
 /***/ 539:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const http = __webpack_require__(876);
+const http = __webpack_require__(605);
 const https = __webpack_require__(211);
 const pm = __webpack_require__(950);
 let tunnel;
@@ -5898,303 +6266,120 @@ exports.HttpClient = HttpClient;
 
 /***/ }),
 
-/***/ 583:
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-const { info } = __webpack_require__(470);
-const { exec } = __webpack_require__(986);
-const github = __webpack_require__(469);
-const splitRepo = __webpack_require__(461);
-
-/**
- * @param {{
- *   token: string,
- *   branch: string,
- *   baseBranch: string,
- *   title: string,
- *   pullBody: string,
- *   commitBody: string,
- *   repository: string,
- *   author: string,
- *   email: string,
- *   labels: string[],
- * }} params
- */
-module.exports = async function createOrUpdatePullRequest({
-  token,
-  branch,
-  baseBranch,
-  title,
-  pullBody,
-  commitBody,
-  repository,
-  author,
-  email,
-  labels,
-}) {
-  const remote = `https://${author}:${token}@github.com/${repository}.git`;
-  const { owner, repo } = splitRepo(repository);
-  const octokit = github.getOctokit(token);
-
-  // Find pull request
-  const pulls = await octokit.rest.pulls.list({
-    owner,
-    repo,
-    state: "open",
-    base: baseBranch,
-    sort: "updated",
-    direction: "desc",
-    per_page: 100,
-  });
-  const pull = pulls.data.find(({ head }) => head.ref === branch);
-
-  await exec("git", ["config", "user.name", author]);
-  await exec("git", ["config", "user.email", email]);
-  await exec("git", ["add", "package-lock.json"]);
-  await exec("git", ["commit", "--message", `${title}\n\n${commitBody}`]);
-  await exec("git", ["checkout", "-B", branch]);
-  await exec("git", ["push", remote, `HEAD:${branch}`, ...(pull ? ["--force"] : [])]);
-
-  if (pull) {
-    await octokit.rest.pulls.update({
-      owner,
-      repo,
-      pull_number: pull.number,
-      title,
-      body: pullBody,
-    });
-    info(`The pull request was updated successfully: ${pull.html_url}`);
-  } else {
-    const newPull = await octokit.rest.pulls.create({
-      owner,
-      repo,
-      title,
-      body: pullBody,
-      head: branch,
-      base: baseBranch,
-    });
-    info(`The pull request was created successfully: ${newPull.data.html_url}`);
-
-    const newLabels = await octokit.rest.issues.addLabels({
-      owner,
-      repo,
-      issue_number: newPull.data.number,
-      labels,
-    });
-    info(`The labels were added successfully: ${newLabels.data.map((l) => l.name).join(", ")}`);
-  }
-};
-
-
-/***/ }),
-
 /***/ 599:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
-const capitalize = __webpack_require__(203);
-const semverToNumber = __webpack_require__(915);
-const packageRepoUrls = __webpack_require__(405);
+"use strict";
 
-/**
- * @param {{ name: string, version: string }} a
- * @param {{ name: string, version: string }} b
- * @returns {number}
- */
-const byNameAndVersion = (a, b) => {
-  const res = a.name.localeCompare(b.name);
-  if (res > 0) {
-    return 1;
+const gitHosts = __webpack_require__(813)
+
+class GitHost {
+  constructor (type, user, auth, project, committish, defaultRepresentation, opts = {}) {
+    Object.assign(this, gitHosts[type])
+    this.type = type
+    this.user = user
+    this.auth = auth
+    this.project = project
+    this.committish = committish
+    this.default = defaultRepresentation
+    this.opts = opts
   }
-  if (res < 0) {
-    return -1;
+
+  hash () {
+    return this.committish ? `#${this.committish}` : ''
   }
-  return semverToNumber(a.version) - semverToNumber(b.version);
-};
 
-/**
- * @param {AuditReport} audit
- * @param {Map<string, string>} beforePackages
- * @param {Map<string, string>} afterPackages
- * @returns {Promise<Report>}
- */
-module.exports = async function aggregateReport(audit, beforePackages, afterPackages) {
-  /** @type {Report["added"]} */
-  const added = [];
-  afterPackages.forEach((version, name) => {
-    if (!beforePackages.has(name)) {
-      added.push({ name, version });
-    }
-  });
-  added.sort(byNameAndVersion);
+  ssh (opts) {
+    return this._fill(this.sshtemplate, opts)
+  }
 
-  /** @type {Report["removed"]} */
-  const removed = [];
-  beforePackages.forEach((version, name) => {
-    if (!afterPackages.has(name)) {
-      removed.push({ name, version });
-    }
-  });
-  removed.sort(byNameAndVersion);
+  _fill (template, opts) {
+    if (typeof template === 'function') {
+      const options = { ...this, ...this.opts, ...opts }
 
-  /** @type {Report["updated"]} */
-  const updated = [];
-  afterPackages.forEach((version, name) => {
-    const previousVersion = beforePackages.get(name);
-    if (version !== previousVersion && previousVersion != null) {
-      const info = audit.get(name);
-      const severity = info == null ? null : capitalize(info.severity);
-      const title = info == null ? null : info.title;
-      const url = info == null ? null : info.url;
-      updated.push({ name, version, previousVersion, severity, title, url });
-    }
-  });
-  updated.sort(byNameAndVersion);
-
-  const allPackageNames = Array.from(
-    new Set([
-      ...added.map((e) => e.name),
-      ...updated.map((e) => e.name),
-      ...removed.map((e) => e.name),
-    ])
-  );
-  const packageCount = allPackageNames.length;
-  const packageUrls = await packageRepoUrls(allPackageNames);
-
-  return { added, removed, updated, packageCount, packageUrls };
-};
-
-
-/***/ }),
-
-/***/ 603:
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-const { PACKAGE_NAME, PACKAGE_URL } = __webpack_require__(32);
-
-const EMPTY = "-";
-
-/**
- * @param {Report} report
- * @param {string} npmVersion
- * @returns {string}
- */
-module.exports = function buildPullRequestBody(report, npmVersion) {
-  /**
-   * @param {string} name
-   * @param {string} version
-   */
-  const npmPackage = (name, version) =>
-    `[${name}](https://www.npmjs.com/package/${name}/v/${version})`;
-
-  /**
-   * @param {...string} items
-   */
-  const buildTableRow = (...items) => `| ${items.join(" | ")} |`;
-
-  /**
-   * @param {string} name
-   * @returns {string}
-   */
-  const repoLink = (name) => {
-    const url = report.packageUrls[name];
-    return url ? `[${url.type}](${url.url})` : EMPTY;
-  };
-
-  /**
-   * @param {string} version
-   * @returns {string}
-   */
-  const versionLabel = (version) => `\`${version}\``;
-
-  const header = [];
-  header.push("| Package | Version | Source | Detail |");
-  header.push("|:--------|:-------:|:------:|:-------|");
-
-  const lines = [];
-  lines.push(
-    `This pull request fixes the vulnerable packages via npm [${npmVersion}](https://github.com/npm/cli/releases/tag/v${npmVersion}).`
-  );
-
-  if (report.updated.length > 0) {
-    lines.push("");
-    lines.push("<details open>");
-    lines.push(`<summary><strong>Updated (${report.updated.length})</strong></summary>`);
-    lines.push("");
-    lines.push(...header);
-
-    report.updated.forEach(({ name, version, previousVersion, severity, title, url }) => {
-      let extra = EMPTY;
-      if (severity != null && title != null && url != null) {
-        extra = `**[${severity}]** ${title} ([ref](${url}))`;
+      // the path should always be set so we don't end up with 'undefined' in urls
+      if (!options.path) {
+        options.path = ''
       }
-      lines.push(
-        buildTableRow(
-          npmPackage(name, version),
-          `${versionLabel(previousVersion)} → ${versionLabel(version)}`,
-          repoLink(name),
-          extra
-        )
-      );
-    });
 
-    lines.push("");
-    lines.push("</details>");
+      // template functions will insert the leading slash themselves
+      if (options.path.startsWith('/')) {
+        options.path = options.path.slice(1)
+      }
+
+      if (options.noCommittish) {
+        options.committish = null
+      }
+
+      const result = template(options)
+      return options.noGitPlus && result.startsWith('git+') ? result.slice(4) : result
+    }
+
+    return null
   }
 
-  if (report.added.length > 0) {
-    lines.push("");
-    lines.push("<details open>");
-    lines.push(`<summary><strong>Added (${report.added.length})</strong></summary>`);
-    lines.push("");
-    lines.push(...header);
-    report.added.forEach(({ name, version }) => {
-      lines.push(
-        buildTableRow(npmPackage(name, version), versionLabel(version), repoLink(name), EMPTY)
-      );
-    });
-    lines.push("");
-    lines.push("</details>");
+  sshurl (opts) {
+    return this._fill(this.sshurltemplate, opts)
   }
 
-  if (report.removed.length > 0) {
-    lines.push("");
-    lines.push("<details open>");
-    lines.push(`<summary><strong>Removed (${report.removed.length})</strong></summary>`);
-    lines.push("");
-    lines.push(...header);
-    report.removed.forEach(({ name, version }) => {
-      lines.push(
-        buildTableRow(npmPackage(name, version), versionLabel(version), repoLink(name), EMPTY)
-      );
-    });
-    lines.push("");
-    lines.push("</details>");
+  browse (path, fragment, opts) {
+    // not a string, treat path as opts
+    if (typeof path !== 'string') {
+      return this._fill(this.browsetemplate, path)
+    }
+
+    if (typeof fragment !== 'string') {
+      opts = fragment
+      fragment = null
+    }
+    return this._fill(this.browsefiletemplate, { ...opts, fragment, path })
   }
 
-  lines.push("");
-  lines.push("***");
-  lines.push("");
-  lines.push(`Created by [${PACKAGE_NAME}](${PACKAGE_URL})`);
+  docs (opts) {
+    return this._fill(this.docstemplate, opts)
+  }
 
-  return lines.join("\n").trim();
-};
+  bugs (opts) {
+    return this._fill(this.bugstemplate, opts)
+  }
 
+  https (opts) {
+    return this._fill(this.httpstemplate, opts)
+  }
 
-/***/ }),
+  git (opts) {
+    return this._fill(this.gittemplate, opts)
+  }
 
-/***/ 604:
-/***/ (function(module) {
+  shortcut (opts) {
+    return this._fill(this.shortcuttemplate, opts)
+  }
 
-/**
- * @param {string} str
- * @returns {string[]}
- */
-module.exports = function commaSeparatedList(str) {
-  return str
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
-};
+  path (opts) {
+    return this._fill(this.pathtemplate, opts)
+  }
+
+  tarball (opts) {
+    return this._fill(this.tarballtemplate, { ...opts, noCommittish: false })
+  }
+
+  file (path, opts) {
+    return this._fill(this.filetemplate, { ...opts, path })
+  }
+
+  getDefaultRepresentation () {
+    return this.default
+  }
+
+  toString (opts) {
+    if (this.default && typeof this[this.default] === 'function') {
+      return this[this.default](opts)
+    }
+
+    return this.sshurl(opts)
+  }
+}
+module.exports = GitHost
 
 
 /***/ }),
@@ -6202,33 +6387,7 @@ module.exports = function commaSeparatedList(str) {
 /***/ 605:
 /***/ (function(module) {
 
-/**
- * @param {Report} report
- * @returns {string}
- */
-module.exports = function buildCommitBody(report) {
-  const lines = [];
-
-  lines.push("Summary:");
-  lines.push(`- Updated packages: ${report.updated.length}`);
-  lines.push(`- Added packages: ${report.added.length}`);
-  lines.push(`- Removed packages: ${report.removed.length}`);
-
-  lines.push("");
-  if (report.updated.length > 0) {
-    lines.push("Fixed vulnerabilities:");
-    report.updated.forEach(({ name, severity, title, url }) => {
-      if (severity != null && title != null && url != null) {
-        lines.push(`- ${name}: "${title}" (${url})`);
-      }
-    });
-  } else {
-    lines.push("No fixed vulnerabilities.");
-  }
-
-  return lines.map((line) => `${line}\n`).join("");
-};
-
+module.exports = require("http");
 
 /***/ }),
 
@@ -6893,25 +7052,6 @@ function isUnixExecutable(stats) {
         ((stats.mode & 64) > 0 && stats.uid === process.getuid()));
 }
 //# sourceMappingURL=io-util.js.map
-
-/***/ }),
-
-/***/ 686:
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-const github = __webpack_require__(469);
-const splitRepo = __webpack_require__(461);
-
-/**
- * @param {{token: string, repository: string}} params
- * @returns {Promise<string>}
- */
-module.exports = async function getDefaultBranch({ token, repository }) {
-  const octokit = github.getOctokit(token);
-  const res = await octokit.rest.repos.get(splitRepo(repository));
-  return res.data.default_branch;
-};
-
 
 /***/ }),
 
@@ -7702,59 +7842,6 @@ module.exports = gitHosts
 /***/ (function(module) {
 
 module.exports = require("url");
-
-/***/ }),
-
-/***/ 838:
-/***/ (function(module) {
-
-module.exports = addHook;
-
-function addHook(state, kind, name, hook) {
-  var orig = hook;
-  if (!state.registry[name]) {
-    state.registry[name] = [];
-  }
-
-  if (kind === "before") {
-    hook = function (method, options) {
-      return Promise.resolve()
-        .then(orig.bind(null, options))
-        .then(method.bind(null, options));
-    };
-  }
-
-  if (kind === "after") {
-    hook = function (method, options) {
-      var result;
-      return Promise.resolve()
-        .then(method.bind(null, options))
-        .then(function (result_) {
-          result = result_;
-          return orig(result, options);
-        })
-        .then(function () {
-          return result;
-        });
-    };
-  }
-
-  if (kind === "error") {
-    hook = function (method, options) {
-      return Promise.resolve()
-        .then(method.bind(null, options))
-        .catch(function (error) {
-          return orig(error, options);
-        });
-    };
-  }
-
-  state.registry[name].push({
-    hook: hook,
-    orig: orig,
-  });
-}
-
 
 /***/ }),
 
@@ -9030,13 +9117,6 @@ function removeHook(state, name, method) {
 
 /***/ }),
 
-/***/ 876:
-/***/ (function(module) {
-
-module.exports = require("http");
-
-/***/ }),
-
 /***/ 898:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -9161,59 +9241,6 @@ exports.withCustomRequest = withCustomRequest;
 
 /***/ }),
 
-/***/ 905:
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-const { warning } = __webpack_require__(470);
-const { exec } = __webpack_require__(986);
-const npmArgs = __webpack_require__(510);
-
-module.exports = async function auditFix() {
-  let error = "";
-
-  const returnCode = await exec("npm", npmArgs("audit", "fix"), {
-    listeners: {
-      stderr: (data) => {
-        error += data.toString();
-      },
-    },
-    ignoreReturnCode: true,
-  });
-
-  if (error.includes("npm ERR!")) {
-    throw new Error("Unexpected error occurred");
-  }
-
-  if (returnCode !== 0) {
-    warning(error);
-  }
-};
-
-
-/***/ }),
-
-/***/ 915:
-/***/ (function(module) {
-
-/**
- * @param {string} version
- * @returns {number}
- */
-module.exports = function semverToNumber(version) {
-  return version
-    .split(".")
-    .slice(0, 3)
-    .reverse()
-    .map((str) => parseInt(str, 10))
-    .reduce((sum, num, idx) => {
-      const added = num * 10 ** (idx * 2) || 0;
-      return sum + added;
-    }, 0);
-};
-
-
-/***/ }),
-
 /***/ 950:
 /***/ (function(__unusedmodule, exports) {
 
@@ -9279,124 +9306,6 @@ exports.checkBypass = checkBypass;
 
 /***/ }),
 
-/***/ 982:
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-"use strict";
-
-const gitHosts = __webpack_require__(813)
-
-class GitHost {
-  constructor (type, user, auth, project, committish, defaultRepresentation, opts = {}) {
-    Object.assign(this, gitHosts[type])
-    this.type = type
-    this.user = user
-    this.auth = auth
-    this.project = project
-    this.committish = committish
-    this.default = defaultRepresentation
-    this.opts = opts
-  }
-
-  hash () {
-    return this.committish ? `#${this.committish}` : ''
-  }
-
-  ssh (opts) {
-    return this._fill(this.sshtemplate, opts)
-  }
-
-  _fill (template, opts) {
-    if (typeof template === 'function') {
-      const options = { ...this, ...this.opts, ...opts }
-
-      // the path should always be set so we don't end up with 'undefined' in urls
-      if (!options.path) {
-        options.path = ''
-      }
-
-      // template functions will insert the leading slash themselves
-      if (options.path.startsWith('/')) {
-        options.path = options.path.slice(1)
-      }
-
-      if (options.noCommittish) {
-        options.committish = null
-      }
-
-      const result = template(options)
-      return options.noGitPlus && result.startsWith('git+') ? result.slice(4) : result
-    }
-
-    return null
-  }
-
-  sshurl (opts) {
-    return this._fill(this.sshurltemplate, opts)
-  }
-
-  browse (path, fragment, opts) {
-    // not a string, treat path as opts
-    if (typeof path !== 'string') {
-      return this._fill(this.browsetemplate, path)
-    }
-
-    if (typeof fragment !== 'string') {
-      opts = fragment
-      fragment = null
-    }
-    return this._fill(this.browsefiletemplate, { ...opts, fragment, path })
-  }
-
-  docs (opts) {
-    return this._fill(this.docstemplate, opts)
-  }
-
-  bugs (opts) {
-    return this._fill(this.bugstemplate, opts)
-  }
-
-  https (opts) {
-    return this._fill(this.httpstemplate, opts)
-  }
-
-  git (opts) {
-    return this._fill(this.gittemplate, opts)
-  }
-
-  shortcut (opts) {
-    return this._fill(this.shortcuttemplate, opts)
-  }
-
-  path (opts) {
-    return this._fill(this.pathtemplate, opts)
-  }
-
-  tarball (opts) {
-    return this._fill(this.tarballtemplate, { ...opts, noCommittish: false })
-  }
-
-  file (path, opts) {
-    return this._fill(this.filetemplate, { ...opts, path })
-  }
-
-  getDefaultRepresentation () {
-    return this.default
-  }
-
-  toString (opts) {
-    if (this.default && typeof this[this.default] === 'function') {
-      return this[this.default](opts)
-    }
-
-    return this.sshurl(opts)
-  }
-}
-module.exports = GitHost
-
-
-/***/ }),
-
 /***/ 986:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -9448,4 +9357,62 @@ exports.exec = exec;
 
 /***/ })
 
-/******/ });
+/******/ },
+/******/ function(__webpack_require__) { // webpackRuntimeModules
+/******/ 	"use strict";
+/******/ 
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	!function() {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = function(exports) {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getter */
+/******/ 	!function() {
+/******/ 		// define getter function for harmony exports
+/******/ 		var hasOwnProperty = Object.prototype.hasOwnProperty;
+/******/ 		__webpack_require__.d = function(exports, name, getter) {
+/******/ 			if(!hasOwnProperty.call(exports, name)) {
+/******/ 				Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 			}
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/create fake namespace object */
+/******/ 	!function() {
+/******/ 		// create a fake namespace object
+/******/ 		// mode & 1: value is a module id, require it
+/******/ 		// mode & 2: merge all properties of value into the ns
+/******/ 		// mode & 4: return value when already ns object
+/******/ 		// mode & 8|1: behave like require
+/******/ 		__webpack_require__.t = function(value, mode) {
+/******/ 			if(mode & 1) value = this(value);
+/******/ 			if(mode & 8) return value;
+/******/ 			if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 			var ns = Object.create(null);
+/******/ 			__webpack_require__.r(ns);
+/******/ 			Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 			if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 			return ns;
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	!function() {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = function(module) {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				function getDefault() { return module['default']; } :
+/******/ 				function getModuleExports() { return module; };
+/******/ 			__webpack_require__.d(getter, 'a', getter);
+/******/ 			return getter;
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ }
+);
