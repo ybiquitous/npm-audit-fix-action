@@ -1447,6 +1447,12 @@ const byNameAndVersion = (a, b) => {
   return semverToNumber(a.version) - semverToNumber(b.version);
 };
 
+/**
+ * @param {AuditReport} audit
+ * @param {Map<string, string>} beforePackages
+ * @param {Map<string, string>} afterPackages
+ * @returns {Promise<Report>}
+ */
 async function aggregateReport(audit, beforePackages, afterPackages) {
   /** @type {Report["added"]} */
   const added = [];
