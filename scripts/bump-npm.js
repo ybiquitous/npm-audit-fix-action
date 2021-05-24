@@ -1,7 +1,9 @@
-const { execFileSync } = require("child_process");
-const { readFileSync, writeFileSync } = require("fs");
-const { basename } = require("path");
-const pkg = require("../package.json");
+import { execFileSync } from "child_process";
+import { readFileSync, writeFileSync } from "fs";
+import { basename } from "path";
+
+// @ts-expect-error
+const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
 
 const [main, sub, newVersion] = process.argv;
 if (!newVersion) {
