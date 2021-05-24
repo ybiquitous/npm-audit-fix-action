@@ -35,8 +35,7 @@
     "prerelease": "git switch main && git pull && npm ci && npm run clean && npm test && npm run lint && npm run clean",
     "release": "standard-version",
     "release:dry-run": "standard-version --dry-run",
-    "clean": "git clean -dx --force --exclude=node_modules --exclude=.husky",
-    "bump:npm": "node scripts/bump-npm.js"
+    "clean": "git clean -dx --force --exclude=node_modules --exclude=.husky"
   },
   "dependencies": {
     "@actions/core": "^1.3.0",
