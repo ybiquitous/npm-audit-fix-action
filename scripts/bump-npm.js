@@ -1,7 +1,9 @@
 import { execFileSync } from "child_process";
 import { readFileSync, writeFileSync } from "fs";
 import { basename } from "path";
-import * as pkg from "../package.json";
+
+// @ts-expect-error
+const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
 
 const [main, sub, newVersion] = process.argv;
 if (!newVersion) {
