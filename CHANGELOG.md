@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.2.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.1.6...v3.2.0) (2021-05-24)
+
+### Features
+
+- migrate to ESM ([#417](https://github.com/ybiquitous/npm-audit-fix-action/issues/417)) ([625c6d7](https://github.com/ybiquitous/npm-audit-fix-action/commit/625c6d7b609a9dcf3c15b5d2c49edaa520e01857))
+
+### Bug Fixes
+
+- output warning when `npm audit fix` returns non-zero ([#415](https://github.com/ybiquitous/npm-audit-fix-action/issues/415)) ([9480f3a](https://github.com/ybiquitous/npm-audit-fix-action/commit/9480f3a2f633fe4ba29d0abb55cce851b501980a)), closes [#410](https://github.com/ybiquitous/npm-audit-fix-action/issues/410)
+
 ### [3.1.6](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.1.5...v3.1.6) (2021-05-18)
 
 ### Bug Fixes
