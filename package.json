@@ -48,7 +48,7 @@
     "@types/jest": "^26.0.23",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
     "@zeit/ncc": "^0.22.3",
-    "eslint": "^7.27.0",
+    "eslint": "^7.28.0",
     "eslint-config-ybiquitous": "^14.0.1",
     "eslint-plugin-jest": "^24.3.6",
     "jest": "^27.0.3",
