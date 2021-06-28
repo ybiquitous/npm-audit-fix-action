@@ -47,7 +47,7 @@
   "devDependencies": {
     "@types/hosted-git-info": "^3.0.1",
     "@types/jest": "^26.0.23",
-    "@typescript-eslint/eslint-plugin": "^4.28.0",
+    "@typescript-eslint/eslint-plugin": "^4.28.1",
     "@zeit/ncc": "^0.22.3",
     "eslint": "^7.29.0",
     "eslint-config-ybiquitous": "^14.0.1",
