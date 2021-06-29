@@ -29,17 +29,19 @@ type AuditFix = {
 
 type UrlInfo = { name: string; url: string; type: string };
 
+type PackageInfo = { name: string; version: string; location: string | null };
+
 type Report = {
-  added: Array<{ name: string; version: string }>;
-  removed: Array<{ name: string; version: string }>;
-  updated: Array<{
-    name: string;
-    version: string;
-    previousVersion: string;
-    severity: string | null;
-    title: string | null;
-    url: string | null;
-  }>;
+  added: Array<PackageInfo>;
+  removed: Array<PackageInfo>;
+  updated: Array<
+    PackageInfo & {
+      previousVersion: string;
+      severity: string | null;
+      title: string | null;
+      url: string | null;
+    }
+  >;
   packageCount: number;
   packageUrls: Record<string, UrlInfo>;
 };

@@ -4,16 +4,22 @@ exports[`aggregateReport() 1`] = `
 Object {
   "added": Array [
     Object {
+      "location": null,
       "name": "arrify",
       "version": "2.0.1",
     },
   ],
-  "packageCount": 3,
+  "packageCount": 4,
   "packageUrls": Object {
     "arrify": Object {
       "name": "arrify",
       "type": "github",
       "url": "https://github.com/sindresorhus/arrify",
+    },
+    "css-select": Object {
+      "name": "css-select",
+      "type": "github",
+      "url": "https://github.com/fb55/css-select",
     },
     "xmldom": Object {
       "name": "xmldom",
@@ -28,12 +34,19 @@ Object {
   },
   "removed": Array [
     Object {
+      "location": "svgo/node_modules/css-select",
+      "name": "css-select",
+      "version": "3.1.2",
+    },
+    Object {
+      "location": null,
       "name": "xmldom",
       "version": "0.5.0",
     },
   ],
   "updated": Array [
     Object {
+      "location": null,
       "name": "y18n",
       "previousVersion": "4.0.0",
       "severity": "High",

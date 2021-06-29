@@ -40,7 +40,7 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(134);
+/******/ 		return __webpack_require__(897);
 /******/ 	};
 /******/ 	// initialize runtime
 /******/ 	runtime(__webpack_require__);
@@ -1317,744 +1317,6 @@ exports.getApiBaseUrl = getApiBaseUrl;
 /***/ (function(module) {
 
 module.exports = require("child_process");
-
-/***/ }),
-
-/***/ 134:
-/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
-var core = __webpack_require__(470);
-
-// EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
-var exec = __webpack_require__(986);
-
-// EXTERNAL MODULE: ./node_modules/hosted-git-info/index.js
-var hosted_git_info = __webpack_require__(190);
-
-// CONCATENATED MODULE: ./lib/packageRepoUrls.js
-
-
-
-
-/**
- * @type {Map<string, UrlInfo>}
- */
-const cache = new Map();
-
-/**
- * @param {string} packageName
- * @returns {Promise<UrlInfo | null>}
- */
-async function fetchUrl(packageName) {
-  const cached = cache.get(packageName);
-  if (cached) {
-    return cached;
-  }
-
-  let stdout = "";
-  let stderr = "";
-  try {
-    await Object(exec.exec)("npm", ["view", packageName, "repository.url"], {
-      listeners: {
-        stdout: (data) => {
-          stdout += data.toString();
-        },
-        stderr: (data) => {
-          stderr += data.toString();
-        },
-      },
-      silent: true,
-    });
-  } catch (err) {
-    // code E404 means the package does not exist on npm
-    // which means it is a file: or git: dependency
-    // We are fine with 404 errors, but not with any other errors
-    if (!stderr.includes("code E404")) {
-      throw new Error(stderr);
-    }
-  }
-  stdout = stdout.trim();
-
-  if (!stdout) {
-    Object(core.info)(`No repository URL for '${packageName}'`);
-    return null;
-  }
-
-  const url = Object(hosted_git_info.fromUrl)(stdout);
-  if (!url) {
-    Object(core.info)(`No repository URL for '${packageName}'`);
-    return null;
-  }
-  const urlInfo = { name: packageName, url: url.browse(), type: url.type };
-
-  cache.set(packageName, urlInfo);
-
-  return urlInfo;
-}
-
-/**
- * @param {string[]} packageNames
- * @returns {Promise<Record<string, UrlInfo>>}
- */
-async function packageRepoUrls(packageNames) {
-  const allUrls = await Promise.all(packageNames.map(fetchUrl));
-
-  /**
-   * @type {Record<string, UrlInfo>}
-   */
-  const map = {};
-  for (const url of allUrls) {
-    if (url) {
-      map[url.name] = url;
-    }
-  }
-  return map;
-}
-
-// CONCATENATED MODULE: ./lib/utils/capitalize.js
-/**
- * @param {string} str
- * @returns {string}
- */
-function capitalize(str) {
-  if (typeof str === "string") {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  }
-  return "";
-}
-
-// CONCATENATED MODULE: ./lib/utils/semverToNumber.js
-/**
- * @param {string} version
- * @returns {number}
- */
-function semverToNumber(version) {
-  return version
-    .split(".")
-    .slice(0, 3)
-    .reverse()
-    .map((str) => parseInt(str, 10))
-    .reduce((sum, num, idx) => {
-      const added = num * 10 ** (idx * 2) || 0;
-      return sum + added;
-    }, 0);
-}
-
-// CONCATENATED MODULE: ./lib/aggregateReport.js
-
-
-
-
-/**
- * @param {{ name: string, version: string }} a
- * @param {{ name: string, version: string }} b
- * @returns {number}
- */
-const byNameAndVersion = (a, b) => {
-  const res = a.name.localeCompare(b.name);
-  if (res > 0) {
-    return 1;
-  }
-  if (res < 0) {
-    return -1;
-  }
-  return semverToNumber(a.version) - semverToNumber(b.version);
-};
-
-/**
- * @param {AuditReport} audit
- * @param {Map<string, string>} beforePackages
- * @param {Map<string, string>} afterPackages
- * @returns {Promise<Report>}
- */
-async function aggregateReport(audit, beforePackages, afterPackages) {
-  /** @type {Report["added"]} */
-  const added = [];
-  afterPackages.forEach((version, name) => {
-    if (!beforePackages.has(name)) {
-      added.push({ name, version });
-    }
-  });
-  added.sort(byNameAndVersion);
-
-  /** @type {Report["removed"]} */
-  const removed = [];
-  beforePackages.forEach((version, name) => {
-    if (!afterPackages.has(name)) {
-      removed.push({ name, version });
-    }
-  });
-  removed.sort(byNameAndVersion);
-
-  /** @type {Report["updated"]} */
-  const updated = [];
-  afterPackages.forEach((version, name) => {
-    const previousVersion = beforePackages.get(name);
-    if (version !== previousVersion && previousVersion != null) {
-      const info = audit.get(name);
-      const severity = info == null ? null : capitalize(info.severity);
-      const title = info == null ? null : info.title;
-      const url = info == null ? null : info.url;
-      updated.push({ name, version, previousVersion, severity, title, url });
-    }
-  });
-  updated.sort(byNameAndVersion);
-
-  const allPackageNames = Array.from(
-    new Set([
-      ...added.map((e) => e.name),
-      ...updated.map((e) => e.name),
-      ...removed.map((e) => e.name),
-    ])
-  );
-  const packageCount = allPackageNames.length;
-  const packageUrls = await packageRepoUrls(allPackageNames);
-
-  return { added, removed, updated, packageCount, packageUrls };
-}
-
-// CONCATENATED MODULE: ./lib/npmArgs.js
-/**
- * @param {string[]} args
- */
-function npmArgs(...args) {
-  return [...args, "--ignore-scripts", "--no-progress"];
-}
-
-// CONCATENATED MODULE: ./lib/audit.js
-
-
-
-/**
- * @param {typeof exec} execFn
- * @returns {Promise<AuditReport>}
- */
-async function audit_audit(execFn = exec.exec) {
-  let report = "";
-  await execFn("npm", npmArgs("audit", "--json"), {
-    listeners: {
-      stdout: (data) => {
-        report += data.toString();
-      },
-    },
-    ignoreReturnCode: true,
-  });
-  const { vulnerabilities } = JSON.parse(report);
-
-  if (vulnerabilities != null && typeof vulnerabilities === "object") {
-    const map = /** @type {AuditReport} */ new Map();
-
-    Object.values(vulnerabilities).forEach(({ name, severity, via }) => {
-      if (Array.isArray(via)) {
-        const [viaFirst] = via;
-        if (typeof viaFirst.title === "string" && typeof viaFirst.url === "string") {
-          map.set(name, { name, severity, title: viaFirst.title, url: viaFirst.url });
-        } else if (typeof viaFirst === "string") {
-          // ignore
-        } else {
-          throw new Error(`"via" of "${name}" is invalid: ${JSON.stringify(via)}`);
-        }
-      } else {
-        throw new Error('"via" is not an array');
-      }
-    });
-
-    return map;
-  }
-
-  throw new Error('"vulnerabilities" is missing');
-}
-
-// CONCATENATED MODULE: ./lib/auditFix.js
-
-
-
-
-async function auditFix() {
-  let error = "";
-
-  const returnCode = await Object(exec.exec)("npm", npmArgs("audit", "fix"), {
-    listeners: {
-      stderr: (data) => {
-        error += data.toString();
-      },
-    },
-    ignoreReturnCode: true,
-  });
-
-  if (error.includes("npm ERR!")) {
-    throw new Error("Unexpected error occurred");
-  }
-
-  if (returnCode !== 0) {
-    Object(core.warning)(error);
-  }
-}
-
-// CONCATENATED MODULE: ./lib/buildCommitBody.js
-/**
- * @param {Report} report
- * @returns {string}
- */
-function buildCommitBody(report) {
-  const lines = [];
-
-  lines.push("Summary:");
-  lines.push(`- Updated packages: ${report.updated.length}`);
-  lines.push(`- Added packages: ${report.added.length}`);
-  lines.push(`- Removed packages: ${report.removed.length}`);
-
-  lines.push("");
-  if (report.updated.length > 0) {
-    lines.push("Fixed vulnerabilities:");
-    report.updated.forEach(({ name, severity, title, url }) => {
-      if (severity != null && title != null && url != null) {
-        lines.push(`- ${name}: "${title}" (${url})`);
-      }
-    });
-  } else {
-    lines.push("No fixed vulnerabilities.");
-  }
-
-  return lines.map((line) => `${line}\n`).join("");
-}
-
-// CONCATENATED MODULE: ./lib/constants.js
-const PACKAGE_NAME = "ybiquitous/npm-audit-fix-action";
-const PACKAGE_URL = "https://github.com/ybiquitous/npm-audit-fix-action";
-const NPM_VERSION = "7";
-
-// CONCATENATED MODULE: ./lib/buildPullRequestBody.js
-
-
-const EMPTY = "-";
-
-/**
- * @param {Report} report
- * @param {string} npmVersion
- * @returns {string}
- */
-function buildPullRequestBody(report, npmVersion) {
-  /**
-   * @param {string} name
-   * @param {string} version
-   */
-  const npmPackage = (name, version) =>
-    `[${name}](https://www.npmjs.com/package/${name}/v/${version})`;
-
-  /**
-   * @param {...string} items
-   */
-  const buildTableRow = (...items) => `| ${items.join(" | ")} |`;
-
-  /**
-   * @param {string} name
-   * @returns {string}
-   */
-  const repoLink = (name) => {
-    const url = report.packageUrls[name];
-    return url ? `[${url.type}](${url.url})` : EMPTY;
-  };
-
-  /**
-   * @param {string} version
-   * @returns {string}
-   */
-  const versionLabel = (version) => `\`${version}\``;
-
-  const header = [];
-  header.push("| Package | Version | Source | Detail |");
-  header.push("|:--------|:-------:|:------:|:-------|");
-
-  const lines = [];
-  lines.push(
-    `This pull request fixes the vulnerable packages via npm [${npmVersion}](https://github.com/npm/cli/releases/tag/v${npmVersion}).`
-  );
-
-  if (report.updated.length > 0) {
-    lines.push("");
-    lines.push("<details open>");
-    lines.push(`<summary><strong>Updated (${report.updated.length})</strong></summary>`);
-    lines.push("");
-    lines.push(...header);
-
-    report.updated.forEach(({ name, version, previousVersion, severity, title, url }) => {
-      let extra = EMPTY;
-      if (severity != null && title != null && url != null) {
-        extra = `**[${severity}]** ${title} ([ref](${url}))`;
-      }
-      lines.push(
-        buildTableRow(
-          npmPackage(name, version),
-          `${versionLabel(previousVersion)} → ${versionLabel(version)}`,
-          repoLink(name),
-          extra
-        )
-      );
-    });
-
-    lines.push("");
-    lines.push("</details>");
-  }
-
-  if (report.added.length > 0) {
-    lines.push("");
-    lines.push("<details open>");
-    lines.push(`<summary><strong>Added (${report.added.length})</strong></summary>`);
-    lines.push("");
-    lines.push(...header);
-    report.added.forEach(({ name, version }) => {
-      lines.push(
-        buildTableRow(npmPackage(name, version), versionLabel(version), repoLink(name), EMPTY)
-      );
-    });
-    lines.push("");
-    lines.push("</details>");
-  }
-
-  if (report.removed.length > 0) {
-    lines.push("");
-    lines.push("<details open>");
-    lines.push(`<summary><strong>Removed (${report.removed.length})</strong></summary>`);
-    lines.push("");
-    lines.push(...header);
-    report.removed.forEach(({ name, version }) => {
-      lines.push(
-        buildTableRow(npmPackage(name, version), versionLabel(version), repoLink(name), EMPTY)
-      );
-    });
-    lines.push("");
-    lines.push("</details>");
-  }
-
-  lines.push("");
-  lines.push("***");
-  lines.push("");
-  lines.push(`Created by [${PACKAGE_NAME}](${PACKAGE_URL})`);
-
-  return lines.join("\n").trim();
-}
-
-// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
-var github = __webpack_require__(469);
-
-// CONCATENATED MODULE: ./lib/utils/splitRepo.js
-/**
- * @param {string} repository
- * @returns {{ owner: string, repo: string }}
- */
-function splitRepo(repository) {
-  const [owner, repo] = repository.split("/");
-  if (owner && repo) {
-    return { owner, repo };
-  }
-  throw new TypeError(`invalid repository: "${repository}"`);
-}
-
-// CONCATENATED MODULE: ./lib/createOrUpdatePullRequest.js
-
-
-
-
-
-/**
- * @param {{
- *   token: string,
- *   branch: string,
- *   baseBranch: string,
- *   title: string,
- *   pullBody: string,
- *   commitBody: string,
- *   repository: string,
- *   author: string,
- *   email: string,
- *   labels: string[],
- * }} params
- */
-async function createOrUpdatePullRequest({
-  token,
-  branch,
-  baseBranch,
-  title,
-  pullBody,
-  commitBody,
-  repository,
-  author,
-  email,
-  labels,
-}) {
-  const remote = `https://${author}:${token}@github.com/${repository}.git`;
-  const { owner, repo } = splitRepo(repository);
-  const octokit = Object(github.getOctokit)(token);
-
-  // Find pull request
-  const pulls = await octokit.rest.pulls.list({
-    owner,
-    repo,
-    state: "open",
-    base: baseBranch,
-    sort: "updated",
-    direction: "desc",
-    per_page: 100,
-  });
-  const pull = pulls.data.find(({ head }) => head.ref === branch);
-
-  await Object(exec.exec)("git", ["config", "user.name", author]);
-  await Object(exec.exec)("git", ["config", "user.email", email]);
-  await Object(exec.exec)("git", ["add", "package-lock.json"]);
-  await Object(exec.exec)("git", ["commit", "--message", `${title}\n\n${commitBody}`]);
-  await Object(exec.exec)("git", ["checkout", "-B", branch]);
-  await Object(exec.exec)("git", ["push", remote, `HEAD:${branch}`, ...(pull ? ["--force"] : [])]);
-
-  if (pull) {
-    await octokit.rest.pulls.update({
-      owner,
-      repo,
-      pull_number: pull.number,
-      title,
-      body: pullBody,
-    });
-    Object(core.info)(`The pull request was updated successfully: ${pull.html_url}`);
-  } else {
-    const newPull = await octokit.rest.pulls.create({
-      owner,
-      repo,
-      title,
-      body: pullBody,
-      head: branch,
-      base: baseBranch,
-    });
-    Object(core.info)(`The pull request was created successfully: ${newPull.data.html_url}`);
-
-    const newLabels = await octokit.rest.issues.addLabels({
-      owner,
-      repo,
-      issue_number: newPull.data.number,
-      labels,
-    });
-    Object(core.info)(`The labels were added successfully: ${newLabels.data.map((l) => l.name).join(", ")}`);
-  }
-}
-
-// CONCATENATED MODULE: ./lib/getDefaultBranch.js
-
-
-
-/**
- * @param {{token: string, repository: string}} params
- * @returns {Promise<string>}
- */
-async function getDefaultBranch({ token, repository }) {
-  const octokit = Object(github.getOctokit)(token);
-  const res = await octokit.rest.repos.get(splitRepo(repository));
-  return res.data.default_branch;
-}
-
-// CONCATENATED MODULE: ./lib/listPackages.js
-
-
-
-/**
- * @param {import("@actions/exec").ExecOptions?} options
- * @returns {Promise<Map<string, string>>}
- */
-async function listPackages(options = {}) {
-  let lines = "";
-  let stderr = "";
-  const returnCode = await Object(exec.exec)("npm", npmArgs("ls", "--parseable", "--long", "--all"), {
-    listeners: {
-      stdout: (data) => {
-        lines += data.toString();
-      },
-      stderr: (data) => {
-        stderr += data.toString();
-      },
-    },
-    ignoreReturnCode: true,
-    ...options,
-  });
-
-  // NOTE: Ignore missing peer deps error.
-  if (returnCode !== 0 && !stderr.includes("npm ERR! missing:")) {
-    throw new Error(`"npm ls" failed`);
-  }
-
-  const packages = /** @type {Map<string, string>} */ new Map();
-  lines
-    .split("\n")
-    .filter((line) => line.trim())
-    .forEach((line) => {
-      const [, pkg] = line.split(":", 2);
-      if (pkg == null) {
-        throw new Error(`Invalid line: "${line}"`);
-      }
-
-      const match = /^(?<name>@?\S+)@(?<version>\S+)$/u.exec(pkg);
-      if (match == null || match.groups == null) {
-        return; // skip
-      }
-
-      /* eslint-disable dot-notation, prefer-destructuring -- Prevent TS4111 */
-      const name = match.groups["name"];
-      const version = match.groups["version"];
-      /* eslint-enable */
-
-      if (name == null || version == null) {
-        throw new Error(`Invalid name and version: "${line}"`);
-      }
-
-      packages.set(name.trim(), version.trim());
-    });
-  return packages;
-}
-
-// CONCATENATED MODULE: ./lib/updateNpm.js
-
-
-
-/**
- * @param {string} version
- */
-async function updateNpm(version) {
-  await Object(exec.exec)("sudo", ["npm", ...npmArgs("install", "--global", `npm@${version}`)]);
-
-  let actualVersion = "";
-  await Object(exec.exec)("npm", ["--version"], {
-    listeners: {
-      stdout: (data) => {
-        actualVersion += data.toString();
-      },
-    },
-  });
-
-  // HACK: Fix the error "npm update check failed".
-  // eslint-disable-next-line dot-notation -- Prevent TS4111
-  await Object(exec.exec)("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
-
-  return actualVersion.trim();
-}
-
-// CONCATENATED MODULE: ./lib/utils/commaSeparatedList.js
-/**
- * @param {string} str
- * @returns {string[]}
- */
-function commaSeparatedList(str) {
-  return str
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
-}
-
-// CONCATENATED MODULE: ./lib/index.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * @returns {Promise<boolean>}
- */
-async function filesChanged() {
-  try {
-    const exitCode = await Object(exec.exec)("git", ["diff", "--exit-code"]);
-    return exitCode === 0;
-  } catch (err) {
-    return false;
-  }
-}
-
-/**
- * @param {string} name
- * @returns {string}
- */
-function getFromEnv(name) {
-  const value = process.env[name];
-  if (value) {
-    return value;
-  }
-  throw new Error(`Not found '${name}' in the environment variables`);
-}
-
-async function run() {
-  const npmVersion = await Object(core.group)(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
-
-  await Object(core.group)("Install user packages", async () => {
-    await Object(exec.exec)("npm", npmArgs("ci"));
-  });
-
-  const auditReport = await Object(core.group)("Get audit report", async () => {
-    const res = await audit_audit();
-    Object(core.info)(JSON.stringify(res, null, 2));
-    return res;
-  });
-
-  const beforePackages = await Object(core.group)("List packages before", () => listPackages());
-
-  await Object(core.group)("Fix vulnerabilities", () => auditFix());
-
-  await Object(core.group)("Re-install user packages", async () => {
-    await Object(exec.exec)("npm", npmArgs("ci"));
-  });
-
-  const afterPackages = await Object(core.group)("List packages after", () => listPackages());
-
-  const report = await Object(core.group)("Aggregate report", () =>
-    aggregateReport(auditReport, beforePackages, afterPackages)
-  );
-
-  if (report.packageCount === 0) {
-    Object(core.info)("No update.");
-    return;
-  }
-
-  const changed = await Object(core.group)("Check file changes", filesChanged);
-  if (changed) {
-    Object(core.info)("No file changes.");
-    return;
-  }
-
-  await Object(core.group)("Create or update a pull request", async () => {
-    const token = Object(core.getInput)("github_token");
-    const repository = getFromEnv("GITHUB_REPOSITORY");
-
-    let baseBranch = Object(core.getInput)("default_branch");
-    if (!baseBranch) {
-      baseBranch = await getDefaultBranch({ token, repository });
-    }
-
-    const author = getFromEnv("GITHUB_ACTOR");
-    return createOrUpdatePullRequest({
-      branch: Object(core.getInput)("branch"),
-      token,
-      baseBranch,
-      title: Object(core.getInput)("commit_title"),
-      pullBody: buildPullRequestBody(report, npmVersion),
-      commitBody: buildCommitBody(report),
-      repository,
-      author,
-      email: `${author}@users.noreply.github.com`,
-      labels: commaSeparatedList(Object(core.getInput)("labels")),
-    });
-  });
-}
-
-run().catch((e) => Object(core.setFailed)(e.message));
-
 
 /***/ }),
 
@@ -9188,6 +8450,781 @@ function removeHook(state, name, method) {
 
   state.registry[name].splice(index, 1);
 }
+
+
+/***/ }),
+
+/***/ 897:
+/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __webpack_require__(470);
+
+// EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
+var exec = __webpack_require__(986);
+
+// EXTERNAL MODULE: ./node_modules/hosted-git-info/index.js
+var hosted_git_info = __webpack_require__(190);
+
+// CONCATENATED MODULE: ./lib/packageRepoUrls.js
+
+
+
+
+/**
+ * @type {Map<string, UrlInfo>}
+ */
+const cache = new Map();
+
+/**
+ * @param {string} packageName
+ * @returns {Promise<UrlInfo | null>}
+ */
+async function fetchUrl(packageName) {
+  const cached = cache.get(packageName);
+  if (cached) {
+    return cached;
+  }
+
+  let stdout = "";
+  let stderr = "";
+  try {
+    await Object(exec.exec)("npm", ["view", packageName, "repository.url"], {
+      listeners: {
+        stdout: (data) => {
+          stdout += data.toString();
+        },
+        stderr: (data) => {
+          stderr += data.toString();
+        },
+      },
+      silent: true,
+    });
+  } catch (err) {
+    // code E404 means the package does not exist on npm
+    // which means it is a file: or git: dependency
+    // We are fine with 404 errors, but not with any other errors
+    if (!stderr.includes("code E404")) {
+      throw new Error(stderr);
+    }
+  }
+  stdout = stdout.trim();
+
+  if (!stdout) {
+    Object(core.info)(`No repository URL for '${packageName}'`);
+    return null;
+  }
+
+  const url = Object(hosted_git_info.fromUrl)(stdout);
+  if (!url) {
+    Object(core.info)(`No repository URL for '${packageName}'`);
+    return null;
+  }
+  const urlInfo = { name: packageName, url: url.browse(), type: url.type };
+
+  cache.set(packageName, urlInfo);
+
+  return urlInfo;
+}
+
+/**
+ * @param {string[]} packageNames
+ * @returns {Promise<Record<string, UrlInfo>>}
+ */
+async function packageRepoUrls(packageNames) {
+  const allUrls = await Promise.all(packageNames.map(fetchUrl));
+
+  /**
+   * @type {Record<string, UrlInfo>}
+   */
+  const map = {};
+  for (const url of allUrls) {
+    if (url) {
+      map[url.name] = url;
+    }
+  }
+  return map;
+}
+
+// CONCATENATED MODULE: ./lib/utils/capitalize.js
+/**
+ * @param {string} str
+ * @returns {string}
+ */
+function capitalize(str) {
+  if (typeof str === "string") {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+  return "";
+}
+
+// CONCATENATED MODULE: ./lib/utils/semverToNumber.js
+/**
+ * @param {string} version
+ * @returns {number}
+ */
+function semverToNumber(version) {
+  return version
+    .split(".")
+    .slice(0, 3)
+    .reverse()
+    .map((str) => parseInt(str, 10))
+    .reduce((sum, num, idx) => {
+      const added = num * 10 ** (idx * 2) || 0;
+      return sum + added;
+    }, 0);
+}
+
+// CONCATENATED MODULE: ./lib/utils/splitPackageName.js
+/**
+ * @param {string} packageName
+ * @returns {{ name: string, fullName: string, location: string | null }}
+ */
+function splitPackageName(packageName) {
+  const [location, name] = packageName.split(":", 2);
+  if (name && location) {
+    return { name, fullName: packageName, location: name === location ? null : location };
+  }
+  throw new TypeError(`invalid package: "${packageName}"`);
+}
+
+// CONCATENATED MODULE: ./lib/aggregateReport.js
+
+
+
+
+
+/**
+ * @param {{ name: string, version: string }} a
+ * @param {{ name: string, version: string }} b
+ * @returns {number}
+ */
+const byNameAndVersion = (a, b) => {
+  const res = a.name.localeCompare(b.name);
+  if (res > 0) {
+    return 1;
+  }
+  if (res < 0) {
+    return -1;
+  }
+  return semverToNumber(a.version) - semverToNumber(b.version);
+};
+
+/**
+ * @param {AuditReport} audit
+ * @param {Map<string, string>} beforePackages
+ * @param {Map<string, string>} afterPackages
+ * @returns {Promise<Report>}
+ */
+async function aggregateReport(audit, beforePackages, afterPackages) {
+  /** @type {Report["added"]} */
+  const added = [];
+  afterPackages.forEach((version, name) => {
+    if (!beforePackages.has(name)) {
+      const pkg = splitPackageName(name);
+      added.push({ name: pkg.name, location: pkg.location, version });
+    }
+  });
+  added.sort(byNameAndVersion);
+
+  /** @type {Report["removed"]} */
+  const removed = [];
+  beforePackages.forEach((version, name) => {
+    if (!afterPackages.has(name)) {
+      const pkg = splitPackageName(name);
+      removed.push({ name: pkg.name, location: pkg.location, version });
+    }
+  });
+  removed.sort(byNameAndVersion);
+
+  /** @type {Report["updated"]} */
+  const updated = [];
+  afterPackages.forEach((version, name) => {
+    const previousVersion = beforePackages.get(name);
+    if (version !== previousVersion && previousVersion != null) {
+      const pkg = splitPackageName(name);
+      const info = audit.get(pkg.name);
+      const severity = info == null ? null : capitalize(info.severity);
+      const title = info == null ? null : info.title;
+      const url = info == null ? null : info.url;
+      updated.push({
+        name: pkg.name,
+        location: pkg.location,
+        version,
+        previousVersion,
+        severity,
+        title,
+        url,
+      });
+    }
+  });
+  updated.sort(byNameAndVersion);
+
+  const allPackageNames = Array.from(
+    new Set([
+      ...added.map((e) => e.name),
+      ...updated.map((e) => e.name),
+      ...removed.map((e) => e.name),
+    ])
+  );
+  const packageCount = allPackageNames.length;
+  const packageUrls = await packageRepoUrls(allPackageNames);
+
+  return { added, removed, updated, packageCount, packageUrls };
+}
+
+// CONCATENATED MODULE: ./lib/npmArgs.js
+/**
+ * @param {string[]} args
+ */
+function npmArgs(...args) {
+  return [...args, "--ignore-scripts", "--no-progress"];
+}
+
+// CONCATENATED MODULE: ./lib/audit.js
+
+
+
+/**
+ * @param {typeof exec} execFn
+ * @returns {Promise<AuditReport>}
+ */
+async function audit_audit(execFn = exec.exec) {
+  let report = "";
+  await execFn("npm", npmArgs("audit", "--json"), {
+    listeners: {
+      stdout: (data) => {
+        report += data.toString();
+      },
+    },
+    ignoreReturnCode: true,
+  });
+  const { vulnerabilities } = JSON.parse(report);
+
+  if (vulnerabilities != null && typeof vulnerabilities === "object") {
+    const map = /** @type {AuditReport} */ new Map();
+
+    Object.values(vulnerabilities).forEach(({ name, severity, via }) => {
+      if (Array.isArray(via)) {
+        const [viaFirst] = via;
+        if (typeof viaFirst.title === "string" && typeof viaFirst.url === "string") {
+          map.set(name, { name, severity, title: viaFirst.title, url: viaFirst.url });
+        } else if (typeof viaFirst === "string") {
+          // ignore
+        } else {
+          throw new Error(`"via" of "${name}" is invalid: ${JSON.stringify(via)}`);
+        }
+      } else {
+        throw new Error('"via" is not an array');
+      }
+    });
+
+    return map;
+  }
+
+  throw new Error('"vulnerabilities" is missing');
+}
+
+// CONCATENATED MODULE: ./lib/auditFix.js
+
+
+
+
+async function auditFix() {
+  let error = "";
+
+  const returnCode = await Object(exec.exec)("npm", npmArgs("audit", "fix"), {
+    listeners: {
+      stderr: (data) => {
+        error += data.toString();
+      },
+    },
+    ignoreReturnCode: true,
+  });
+
+  if (error.includes("npm ERR!")) {
+    throw new Error("Unexpected error occurred");
+  }
+
+  if (returnCode !== 0) {
+    Object(core.warning)(error);
+  }
+}
+
+// CONCATENATED MODULE: ./lib/buildCommitBody.js
+/**
+ * @param {Report} report
+ * @returns {string}
+ */
+function buildCommitBody(report) {
+  const lines = [];
+
+  lines.push("Summary:");
+  lines.push(`- Updated packages: ${report.updated.length}`);
+  lines.push(`- Added packages: ${report.added.length}`);
+  lines.push(`- Removed packages: ${report.removed.length}`);
+
+  lines.push("");
+  if (report.updated.length > 0) {
+    lines.push("Fixed vulnerabilities:");
+    report.updated.forEach(({ name, severity, title, url }) => {
+      if (severity != null && title != null && url != null) {
+        lines.push(`- ${name}: "${title}" (${url})`);
+      }
+    });
+  } else {
+    lines.push("No fixed vulnerabilities.");
+  }
+
+  return lines.map((line) => `${line}\n`).join("");
+}
+
+// CONCATENATED MODULE: ./lib/constants.js
+const PACKAGE_NAME = "ybiquitous/npm-audit-fix-action";
+const PACKAGE_URL = "https://github.com/ybiquitous/npm-audit-fix-action";
+const NPM_VERSION = "7";
+
+// CONCATENATED MODULE: ./lib/buildPullRequestBody.js
+
+
+const EMPTY = "-";
+
+/**
+ * @param {string} name
+ * @param {string} version
+ * @param {string | null} location
+ */
+const npmPackage = (name, version, location) => {
+  let result = `[${name}](https://www.npmjs.com/package/${name}/v/${version})`;
+  if (location != null) {
+    result += ` (\`${location}\`)`;
+  }
+  return result;
+};
+
+/**
+ * @param {...string} items
+ */
+const buildTableRow = (...items) => `| ${items.join(" | ")} |`;
+
+/**
+ * @param {Report} report
+ * @param {string} name
+ */
+const repoLink = (report, name) => {
+  const url = report.packageUrls[name];
+  return url ? `[${url.type}](${url.url})` : EMPTY;
+};
+
+/**
+ * @param {string} version
+ */
+const versionLabel = (version) => `\`${version}\``;
+
+/**
+ * @param {Report} report
+ * @param {string} npmVersion
+ * @returns {string}
+ */
+function buildPullRequestBody(report, npmVersion) {
+  const header = [];
+  header.push("| Package | Version | Source | Detail |");
+  header.push("|:--------|:-------:|:------:|:-------|");
+
+  const lines = [];
+  lines.push(
+    `This pull request fixes the vulnerable packages via npm [${npmVersion}](https://github.com/npm/cli/releases/tag/v${npmVersion}).`
+  );
+
+  if (report.updated.length > 0) {
+    lines.push("");
+    lines.push("<details open>");
+    lines.push(`<summary><strong>Updated (${report.updated.length})</strong></summary>`);
+    lines.push("");
+    lines.push(...header);
+
+    report.updated.forEach(({ name, version, location, previousVersion, severity, title, url }) => {
+      let extra = EMPTY;
+      if (severity != null && title != null && url != null) {
+        extra = `**[${severity}]** ${title} ([ref](${url}))`;
+      }
+      lines.push(
+        buildTableRow(
+          npmPackage(name, version, location),
+          `${versionLabel(previousVersion)} → ${versionLabel(version)}`,
+          repoLink(report, name),
+          extra
+        )
+      );
+    });
+
+    lines.push("");
+    lines.push("</details>");
+  }
+
+  if (report.added.length > 0) {
+    lines.push("");
+    lines.push("<details open>");
+    lines.push(`<summary><strong>Added (${report.added.length})</strong></summary>`);
+    lines.push("");
+    lines.push(...header);
+    report.added.forEach(({ name, version, location }) => {
+      lines.push(
+        buildTableRow(
+          npmPackage(name, version, location),
+          versionLabel(version),
+          repoLink(report, name),
+          EMPTY
+        )
+      );
+    });
+    lines.push("");
+    lines.push("</details>");
+  }
+
+  if (report.removed.length > 0) {
+    lines.push("");
+    lines.push("<details open>");
+    lines.push(`<summary><strong>Removed (${report.removed.length})</strong></summary>`);
+    lines.push("");
+    lines.push(...header);
+    report.removed.forEach(({ name, version, location }) => {
+      lines.push(
+        buildTableRow(
+          npmPackage(name, version, location),
+          versionLabel(version),
+          repoLink(report, name),
+          EMPTY
+        )
+      );
+    });
+    lines.push("");
+    lines.push("</details>");
+  }
+
+  lines.push("");
+  lines.push("***");
+  lines.push("");
+  lines.push(`Created by [${PACKAGE_NAME}](${PACKAGE_URL})`);
+
+  return lines.join("\n").trim();
+}
+
+// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
+var github = __webpack_require__(469);
+
+// CONCATENATED MODULE: ./lib/utils/splitRepo.js
+/**
+ * @param {string} repository
+ * @returns {{ owner: string, repo: string }}
+ */
+function splitRepo(repository) {
+  const [owner, repo] = repository.split("/", 2);
+  if (owner && repo) {
+    return { owner, repo };
+  }
+  throw new TypeError(`invalid repository: "${repository}"`);
+}
+
+// CONCATENATED MODULE: ./lib/createOrUpdatePullRequest.js
+
+
+
+
+
+/**
+ * @param {{
+ *   token: string,
+ *   branch: string,
+ *   baseBranch: string,
+ *   title: string,
+ *   pullBody: string,
+ *   commitBody: string,
+ *   repository: string,
+ *   author: string,
+ *   email: string,
+ *   labels: string[],
+ * }} params
+ */
+async function createOrUpdatePullRequest({
+  token,
+  branch,
+  baseBranch,
+  title,
+  pullBody,
+  commitBody,
+  repository,
+  author,
+  email,
+  labels,
+}) {
+  const remote = `https://${author}:${token}@github.com/${repository}.git`;
+  const { owner, repo } = splitRepo(repository);
+  const octokit = Object(github.getOctokit)(token);
+
+  // Find pull request
+  const pulls = await octokit.rest.pulls.list({
+    owner,
+    repo,
+    state: "open",
+    base: baseBranch,
+    sort: "updated",
+    direction: "desc",
+    per_page: 100,
+  });
+  const pull = pulls.data.find(({ head }) => head.ref === branch);
+
+  await Object(exec.exec)("git", ["config", "user.name", author]);
+  await Object(exec.exec)("git", ["config", "user.email", email]);
+  await Object(exec.exec)("git", ["add", "package-lock.json"]);
+  await Object(exec.exec)("git", ["commit", "--message", `${title}\n\n${commitBody}`]);
+  await Object(exec.exec)("git", ["checkout", "-B", branch]);
+  await Object(exec.exec)("git", ["push", remote, `HEAD:${branch}`, ...(pull ? ["--force"] : [])]);
+
+  if (pull) {
+    await octokit.rest.pulls.update({
+      owner,
+      repo,
+      pull_number: pull.number,
+      title,
+      body: pullBody,
+    });
+    Object(core.info)(`The pull request was updated successfully: ${pull.html_url}`);
+  } else {
+    const newPull = await octokit.rest.pulls.create({
+      owner,
+      repo,
+      title,
+      body: pullBody,
+      head: branch,
+      base: baseBranch,
+    });
+    Object(core.info)(`The pull request was created successfully: ${newPull.data.html_url}`);
+
+    const newLabels = await octokit.rest.issues.addLabels({
+      owner,
+      repo,
+      issue_number: newPull.data.number,
+      labels,
+    });
+    Object(core.info)(`The labels were added successfully: ${newLabels.data.map((l) => l.name).join(", ")}`);
+  }
+}
+
+// CONCATENATED MODULE: ./lib/getDefaultBranch.js
+
+
+
+/**
+ * @param {{token: string, repository: string}} params
+ * @returns {Promise<string>}
+ */
+async function getDefaultBranch({ token, repository }) {
+  const octokit = Object(github.getOctokit)(token);
+  const res = await octokit.rest.repos.get(splitRepo(repository));
+  return res.data.default_branch;
+}
+
+// CONCATENATED MODULE: ./lib/listPackages.js
+
+
+
+/**
+ * @param {import("@actions/exec").ExecOptions} [options]
+ * @returns {Promise<Map<string, string>>}
+ */
+async function listPackages(options = {}) {
+  const cwd = options.cwd || process.cwd();
+  let lines = "";
+  let stderr = "";
+  const returnCode = await Object(exec.exec)(
+    "npm",
+    npmArgs("ls", "--parseable", "--long", "--all", "--package-lock-only"),
+    {
+      listeners: {
+        stdout: (data) => {
+          lines += data.toString();
+        },
+        stderr: (data) => {
+          stderr += data.toString();
+        },
+      },
+      ignoreReturnCode: true,
+      ...options,
+      cwd,
+    }
+  );
+
+  // NOTE: Ignore missing peer deps error.
+  if (returnCode !== 0 && !stderr.includes("npm ERR! missing:")) {
+    throw new Error(`"npm ls" failed`);
+  }
+
+  /** @type {Map<string, string>} */
+  const packages = new Map();
+
+  lines
+    .split("\n")
+    .filter((line) => line.trim().length !== 0)
+    .map((line) => line.replace(`${cwd}/node_modules/`, ""))
+    .forEach((line) => {
+      const versionSeparatorPosition = line.lastIndexOf("@");
+      if (versionSeparatorPosition === line.length - 1) {
+        return; // exclude when no version
+      }
+      const name = line.slice(0, versionSeparatorPosition);
+      const version = line.slice(versionSeparatorPosition + 1);
+      packages.set(name, version);
+    });
+
+  return packages;
+}
+
+// CONCATENATED MODULE: ./lib/updateNpm.js
+
+
+
+/**
+ * @param {string} version
+ */
+async function updateNpm(version) {
+  await Object(exec.exec)("sudo", ["npm", ...npmArgs("install", "--global", `npm@${version}`)]);
+
+  let actualVersion = "";
+  await Object(exec.exec)("npm", ["--version"], {
+    listeners: {
+      stdout: (data) => {
+        actualVersion += data.toString();
+      },
+    },
+  });
+
+  // HACK: Fix the error "npm update check failed".
+  // eslint-disable-next-line dot-notation -- Prevent TS4111
+  await Object(exec.exec)("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
+
+  return actualVersion.trim();
+}
+
+// CONCATENATED MODULE: ./lib/utils/commaSeparatedList.js
+/**
+ * @param {string} str
+ * @returns {string[]}
+ */
+function commaSeparatedList(str) {
+  return str
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+// CONCATENATED MODULE: ./lib/index.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * @returns {Promise<boolean>}
+ */
+async function filesChanged() {
+  try {
+    const exitCode = await Object(exec.exec)("git", ["diff", "--exit-code"]);
+    return exitCode === 0;
+  } catch (err) {
+    return false;
+  }
+}
+
+/**
+ * @param {string} name
+ * @returns {string}
+ */
+function getFromEnv(name) {
+  const value = process.env[name];
+  if (value) {
+    return value;
+  }
+  throw new Error(`Not found '${name}' in the environment variables`);
+}
+
+async function run() {
+  const npmVersion = await Object(core.group)(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
+
+  await Object(core.group)("Install user packages", async () => {
+    await Object(exec.exec)("npm", npmArgs("ci"));
+  });
+
+  const auditReport = await Object(core.group)("Get audit report", async () => {
+    const res = await audit_audit();
+    Object(core.info)(JSON.stringify(res, null, 2));
+    return res;
+  });
+
+  const beforePackages = await Object(core.group)("List packages before", () => listPackages());
+
+  await Object(core.group)("Fix vulnerabilities", () => auditFix());
+
+  await Object(core.group)("Re-install user packages", async () => {
+    await Object(exec.exec)("npm", npmArgs("ci"));
+  });
+
+  const afterPackages = await Object(core.group)("List packages after", () => listPackages());
+
+  const report = await Object(core.group)("Aggregate report", () =>
+    aggregateReport(auditReport, beforePackages, afterPackages)
+  );
+
+  if (report.packageCount === 0) {
+    Object(core.info)("No update.");
+    return;
+  }
+
+  const changed = await Object(core.group)("Check file changes", filesChanged);
+  if (changed) {
+    Object(core.info)("No file changes.");
+    return;
+  }
+
+  await Object(core.group)("Create or update a pull request", async () => {
+    const token = Object(core.getInput)("github_token");
+    const repository = getFromEnv("GITHUB_REPOSITORY");
+
+    let baseBranch = Object(core.getInput)("default_branch");
+    if (!baseBranch) {
+      baseBranch = await getDefaultBranch({ token, repository });
+    }
+
+    const author = getFromEnv("GITHUB_ACTOR");
+    return createOrUpdatePullRequest({
+      branch: Object(core.getInput)("branch"),
+      token,
+      baseBranch,
+      title: Object(core.getInput)("commit_title"),
+      pullBody: buildPullRequestBody(report, npmVersion),
+      commitBody: buildCommitBody(report),
+      repository,
+      author,
+      email: `${author}@users.noreply.github.com`,
+      labels: commaSeparatedList(Object(core.getInput)("labels")),
+    });
+  });
+}
+
+run().catch((e) => Object(core.setFailed)(e.message));
 
 
 /***/ }),
