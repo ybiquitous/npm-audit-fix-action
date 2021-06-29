@@ -30,11 +30,12 @@ type AuditFix = {
 type UrlInfo = { name: string; url: string; type: string };
 
 type Report = {
-  added: Array<{ name: string; version: string }>;
-  removed: Array<{ name: string; version: string }>;
+  added: Array<{ name: string; version: string; location: string | null }>;
+  removed: Array<{ name: string; version: string; location: string | null }>;
   updated: Array<{
     name: string;
     version: string;
+    location: string | null;
     previousVersion: string;
     severity: string | null;
     title: string | null;
