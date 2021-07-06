@@ -33,6 +33,7 @@
     "lint:md": "remark . --frail",
     "lint:md:fix": "remark . --output",
     "lint:types": "tsc --noEmit",
+    "lint:types:watch": "npm run lint:types -- --watch",
     "prerelease": "git switch main && git pull && npm ci && npm run clean && npm test && npm run lint && npm run clean",
     "release": "standard-version",
     "release:dry-run": "standard-version --dry-run",
@@ -55,7 +56,7 @@
     "jest": "^27.0.6",
     "remark-preset-ybiquitous": "0.0.5",
     "typescript": "^4.3.4",
-    "ybiq": "^13.1.0"
+    "ybiq": "^13.2.0"
   },
   "lint-staged": {
     "!(dist)/**/*.{js,jsx,mjs,ts,tsx}": "eslint --fix",
@@ -93,7 +94,8 @@
     ],
     "ignorePatterns": [
       "coverage",
-      "dist"
+      "dist",
+      "tmp"
     ],
     "reportUnusedDisableDirectives": true,
     "rules": {
