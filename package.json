@@ -33,6 +33,7 @@
     "lint:md": "remark . --frail",
     "lint:md:fix": "remark . --output",
     "lint:types": "tsc --noEmit",
+    "lint:types:watch": "npm run lint:types -- --watch",
     "prerelease": "git switch main && git pull && npm ci && npm run clean && npm test && npm run lint && npm run clean",
     "release": "standard-version",
     "release:dry-run": "standard-version --dry-run",
@@ -93,7 +94,8 @@
     ],
     "ignorePatterns": [
       "coverage",
-      "dist"
+      "dist",
+      "tmp"
     ],
     "reportUnusedDisableDirectives": true,
     "rules": {
