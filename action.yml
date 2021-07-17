@@ -23,4 +23,4 @@ inputs:
     default: "dependencies, javascript, security"
 runs:
   using: "node12"
-  main: "dist/index.mjs"
+  main: "dist/index.cjs"
