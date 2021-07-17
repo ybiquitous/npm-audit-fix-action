@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.2.4](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.2.3...v3.2.4) (2021-07-17)
+
+### Bug Fixes
+
+- **deps:** migrate @zeit/ncc to @vercel/ncc ([#449](https://github.com/ybiquitous/npm-audit-fix-action/issues/449)) ([1b8aec2](https://github.com/ybiquitous/npm-audit-fix-action/commit/1b8aec2e239b749b66994206442d653ba764bb6b))
+
 ### [3.2.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.2.2...v3.2.3) (2021-06-29)
 
 ### Bug Fixes
