@@ -19,7 +19,7 @@
   "main": "lib/index.js",
   "scripts": {
     "prepare": "husky install && npm run build",
-    "build": "ncc build lib/index.js --out dist",
+    "build": "ncc build lib/index.js --out dist && mv dist/index.js dist/index.mjs",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --testTimeout 30000",
     "test:watch": "npm run test -- --watch",
     "test:coverage": "npm run test --coverage",
