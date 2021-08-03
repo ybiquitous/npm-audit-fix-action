@@ -56,7 +56,7 @@
     "jest": "^27.0.6",
     "remark-preset-ybiquitous": "0.0.5",
     "typescript": "^4.3.5",
-    "ybiq": "^13.2.1"
+    "ybiq": "^13.5.0"
   },
   "lint-staged": {
     "!(dist)/**/*.{js,jsx,mjs,ts,tsx}": "eslint --fix",
