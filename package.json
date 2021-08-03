@@ -28,7 +28,7 @@
     "prettier:write": "npm run prettier -- --write",
     "format": "npm-run-all --print-label --parallel lint:*:fix prettier:write",
     "lint": "npm-run-all --print-label --parallel lint:* prettier:check",
-    "lint:js": "eslint .",
+    "lint:js": "eslint --cache .",
     "lint:js:fix": "npm run lint:js -- --fix",
     "lint:md": "remark . --frail",
     "lint:md:fix": "remark . --output",
@@ -59,7 +59,7 @@
     "ybiq": "^13.5.1"
   },
   "lint-staged": {
-    "!(dist)/**/*.{js,jsx,mjs,ts,tsx}": "eslint --fix",
+    "!(dist)/**/*.{js,jsx,mjs,ts,tsx}": "eslint --cache --fix",
     "!(dist)/**/*": "prettier --write",
     "!(CHANGELOG).md": "remark --frail"
   },
