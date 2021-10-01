@@ -10091,9 +10091,6 @@ async function run() {
   await core2.group("Re-install user packages", async () => {
     await (0, import_exec8.exec)("npm", npmArgs("ci"));
   });
-  if ((0, import_has_yarn.default)()) {
-    await core2.group("Reimport yarn lock", () => restoreYarn());
-  }
   const afterPackages = await core2.group("List packages after", () => listPackages());
   const report = await core2.group(
     "Aggregate report",
@@ -10102,6 +10099,9 @@ async function run() {
   if (report.packageCount === 0) {
     core2.info("No update.");
     return;
+  }
+  if ((0, import_has_yarn.default)()) {
+    await core2.group("Reimport yarn lock", () => restoreYarn());
   }
   const changed = await core2.group("Check file changes", filesChanged);
   if (changed) {
