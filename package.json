@@ -52,7 +52,7 @@
     "@vercel/ncc": "^0.28.6",
     "eslint": "^7.32.0",
     "eslint-config-ybiquitous": "^14.2.0",
-    "eslint-plugin-jest": "^24.4.2",
+    "eslint-plugin-jest": "^24.5.2",
     "jest": "^27.2.2",
     "remark-preset-ybiquitous": "0.0.5",
     "typescript": "^4.4.3",
