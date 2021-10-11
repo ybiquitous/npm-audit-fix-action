@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.3.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.2.5...v3.3.0) (2021-10-11)
+
+### Features
+
+- add configurable user and email ([#501](https://github.com/ybiquitous/npm-audit-fix-action/issues/501)) ([b5611f8](https://github.com/ybiquitous/npm-audit-fix-action/commit/b5611f8fc30e23f645932d5d897dd02195a000d1))
+
 ### [3.2.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.2.4...v3.2.5) (2021-10-08)
 
 ### Bug Fixes
