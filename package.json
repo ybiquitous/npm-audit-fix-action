@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "npm-audit-fix-action",
-  "version": "3.2.4",
+  "version": "3.2.5",
   "description": "A GitHub Action for `npm audit fix`",
   "author": "Masafumi Koba",
   "license": "MIT",
@@ -13,7 +13,7 @@
   "repository": "ybiquitous/npm-audit-fix-action",
   "engines": {
     "node": ">=12.20.0",
-    "npm": ">=7 <8"
+    "npm": ">=7 <9"
   },
   "type": "module",
   "main": "lib/index.js",
