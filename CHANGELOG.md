@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.4.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.4.0...v3.4.1) (2021-10-16)
+
+### Bug Fixes
+
+- remove duplicate lines in commit body ([#507](https://github.com/ybiquitous/npm-audit-fix-action/issues/507)) ([242a4c2](https://github.com/ybiquitous/npm-audit-fix-action/commit/242a4c2c2bccb1f74ce197980f2149269e8a1553))
+
 ## [3.4.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.3.0...v3.4.0) (2021-10-16)
 
 ### Features
