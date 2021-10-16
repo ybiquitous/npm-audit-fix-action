@@ -9258,6 +9258,7 @@ async function auditFix() {
  * @returns {string}
  */
 function buildCommitBody(report) {
+  /** @type {string[]} */
   const lines = [];
 
   lines.push("Summary:");
@@ -9268,11 +9269,15 @@ function buildCommitBody(report) {
   lines.push("");
   if (report.updated.length > 0) {
     lines.push("Fixed vulnerabilities:");
+
+    /** @type {Set<string>} */
+    const vulnerabilities = new Set();
     report.updated.forEach(({ name, severity, title, url }) => {
       if (severity != null && title != null && url != null) {
-        lines.push(`- ${name}: "${title}" (${url})`);
+        vulnerabilities.add(`- ${name}: "${title}" (${url})`);
       }
     });
+    lines.push(...Array.from(vulnerabilities));
   } else {
     lines.push("No fixed vulnerabilities.");
   }
