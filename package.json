@@ -12,7 +12,7 @@
   ],
   "repository": "ybiquitous/npm-audit-fix-action",
   "engines": {
-    "node": ">=12.20.0",
+    "node": ">=16",
     "npm": ">=8"
   },
   "type": "module",
