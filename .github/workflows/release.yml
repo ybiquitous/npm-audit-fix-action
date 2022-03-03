@@ -6,8 +6,10 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      MAJOR_VERSION_TAG: v4
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - run: sudo npm --global install npm@latest
@@ -18,8 +20,8 @@ jobs:
       - run: echo "::set-output name=tag::$(git describe --abbrev=0)"
         id: get_tag
       - run: git push --follow-tags
-      - run: git tag --force --annotate --message 'Release v3' v3
-      - run: git push --tags --force origin v3
+      - run: git tag --force --annotate --message "Release ${MAJOR_VERSION_TAG}" "${MAJOR_VERSION_TAG}"
+      - run: git push --tags --force origin "${MAJOR_VERSION_TAG}"
       - run: gh release create '${{ steps.get_tag.outputs.tag }}' --notes 'See the [changelog](https://github.com/${{ github.repository }}/blob/${{ steps.get_tag.outputs.tag }}/CHANGELOG.md) for more details.'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

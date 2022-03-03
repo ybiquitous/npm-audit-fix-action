@@ -20,8 +20,8 @@ jobs:
   npm-audit-fix:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: ybiquitous/npm-audit-fix-action@v3
+      - uses: actions/checkout@v3
+      - uses: ybiquitous/npm-audit-fix-action@v4
 ```
 
 See also [`action.yml`](action.yml) about the available options.
