@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.4.1...v4.0.0) (2022-03-03)
+
+### ⚠ BREAKING CHANGES
+
+- **deps:** Node.js 16 is the active LTS version.
+
+### Features
+
+- **deps:** bump Node.js image from 12 to 16 ([#521](https://github.com/ybiquitous/npm-audit-fix-action/issues/521)) ([06b2f07](https://github.com/ybiquitous/npm-audit-fix-action/commit/06b2f07dc6306a113fe3e523cb11733544d44331))
+
+### Bug Fixes
+
+- **deps:** bump hosted-git-info from 4.0.2 to 4.1.0 ([#516](https://github.com/ybiquitous/npm-audit-fix-action/issues/516)) ([0ffe8c0](https://github.com/ybiquitous/npm-audit-fix-action/commit/0ffe8c0c4b3efb2672744dde6547bc2d809dbf07))
+- **deps:** bump node-fetch from 2.6.1 to 2.6.7 ([#520](https://github.com/ybiquitous/npm-audit-fix-action/issues/520)) ([b6edd66](https://github.com/ybiquitous/npm-audit-fix-action/commit/b6edd66136f47d49faf47d82ee7d06264aa6ffaa))
+- migrate `@vercel/ncc` to `esbuild` ([#524](https://github.com/ybiquitous/npm-audit-fix-action/issues/524)) ([2e01d05](https://github.com/ybiquitous/npm-audit-fix-action/commit/2e01d05414d449a53511a3db64e3527b29404f17))
+
 ### [3.4.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.4.0...v3.4.1) (2021-10-16)
 
 ### Bug Fixes
