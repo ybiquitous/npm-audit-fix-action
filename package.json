@@ -19,7 +19,7 @@
   "main": "lib/index.js",
   "scripts": {
     "prepare": "husky install && npm run build",
-    "build": "ncc build lib/index.js --out dist && mv dist/index.js dist/index.cjs",
+    "build": "esbuild lib/index.js --outfile=dist/index.cjs --bundle --platform=node",
     "pretest": "npm run lint",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --testTimeout 30000",
     "test:watch": "npm run test -- --watch",
@@ -50,7 +50,7 @@
     "@types/hosted-git-info": "^3.0.2",
     "@types/jest": "^27.4.1",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
-    "@vercel/ncc": "^0.28.6",
+    "esbuild": "^0.14.23",
     "eslint": "^8.6.0",
     "eslint-config-ybiquitous": "^15.1.0",
     "eslint-plugin-jest": "^26.1.1",
