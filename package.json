@@ -52,11 +52,11 @@
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@vercel/ncc": "^0.28.6",
     "eslint": "^8.6.0",
-    "eslint-config-ybiquitous": "^15.0.0",
+    "eslint-config-ybiquitous": "^15.1.0",
     "eslint-plugin-jest": "^26.1.1",
     "jest": "^27.5.1",
     "remark-preset-ybiquitous": "^0.1.2",
-    "typescript": "^4.5.5",
+    "typescript": "^4.6.2",
     "ybiq": "^14.1.0"
   },
   "lint-staged": {
