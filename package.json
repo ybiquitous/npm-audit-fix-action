@@ -50,7 +50,7 @@
     "@types/hosted-git-info": "^3.0.2",
     "@types/jest": "^27.4.1",
     "@typescript-eslint/eslint-plugin": "^5.14.0",
-    "esbuild": "^0.14.25",
+    "esbuild": "^0.14.26",
     "eslint": "^8.6.0",
     "eslint-config-ybiquitous": "^15.2.0",
     "eslint-plugin-jest": "^26.1.1",
