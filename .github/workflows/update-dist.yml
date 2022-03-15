@@ -16,7 +16,7 @@ jobs:
       - run: npm ci
       - run: git config --local user.name '${{ github.actor }}'
       - run: git config --local user.email '${{ github.actor }}@users.noreply.github.com'
-      - run: git add dist/
+      - run: git add -f dist/index.cjs
       - run: |
           git commit --message 'build: update dist'
         continue-on-error: true
