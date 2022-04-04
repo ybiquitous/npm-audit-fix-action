@@ -43,7 +43,7 @@
   "dependencies": {
     "@actions/core": "^1.6.0",
     "@actions/exec": "^1.1.1",
-    "@actions/github": "^5.0.0",
+    "@actions/github": "^5.0.1",
     "hosted-git-info": "^5.0.0"
   },
   "devDependencies": {
