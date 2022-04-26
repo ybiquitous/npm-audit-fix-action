@@ -54,7 +54,7 @@
     "eslint": "^8.14.0",
     "eslint-config-ybiquitous": "^15.2.0",
     "eslint-plugin-jest": "^26.1.5",
-    "jest": "^27.5.1",
+    "jest": "^28.0.0",
     "remark-preset-ybiquitous": "^0.2.1",
     "typescript": "^4.6.3",
     "ybiq": "^14.3.0"
