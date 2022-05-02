@@ -1669,7 +1669,7 @@ var require_io = __commonJS({
     var path = require("path");
     var util_1 = require("util");
     var ioUtil = require_io_util();
-    var exec8 = util_1.promisify(childProcess.exec);
+    var exec5 = util_1.promisify(childProcess.exec);
     function cp(source, dest, options = {}) {
       return __awaiter(this, void 0, void 0, function* () {
         const { force, recursive } = readCopyOptions(options);
@@ -1723,9 +1723,9 @@ var require_io = __commonJS({
         if (ioUtil.IS_WINDOWS) {
           try {
             if (yield ioUtil.isDirectory(inputPath, true)) {
-              yield exec8(`rd /s /q "${inputPath}"`);
+              yield exec5(`rd /s /q "${inputPath}"`);
             } else {
-              yield exec8(`del /f /a "${inputPath}"`);
+              yield exec5(`del /f /a "${inputPath}"`);
             }
           } catch (err) {
             if (err.code !== "ENOENT")
@@ -1747,7 +1747,7 @@ var require_io = __commonJS({
             return;
           }
           if (isDir) {
-            yield exec8(`rm -rf "${inputPath}"`);
+            yield exec5(`rm -rf "${inputPath}"`);
           } else {
             yield ioUtil.unlink(inputPath);
           }
@@ -2406,7 +2406,7 @@ var require_exec = __commonJS({
     exports.getExecOutput = exports.exec = void 0;
     var string_decoder_1 = require("string_decoder");
     var tr = __importStar(require_toolrunner());
-    function exec8(commandLine, args, options) {
+    function exec5(commandLine, args, options) {
       return __awaiter(this, void 0, void 0, function* () {
         const commandArgs = tr.argStringToArray(commandLine);
         if (commandArgs.length === 0) {
@@ -2418,8 +2418,8 @@ var require_exec = __commonJS({
         return runner.exec();
       });
     }
-    exports.exec = exec8;
-    function getExecOutput(commandLine, args, options) {
+    exports.exec = exec5;
+    function getExecOutput5(commandLine, args, options) {
       var _a, _b;
       return __awaiter(this, void 0, void 0, function* () {
         let stdout = "";
@@ -2441,7 +2441,7 @@ var require_exec = __commonJS({
           }
         };
         const listeners = Object.assign(Object.assign({}, options === null || options === void 0 ? void 0 : options.listeners), { stdout: stdOutListener, stderr: stdErrListener });
-        const exitCode = yield exec8(commandLine, args, Object.assign(Object.assign({}, options), { listeners }));
+        const exitCode = yield exec5(commandLine, args, Object.assign(Object.assign({}, options), { listeners }));
         stdout += stdoutDecoder.end();
         stderr += stderrDecoder.end();
         return {
@@ -2451,7 +2451,7 @@ var require_exec = __commonJS({
         };
       });
     }
-    exports.getExecOutput = getExecOutput;
+    exports.getExecOutput = getExecOutput5;
   }
 });
 
@@ -8865,27 +8865,19 @@ async function fetchUrl(packageName) {
   if (cached) {
     return cached;
   }
-  let stdout = "";
-  let stderr = "";
-  try {
-    await (0, import_exec.exec)("npm", ["view", packageName, "repository.url"], {
-      listeners: {
-        stdout: (data) => {
-          stdout += data.toString();
-        },
-        stderr: (data) => {
-          stderr += data.toString();
-        }
-      },
-      silent: true
-    });
-  } catch (err) {
-    if (!stderr.includes("code E404")) {
-      throw new Error(stderr);
-    }
+  const {
+    exitCode,
+    stdout: origStdout,
+    stderr
+  } = await (0, import_exec.getExecOutput)("npm", ["view", packageName, "repository.url"], {
+    silent: true,
+    ignoreReturnCode: true
+  });
+  if (exitCode !== 0 && !stderr.includes("code E404")) {
+    throw new Error(`stderr: ${stderr}`);
   }
-  stdout = stdout.trim();
-  if (!stdout) {
+  const stdout = origStdout.trim();
+  if (stdout === "") {
     (0, import_core.info)(`No repository URL for '${packageName}'`);
     return null;
   }
@@ -9037,20 +9029,14 @@ async function audit(execFn = import_exec2.exec) {
 var import_core2 = __toESM(require_core(), 1);
 var import_exec3 = __toESM(require_exec(), 1);
 async function auditFix() {
-  let error = "";
-  const returnCode = await (0, import_exec3.exec)("npm", npmArgs("audit", "fix"), {
-    listeners: {
-      stderr: (data) => {
-        error += data.toString();
-      }
-    },
+  const { exitCode, stderr } = await (0, import_exec3.getExecOutput)("npm", npmArgs("audit", "fix"), {
     ignoreReturnCode: true
   });
-  if (error.includes("npm ERR!")) {
+  if (stderr.includes("npm ERR!")) {
     throw new Error("Unexpected error occurred");
   }
-  if (returnCode !== 0) {
-    (0, import_core2.warning)(error);
+  if (exitCode !== 0) {
+    (0, import_core2.warning)(stderr);
   }
 }
 
@@ -9240,26 +9226,16 @@ async function getDefaultBranch({ token, repository }) {
 var import_exec5 = __toESM(require_exec(), 1);
 async function listPackages(options = {}) {
   const cwd = options.cwd || process.cwd();
-  let lines = "";
-  let stderr = "";
-  const returnCode = await (0, import_exec5.exec)("npm", npmArgs("ls", "--parseable", "--long", "--all", "--package-lock-only"), {
-    listeners: {
-      stdout: (data) => {
-        lines += data.toString();
-      },
-      stderr: (data) => {
-        stderr += data.toString();
-      }
-    },
+  const { exitCode, stdout, stderr } = await (0, import_exec5.getExecOutput)("npm", npmArgs("ls", "--parseable", "--long", "--all", "--package-lock-only"), {
     ignoreReturnCode: true,
     ...options,
     cwd
   });
-  if (returnCode !== 0 && !stderr.includes("npm ERR! missing:")) {
+  if (exitCode !== 0 && !stderr.includes("npm ERR! missing:")) {
     throw new Error(`"npm ls" failed`);
   }
   const packages = /* @__PURE__ */ new Map();
-  lines.split("\n").filter((line) => line.trim().length !== 0).map((line) => line.replace(`${cwd}/node_modules/`, "")).forEach((line) => {
+  stdout.split("\n").filter((line) => line.trim().length !== 0).map((line) => line.replace(`${cwd}/node_modules/`, "")).forEach((line) => {
     const versionSeparatorPosition = line.lastIndexOf("@");
     if (versionSeparatorPosition === line.length - 1) {
       return;
@@ -9275,14 +9251,7 @@ async function listPackages(options = {}) {
 var import_exec6 = __toESM(require_exec(), 1);
 async function updateNpm(version) {
   await (0, import_exec6.exec)("sudo", ["npm", ...npmArgs("install", "--global", `npm@${version}`)]);
-  let actualVersion = "";
-  await (0, import_exec6.exec)("npm", ["--version"], {
-    listeners: {
-      stdout: (data) => {
-        actualVersion += data.toString();
-      }
-    }
-  });
+  const { stdout: actualVersion } = await (0, import_exec6.getExecOutput)("npm", ["--version"]);
   await (0, import_exec6.exec)("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
   return actualVersion.trim();
 }
