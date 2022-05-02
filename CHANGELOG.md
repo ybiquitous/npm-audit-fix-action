@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.0.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.2...v4.0.3) (2022-05-02)
+
+### Bug Fixes
+
+- **deps:** bump @actions/core from 1.6.0 to 1.7.0 ([#554](https://github.com/ybiquitous/npm-audit-fix-action/issues/554)) ([2427c57](https://github.com/ybiquitous/npm-audit-fix-action/commit/2427c57861062dad788227c9bacdb030853e2d80))
+
 ### [4.0.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.1...v4.0.2) (2022-04-04)
 
 ### Bug Fixes
