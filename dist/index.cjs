@@ -1669,7 +1669,7 @@ var require_io = __commonJS({
     var path = require("path");
     var util_1 = require("util");
     var ioUtil = require_io_util();
-    var exec5 = util_1.promisify(childProcess.exec);
+    var exec4 = util_1.promisify(childProcess.exec);
     function cp(source, dest, options = {}) {
       return __awaiter(this, void 0, void 0, function* () {
         const { force, recursive } = readCopyOptions(options);
@@ -1723,9 +1723,9 @@ var require_io = __commonJS({
         if (ioUtil.IS_WINDOWS) {
           try {
             if (yield ioUtil.isDirectory(inputPath, true)) {
-              yield exec5(`rd /s /q "${inputPath}"`);
+              yield exec4(`rd /s /q "${inputPath}"`);
             } else {
-              yield exec5(`del /f /a "${inputPath}"`);
+              yield exec4(`del /f /a "${inputPath}"`);
             }
           } catch (err) {
             if (err.code !== "ENOENT")
@@ -1747,7 +1747,7 @@ var require_io = __commonJS({
             return;
           }
           if (isDir) {
-            yield exec5(`rm -rf "${inputPath}"`);
+            yield exec4(`rm -rf "${inputPath}"`);
           } else {
             yield ioUtil.unlink(inputPath);
           }
@@ -2406,7 +2406,7 @@ var require_exec = __commonJS({
     exports.getExecOutput = exports.exec = void 0;
     var string_decoder_1 = require("string_decoder");
     var tr = __importStar(require_toolrunner());
-    function exec5(commandLine, args, options) {
+    function exec4(commandLine, args, options) {
       return __awaiter(this, void 0, void 0, function* () {
         const commandArgs = tr.argStringToArray(commandLine);
         if (commandArgs.length === 0) {
@@ -2418,8 +2418,8 @@ var require_exec = __commonJS({
         return runner.exec();
       });
     }
-    exports.exec = exec5;
-    function getExecOutput5(commandLine, args, options) {
+    exports.exec = exec4;
+    function getExecOutput6(commandLine, args, options) {
       var _a, _b;
       return __awaiter(this, void 0, void 0, function* () {
         let stdout = "";
@@ -2441,7 +2441,7 @@ var require_exec = __commonJS({
           }
         };
         const listeners = Object.assign(Object.assign({}, options === null || options === void 0 ? void 0 : options.listeners), { stdout: stdOutListener, stderr: stdErrListener });
-        const exitCode = yield exec5(commandLine, args, Object.assign(Object.assign({}, options), { listeners }));
+        const exitCode = yield exec4(commandLine, args, Object.assign(Object.assign({}, options), { listeners }));
         stdout += stdoutDecoder.end();
         stderr += stderrDecoder.end();
         return {
@@ -2451,7 +2451,7 @@ var require_exec = __commonJS({
         };
       });
     }
-    exports.getExecOutput = getExecOutput5;
+    exports.getExecOutput = getExecOutput6;
   }
 });
 
@@ -8994,17 +8994,11 @@ function npmArgs(...args) {
 }
 
 // lib/audit.js
-async function audit(execFn = import_exec2.exec) {
-  let report = "";
-  await execFn("npm", npmArgs("audit", "--json"), {
-    listeners: {
-      stdout: (data) => {
-        report += data.toString();
-      }
-    },
+async function audit(execFn = import_exec2.getExecOutput) {
+  const { stdout } = await execFn("npm", npmArgs("audit", "--json"), {
     ignoreReturnCode: true
   });
-  const { vulnerabilities } = JSON.parse(report);
+  const { vulnerabilities } = JSON.parse(stdout);
   if (vulnerabilities != null && typeof vulnerabilities === "object") {
     const map = /* @__PURE__ */ new Map();
     Object.values(vulnerabilities).forEach(({ name, severity, via }) => {
