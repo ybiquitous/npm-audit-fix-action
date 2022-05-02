@@ -12,7 +12,11 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-      - run: sudo npm --global install npm@latest
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm --global install npm@latest
       - run: npm ci
       - run: git config --local user.name '${{ github.actor }}'
       - run: git config --local user.email '${{ github.actor }}@users.noreply.github.com'
