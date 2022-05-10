@@ -1089,9 +1089,9 @@ var require_oidc_utils = __commonJS({
   }
 });
 
-// node_modules/@actions/core/lib/markdown-summary.js
-var require_markdown_summary = __commonJS({
-  "node_modules/@actions/core/lib/markdown-summary.js"(exports) {
+// node_modules/@actions/core/lib/summary.js
+var require_summary = __commonJS({
+  "node_modules/@actions/core/lib/summary.js"(exports) {
     "use strict";
     var __awaiter = exports && exports.__awaiter || function(thisArg, _arguments, P, generator) {
       function adopt(value) {
@@ -1121,13 +1121,13 @@ var require_markdown_summary = __commonJS({
       });
     };
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.markdownSummary = exports.SUMMARY_DOCS_URL = exports.SUMMARY_ENV_VAR = void 0;
+    exports.summary = exports.markdownSummary = exports.SUMMARY_DOCS_URL = exports.SUMMARY_ENV_VAR = void 0;
     var os_1 = require("os");
     var fs_1 = require("fs");
     var { access, appendFile, writeFile } = fs_1.promises;
     exports.SUMMARY_ENV_VAR = "GITHUB_STEP_SUMMARY";
-    exports.SUMMARY_DOCS_URL = "https://docs.github.com/actions/using-workflows/workflow-commands-for-github-actions#adding-a-markdown-summary";
-    var MarkdownSummary = class {
+    exports.SUMMARY_DOCS_URL = "https://docs.github.com/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary";
+    var Summary = class {
       constructor() {
         this._buffer = "";
       }
@@ -1138,7 +1138,7 @@ var require_markdown_summary = __commonJS({
           }
           const pathFromEnv = process.env[exports.SUMMARY_ENV_VAR];
           if (!pathFromEnv) {
-            throw new Error(`Unable to find environment variable for $${exports.SUMMARY_ENV_VAR}. Check if your runtime environment supports markdown summaries.`);
+            throw new Error(`Unable to find environment variable for $${exports.SUMMARY_ENV_VAR}. Check if your runtime environment supports job summaries.`);
           }
           try {
             yield access(pathFromEnv, fs_1.constants.R_OK | fs_1.constants.W_OK);
@@ -1248,7 +1248,9 @@ var require_markdown_summary = __commonJS({
         return this.addRaw(element).addEOL();
       }
     };
-    exports.markdownSummary = new MarkdownSummary();
+    var _summary = new Summary();
+    exports.markdownSummary = _summary;
+    exports.summary = _summary;
   }
 });
 
@@ -1452,9 +1454,13 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       });
     }
     exports.getIDToken = getIDToken;
-    var markdown_summary_1 = require_markdown_summary();
+    var summary_1 = require_summary();
+    Object.defineProperty(exports, "summary", { enumerable: true, get: function() {
+      return summary_1.summary;
+    } });
+    var summary_2 = require_summary();
     Object.defineProperty(exports, "markdownSummary", { enumerable: true, get: function() {
-      return markdown_summary_1.markdownSummary;
+      return summary_2.markdownSummary;
     } });
   }
 });
