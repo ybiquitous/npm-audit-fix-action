@@ -43,6 +43,15 @@ with:
 The reason is that the default token does not have enough permissions to trigger CI.
 See also the [GitHub document](https://docs.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token#permissions-for-the-github_token) about the token permissions.
 
+### Use yarn as package manager
+
+If your projects dependency manager is yarn, you can set this up with the `package_manager` variable. The default value is `npm`.
+
+```yaml
+with:
+  package_manager: yarn
+```
+
 ## Screenshot
 
 ![A pull request created by npm-audit-fix-action](screenshot.png)

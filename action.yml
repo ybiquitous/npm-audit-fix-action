@@ -29,6 +29,10 @@ inputs:
     description: ""
     required: false
     default: "dependencies, javascript, security"
+  package_manager:
+    description: "Select the package manager used in your project. (npm|yarn)"
+    required: false
+    default: "npm"
 runs:
   using: "node16"
   main: "dist/index.cjs"
