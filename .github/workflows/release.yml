@@ -26,6 +26,10 @@ jobs:
       - run: git push --follow-tags
       - run: git tag --force --annotate --message "Release ${MAJOR_VERSION_TAG}" "${MAJOR_VERSION_TAG}"
       - run: git push --tags --force origin "${MAJOR_VERSION_TAG}"
-      - run: gh release create '${{ steps.get_tag.outputs.tag }}' --notes 'See the [changelog](https://github.com/${{ github.repository }}/blob/${{ steps.get_tag.outputs.tag }}/CHANGELOG.md) for more details.'
+      - run: |
+          gh release create "${TAG_NAME}" \
+            --generate-notes \
+            --notes "See the [changelog](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG_NAME}/CHANGELOG.md) for more details."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ steps.get_tag.outputs.tag }}
