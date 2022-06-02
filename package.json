@@ -60,7 +60,7 @@
     "ybiq": "^15.1.0"
   },
   "lint-staged": {
-    "!(dist)/**/*.{js,jsx,mjs,ts,tsx}": "eslint --cache --fix",
+    "!(dist)/**/*.{js,jsx,cjs,mjs,ts,tsx}": "eslint --cache --fix",
     "!(dist)/**/*": "prettier --write",
     "!(CHANGELOG).md": "remark --frail"
   },
