@@ -52,7 +52,7 @@
     "@typescript-eslint/eslint-plugin": "^5.28.0",
     "esbuild": "^0.14.43",
     "eslint": "^8.17.0",
-    "eslint-config-ybiquitous": "^15.3.0",
+    "eslint-config-ybiquitous": "^15.4.0",
     "eslint-plugin-jest": "^26.5.3",
     "jest": "^28.1.0",
     "remark-preset-ybiquitous": "^0.2.1",
