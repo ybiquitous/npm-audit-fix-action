@@ -33,7 +33,7 @@
     "lint:types:watch": "npm run lint:types -- --watch",
     "lint:styles": "npm run prettier -- --check",
     "lint:styles:fix": "npm run prettier -- --write",
-    "prettier": "prettier .",
+    "prettier": "prettier --cache .",
     "format": "npm-run-all --print-label --parallel lint:*:fix",
     "prerelease": "git switch main && git pull && npm ci && npm run clean && npm test && npm run clean",
     "release": "standard-version",
@@ -61,7 +61,7 @@
   },
   "lint-staged": {
     "!(dist)/**/*.{js,jsx,cjs,mjs,ts,tsx}": "eslint --cache --fix",
-    "!(dist)/**/*": "prettier --write",
+    "!(dist)/**/*": "prettier --cache --write",
     "!(CHANGELOG).md": "remark --frail"
   },
   "standard-version": {
