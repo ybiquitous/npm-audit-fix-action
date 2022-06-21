@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.0.6](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.5...v4.0.6) (2022-06-21)
+
+### Bug Fixes
+
+- **deps:** bump esbuild from 0.14.43 to 0.14.47 ([#608](https://github.com/ybiquitous/npm-audit-fix-action/issues/608)) ([0e82d26](https://github.com/ybiquitous/npm-audit-fix-action/commit/0e82d2676041340a23c9e47195304e55e80beeb2))
+
 ### [4.0.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.4...v4.0.5) (2022-05-31)
 
 ### Bug Fixes
