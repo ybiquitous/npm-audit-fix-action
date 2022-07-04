@@ -371,18 +371,18 @@ var require_tunnel = __commonJS({
         if (res.statusCode !== 200) {
           debug("tunneling socket could not be established, statusCode=%d", res.statusCode);
           socket.destroy();
-          var error = new Error("tunneling socket could not be established, statusCode=" + res.statusCode);
-          error.code = "ECONNRESET";
-          options.request.emit("error", error);
+          var error2 = new Error("tunneling socket could not be established, statusCode=" + res.statusCode);
+          error2.code = "ECONNRESET";
+          options.request.emit("error", error2);
           self.removeSocket(placeholder);
           return;
         }
         if (head.length > 0) {
           debug("got illegal response body from proxy");
           socket.destroy();
-          var error = new Error("got illegal response body from proxy");
-          error.code = "ECONNRESET";
-          options.request.emit("error", error);
+          var error2 = new Error("got illegal response body from proxy");
+          error2.code = "ECONNRESET";
+          options.request.emit("error", error2);
           self.removeSocket(placeholder);
           return;
         }
@@ -393,9 +393,9 @@ var require_tunnel = __commonJS({
       function onError(cause) {
         connectReq.removeAllListeners();
         debug("tunneling socket could not be established, cause=%s\n", cause.message, cause.stack);
-        var error = new Error("tunneling socket could not be established, cause=" + cause.message);
-        error.code = "ECONNRESET";
-        options.request.emit("error", error);
+        var error2 = new Error("tunneling socket could not be established, cause=" + cause.message);
+        error2.code = "ECONNRESET";
+        options.request.emit("error", error2);
         self.removeSocket(placeholder);
       }
     };
@@ -1187,12 +1187,12 @@ var require_oidc_utils = __commonJS({
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
           const httpclient = OidcClient.createHttpClient();
-          const res = yield httpclient.getJson(id_token_url).catch((error) => {
+          const res = yield httpclient.getJson(id_token_url).catch((error2) => {
             throw new Error(`Failed to get ID Token. 
  
-        Error Code : ${error.statusCode}
+        Error Code : ${error2.statusCode}
  
-        Error Message: ${error.result.message}`);
+        Error Message: ${error2.result.message}`);
           });
           const id_token = (_a = res.result) === null || _a === void 0 ? void 0 : _a.value;
           if (!id_token) {
@@ -1213,8 +1213,8 @@ var require_oidc_utils = __commonJS({
             const id_token = yield OidcClient.getCall(id_token_url);
             core_1.setSecret(id_token);
             return id_token;
-          } catch (error) {
-            throw new Error(`Error message: ${error.message}`);
+          } catch (error2) {
+            throw new Error(`Error message: ${error2.message}`);
           }
         });
       }
@@ -1576,7 +1576,7 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
     exports.setCommandEcho = setCommandEcho;
     function setFailed2(message) {
       process.exitCode = ExitCode.Failure;
-      error(message);
+      error2(message);
     }
     exports.setFailed = setFailed2;
     function isDebug() {
@@ -1587,10 +1587,10 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       command_1.issueCommand("debug", {}, message);
     }
     exports.debug = debug;
-    function error(message, properties = {}) {
+    function error2(message, properties = {}) {
       command_1.issueCommand("error", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
-    exports.error = error;
+    exports.error = error2;
     function warning2(message, properties = {}) {
       command_1.issueCommand("warning", utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
     }
@@ -2408,7 +2408,7 @@ var require_toolrunner = __commonJS({
               this._debug(`STDIO streams have closed for tool '${this.toolPath}'`);
               state.CheckComplete();
             });
-            state.on("done", (error, exitCode) => {
+            state.on("done", (error2, exitCode) => {
               if (stdbuffer.length > 0) {
                 this.emit("stdline", stdbuffer);
               }
@@ -2416,8 +2416,8 @@ var require_toolrunner = __commonJS({
                 this.emit("errline", errbuffer);
               }
               cp.removeAllListeners();
-              if (error) {
-                reject(error);
+              if (error2) {
+                reject(error2);
               } else {
                 resolve(exitCode);
               }
@@ -2512,14 +2512,14 @@ var require_toolrunner = __commonJS({
         this.emit("debug", message);
       }
       _setResult() {
-        let error;
+        let error2;
         if (this.processExited) {
           if (this.processError) {
-            error = new Error(`There was an error when attempting to execute the process '${this.toolPath}'. This may indicate the process failed to start. Error: ${this.processError}`);
+            error2 = new Error(`There was an error when attempting to execute the process '${this.toolPath}'. This may indicate the process failed to start. Error: ${this.processError}`);
           } else if (this.processExitCode !== 0 && !this.options.ignoreReturnCode) {
-            error = new Error(`The process '${this.toolPath}' failed with exit code ${this.processExitCode}`);
+            error2 = new Error(`The process '${this.toolPath}' failed with exit code ${this.processExitCode}`);
           } else if (this.processStderr && this.options.failOnStdErr) {
-            error = new Error(`The process '${this.toolPath}' failed because one or more lines were written to the STDERR stream`);
+            error2 = new Error(`The process '${this.toolPath}' failed because one or more lines were written to the STDERR stream`);
           }
         }
         if (this.timeout) {
@@ -2527,7 +2527,7 @@ var require_toolrunner = __commonJS({
           this.timeout = null;
         }
         this.done = true;
-        this.emit("done", error, this.processExitCode);
+        this.emit("done", error2, this.processExitCode);
       }
       static HandleTimeout(state) {
         if (state.done) {
@@ -3958,8 +3958,8 @@ var require_add = __commonJS({
       }
       if (kind === "error") {
         hook = function(method, options) {
-          return Promise.resolve().then(method.bind(null, options)).catch(function(error) {
-            return orig(error, options);
+          return Promise.resolve().then(method.bind(null, options)).catch(function(error2) {
+            return orig(error2, options);
           });
         };
       }
@@ -4641,21 +4641,21 @@ var require_tr46 = __commonJS({
         label = punycode.toUnicode(label);
         processing_option = PROCESSING_OPTIONS.NONTRANSITIONAL;
       }
-      var error = false;
+      var error2 = false;
       if (normalize(label) !== label || label[3] === "-" && label[4] === "-" || label[0] === "-" || label[label.length - 1] === "-" || label.indexOf(".") !== -1 || label.search(combiningMarksRegex) === 0) {
-        error = true;
+        error2 = true;
       }
       var len = countSymbols(label);
       for (var i = 0; i < len; ++i) {
         var status = findStatus(label.codePointAt(i));
         if (processing === PROCESSING_OPTIONS.TRANSITIONAL && status[1] !== "valid" || processing === PROCESSING_OPTIONS.NONTRANSITIONAL && status[1] !== "valid" && status[1] !== "deviation") {
-          error = true;
+          error2 = true;
           break;
         }
       }
       return {
         label,
-        error
+        error: error2
       };
     }
     function processing(domain_name, useSTD3, processing_option) {
@@ -6305,8 +6305,8 @@ var require_lib4 = __commonJS({
       this.timeout = timeout;
       if (body instanceof Stream) {
         body.on("error", function(err) {
-          const error = err.name === "AbortError" ? err : new FetchError(`Invalid response body while trying to fetch ${_this.url}: ${err.message}`, "system", err);
-          _this[INTERNALS].error = error;
+          const error2 = err.name === "AbortError" ? err : new FetchError(`Invalid response body while trying to fetch ${_this.url}: ${err.message}`, "system", err);
+          _this[INTERNALS].error = error2;
         });
       }
     }
@@ -7033,14 +7033,14 @@ var require_lib4 = __commonJS({
         const signal = request.signal;
         let response = null;
         const abort = function abort2() {
-          let error = new AbortError("The user aborted a request.");
-          reject(error);
+          let error2 = new AbortError("The user aborted a request.");
+          reject(error2);
           if (request.body && request.body instanceof Stream.Readable) {
-            request.body.destroy(error);
+            request.body.destroy(error2);
           }
           if (!response || !response.body)
             return;
-          response.body.emit("error", error);
+          response.body.emit("error", error2);
         };
         if (signal && signal.aborted) {
           abort();
@@ -7432,7 +7432,7 @@ var require_dist_node5 = __commonJS({
         }
         if (status >= 400) {
           const data = await getResponseData(response);
-          const error = new requestError.RequestError(toErrorMessage(data), status, {
+          const error2 = new requestError.RequestError(toErrorMessage(data), status, {
             response: {
               url,
               status,
@@ -7441,7 +7441,7 @@ var require_dist_node5 = __commonJS({
             },
             request: requestOptions
           });
-          throw error;
+          throw error2;
         }
         return getResponseData(response);
       }).then((data) => {
@@ -7451,10 +7451,10 @@ var require_dist_node5 = __commonJS({
           headers,
           data
         };
-      }).catch((error) => {
-        if (error instanceof requestError.RequestError)
-          throw error;
-        throw new requestError.RequestError(error.message, 500, {
+      }).catch((error2) => {
+        if (error2 instanceof requestError.RequestError)
+          throw error2;
+        throw new requestError.RequestError(error2.message, 500, {
           request: requestOptions
         });
       });
@@ -8882,9 +8882,9 @@ var require_dist_node10 = __commonJS({
               return {
                 value: normalizedResponse
               };
-            } catch (error) {
-              if (error.status !== 409)
-                throw error;
+            } catch (error2) {
+              if (error2.status !== 409)
+                throw error2;
               url = "";
               return {
                 value: {
@@ -9052,7 +9052,7 @@ var require_github = __commonJS({
 });
 
 // lib/index.js
-var core = __toESM(require_core(), 1);
+var core2 = __toESM(require_core(), 1);
 var import_exec7 = __toESM(require_exec(), 1);
 
 // lib/packageRepoUrls.js
@@ -9442,9 +9442,16 @@ async function listPackages(options = {}) {
 }
 
 // lib/updateNpm.js
+var core = __toESM(require_core(), 1);
 var import_exec6 = __toESM(require_exec(), 1);
 async function updateNpm(version) {
-  await (0, import_exec6.exec)("sudo", ["npm", ...npmArgs("install", "--global", `npm@${version}`)]);
+  const cmdArgs = npmArgs("install", "--global", `npm@${version}`);
+  try {
+    await (0, import_exec6.exec)("npm", cmdArgs);
+  } catch (error2) {
+    core.error(String(error2));
+    await (0, import_exec6.exec)("sudo", ["npm", ...cmdArgs]);
+  }
   const { stdout: actualVersion } = await (0, import_exec6.getExecOutput)("npm", ["--version"]);
   await (0, import_exec6.exec)("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
   return actualVersion.trim();
@@ -9472,55 +9479,55 @@ function getFromEnv(name) {
   throw new Error(`Not found '${name}' in the environment variables`);
 }
 async function run() {
-  const npmVersion = await core.group(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
-  await core.group("Install user packages", async () => {
+  const npmVersion = await core2.group(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
+  await core2.group("Install user packages", async () => {
     await (0, import_exec7.exec)("npm", npmArgs("ci"));
   });
-  const auditReport = await core.group("Get audit report", async () => {
+  const auditReport = await core2.group("Get audit report", async () => {
     const res = await audit();
-    core.info(JSON.stringify(res, null, 2));
+    core2.info(JSON.stringify(res, null, 2));
     return res;
   });
-  const beforePackages = await core.group("List packages before", () => listPackages());
-  await core.group("Fix vulnerabilities", () => auditFix());
-  await core.group("Re-install user packages", async () => {
+  const beforePackages = await core2.group("List packages before", () => listPackages());
+  await core2.group("Fix vulnerabilities", () => auditFix());
+  await core2.group("Re-install user packages", async () => {
     await (0, import_exec7.exec)("npm", npmArgs("ci"));
   });
-  const afterPackages = await core.group("List packages after", () => listPackages());
-  const report = await core.group("Aggregate report", () => aggregateReport(auditReport, beforePackages, afterPackages));
+  const afterPackages = await core2.group("List packages after", () => listPackages());
+  const report = await core2.group("Aggregate report", () => aggregateReport(auditReport, beforePackages, afterPackages));
   if (report.packageCount === 0) {
-    core.info("No update.");
+    core2.info("No update.");
     return;
   }
-  const changed = await core.group("Check file changes", filesChanged);
+  const changed = await core2.group("Check file changes", filesChanged);
   if (changed) {
-    core.info("No file changes.");
+    core2.info("No file changes.");
     return;
   }
-  await core.group("Create or update a pull request", async () => {
-    const token = core.getInput("github_token");
+  await core2.group("Create or update a pull request", async () => {
+    const token = core2.getInput("github_token");
     const repository = getFromEnv("GITHUB_REPOSITORY");
-    let baseBranch = core.getInput("default_branch");
+    let baseBranch = core2.getInput("default_branch");
     if (!baseBranch) {
       baseBranch = await getDefaultBranch({ token, repository });
     }
-    const author = core.getInput("github_user");
-    const email = core.getInput("github_email");
+    const author = core2.getInput("github_user");
+    const email = core2.getInput("github_email");
     return createOrUpdatePullRequest({
-      branch: core.getInput("branch"),
+      branch: core2.getInput("branch"),
       token,
       baseBranch,
-      title: core.getInput("commit_title"),
+      title: core2.getInput("commit_title"),
       pullBody: buildPullRequestBody(report, npmVersion),
       commitBody: buildCommitBody(report),
       repository,
       author,
       email,
-      labels: commaSeparatedList(core.getInput("labels"))
+      labels: commaSeparatedList(core2.getInput("labels"))
     });
   });
 }
-run().catch((e) => core.setFailed(e.message));
+run().catch((e) => core2.setFailed(e.message));
 /*!
  * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
  *
