@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.0.7](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.6...v4.0.7) (2022-07-04)
+
+### Bug Fixes
+
+- retry `sudo npm install npm` ([#620](https://github.com/ybiquitous/npm-audit-fix-action/issues/620)) ([a8ac4d8](https://github.com/ybiquitous/npm-audit-fix-action/commit/a8ac4d89b5d5e92b586304b351524d4cf0092d4d))
+
 ### [4.0.6](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.5...v4.0.6) (2022-06-21)
 
 ### Bug Fixes
