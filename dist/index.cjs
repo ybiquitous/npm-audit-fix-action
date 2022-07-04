@@ -9261,7 +9261,7 @@ function buildCommitBody(report) {
 // lib/constants.js
 var PACKAGE_NAME = "ybiquitous/npm-audit-fix-action";
 var PACKAGE_URL = "https://github.com/ybiquitous/npm-audit-fix-action";
-var NPM_VERSION = "8";
+var NPM_VERSION = "latest";
 
 // lib/buildPullRequestBody.js
 var EMPTY = "-";
