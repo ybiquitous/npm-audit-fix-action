@@ -51,7 +51,7 @@
     "@types/jest": "^28.1.6",
     "@typescript-eslint/eslint-plugin": "^5.30.5",
     "esbuild": "^0.14.49",
-    "eslint": "^8.19.0",
+    "eslint": "^8.20.0",
     "eslint-config-ybiquitous": "^16.0.0",
     "eslint-plugin-jest": "^26.5.3",
     "jest": "^28.1.3",
