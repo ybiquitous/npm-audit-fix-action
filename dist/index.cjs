@@ -16,7 +16,10 @@ var __copyProps = (to, from, except, desc) => {
   }
   return to;
 };
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target, mod));
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
 
 // node_modules/@actions/core/lib/utils.js
 var require_utils = __commonJS({
@@ -369,7 +372,10 @@ var require_tunnel = __commonJS({
         connectReq.removeAllListeners();
         socket.removeAllListeners();
         if (res.statusCode !== 200) {
-          debug("tunneling socket could not be established, statusCode=%d", res.statusCode);
+          debug(
+            "tunneling socket could not be established, statusCode=%d",
+            res.statusCode
+          );
           socket.destroy();
           var error2 = new Error("tunneling socket could not be established, statusCode=" + res.statusCode);
           error2.code = "ECONNRESET";
@@ -392,7 +398,11 @@ var require_tunnel = __commonJS({
       }
       function onError(cause) {
         connectReq.removeAllListeners();
-        debug("tunneling socket could not be established, cause=%s\n", cause.message, cause.stack);
+        debug(
+          "tunneling socket could not be established, cause=%s\n",
+          cause.message,
+          cause.stack
+        );
         var error2 = new Error("tunneling socket could not be established, cause=" + cause.message);
         error2.code = "ECONNRESET";
         options.request.emit("error", error2);
@@ -2910,18 +2920,21 @@ var require_lru_cache = __commonJS({
   "node_modules/hosted-git-info/node_modules/lru-cache/index.js"(exports, module2) {
     var perf = typeof performance === "object" && performance && typeof performance.now === "function" ? performance : Date;
     var hasAbortController = typeof AbortController !== "undefined";
-    var AC = hasAbortController ? AbortController : Object.assign(class AbortController {
-      constructor() {
-        this.signal = new AC.AbortSignal();
-      }
-      abort() {
-        this.signal.aborted = true;
-      }
-    }, { AbortSignal: class AbortSignal {
-      constructor() {
-        this.aborted = false;
-      }
-    } });
+    var AC = hasAbortController ? AbortController : Object.assign(
+      class AbortController {
+        constructor() {
+          this.signal = new AC.AbortSignal();
+        }
+        abort() {
+          this.signal.aborted = true;
+        }
+      },
+      { AbortSignal: class AbortSignal {
+        constructor() {
+          this.aborted = false;
+        }
+      } }
+    );
     var warned = /* @__PURE__ */ new Set();
     var deprecatedOption = (opt, instead) => {
       const code = `LRU_CACHE_OPTION_${opt}`;
@@ -6325,11 +6338,14 @@ var require_lib4 = __commonJS({
       blob() {
         let ct = this.headers && this.headers.get("content-type") || "";
         return consumeBody.call(this).then(function(buf) {
-          return Object.assign(new Blob([], {
-            type: ct.toLowerCase()
-          }), {
-            [BUFFER]: buf
-          });
+          return Object.assign(
+            new Blob([], {
+              type: ct.toLowerCase()
+            }),
+            {
+              [BUFFER]: buf
+            }
+          );
         });
       },
       json() {
@@ -7386,12 +7402,15 @@ var require_dist_node5 = __commonJS({
       let status;
       let url;
       const fetch = requestOptions.request && requestOptions.request.fetch || nodeFetch;
-      return fetch(requestOptions.url, Object.assign({
-        method: requestOptions.method,
-        body: requestOptions.body,
-        headers: requestOptions.headers,
-        redirect: requestOptions.redirect
-      }, requestOptions.request)).then(async (response) => {
+      return fetch(requestOptions.url, Object.assign(
+        {
+          method: requestOptions.method,
+          body: requestOptions.body,
+          headers: requestOptions.headers,
+          redirect: requestOptions.redirect
+        },
+        requestOptions.request
+      )).then(async (response) => {
         url = response.url;
         status = response.status;
         for (const keyAndValue of response.headers) {
@@ -9175,11 +9194,13 @@ async function aggregateReport(audit2, beforePackages, afterPackages) {
     }
   });
   updated.sort(byNameAndVersion);
-  const allPackageNames = Array.from(/* @__PURE__ */ new Set([
-    ...added.map((e) => e.name),
-    ...updated.map((e) => e.name),
-    ...removed.map((e) => e.name)
-  ]));
+  const allPackageNames = Array.from(
+    /* @__PURE__ */ new Set([
+      ...added.map((e) => e.name),
+      ...updated.map((e) => e.name),
+      ...removed.map((e) => e.name)
+    ])
+  );
   const packageCount = allPackageNames.length;
   const packageUrls = await packageRepoUrls(allPackageNames);
   return { added, removed, updated, packageCount, packageUrls };
@@ -9283,7 +9304,9 @@ function buildPullRequestBody(report, npmVersion) {
   header.push("| Package | Version | Source | Detail |");
   header.push("|:--------|:-------:|:------:|:-------|");
   const lines = [];
-  lines.push(`This pull request fixes the vulnerable packages via npm [${npmVersion}](https://github.com/npm/cli/releases/tag/v${npmVersion}).`);
+  lines.push(
+    `This pull request fixes the vulnerable packages via npm [${npmVersion}](https://github.com/npm/cli/releases/tag/v${npmVersion}).`
+  );
   if (report.updated.length > 0) {
     lines.push("");
     lines.push("<details open>");
@@ -9295,7 +9318,14 @@ function buildPullRequestBody(report, npmVersion) {
       if (severity != null && title != null && url != null) {
         extra = `**[${severity}]** ${title} ([ref](${url}))`;
       }
-      lines.push(buildTableRow(npmPackage(name, version, location), `${versionLabel(previousVersion)} \u2192 ${versionLabel(version)}`, repoLink(report, name), extra));
+      lines.push(
+        buildTableRow(
+          npmPackage(name, version, location),
+          `${versionLabel(previousVersion)} \u2192 ${versionLabel(version)}`,
+          repoLink(report, name),
+          extra
+        )
+      );
     });
     lines.push("");
     lines.push("</details>");
@@ -9307,7 +9337,14 @@ function buildPullRequestBody(report, npmVersion) {
     lines.push("");
     lines.push(...header);
     report.added.forEach(({ name, version, location }) => {
-      lines.push(buildTableRow(npmPackage(name, version, location), versionLabel(version), repoLink(report, name), EMPTY));
+      lines.push(
+        buildTableRow(
+          npmPackage(name, version, location),
+          versionLabel(version),
+          repoLink(report, name),
+          EMPTY
+        )
+      );
     });
     lines.push("");
     lines.push("</details>");
@@ -9319,7 +9356,14 @@ function buildPullRequestBody(report, npmVersion) {
     lines.push("");
     lines.push(...header);
     report.removed.forEach(({ name, version, location }) => {
-      lines.push(buildTableRow(npmPackage(name, version, location), versionLabel(version), repoLink(report, name), EMPTY));
+      lines.push(
+        buildTableRow(
+          npmPackage(name, version, location),
+          versionLabel(version),
+          repoLink(report, name),
+          EMPTY
+        )
+      );
     });
     lines.push("");
     lines.push("</details>");
@@ -9420,11 +9464,15 @@ async function getDefaultBranch({ token, repository }) {
 var import_exec5 = __toESM(require_exec(), 1);
 async function listPackages(options = {}) {
   const cwd = options.cwd || process.cwd();
-  const { exitCode, stdout, stderr } = await (0, import_exec5.getExecOutput)("npm", npmArgs("ls", "--parseable", "--long", "--all", "--package-lock-only"), {
-    ignoreReturnCode: true,
-    ...options,
-    cwd
-  });
+  const { exitCode, stdout, stderr } = await (0, import_exec5.getExecOutput)(
+    "npm",
+    npmArgs("ls", "--parseable", "--long", "--all", "--package-lock-only"),
+    {
+      ignoreReturnCode: true,
+      ...options,
+      cwd
+    }
+  );
   if (exitCode !== 0 && !stderr.includes("npm ERR! missing:")) {
     throw new Error(`"npm ls" failed`);
   }
@@ -9494,7 +9542,10 @@ async function run() {
     await (0, import_exec7.exec)("npm", npmArgs("ci"));
   });
   const afterPackages = await core2.group("List packages after", () => listPackages());
-  const report = await core2.group("Aggregate report", () => aggregateReport(auditReport, beforePackages, afterPackages));
+  const report = await core2.group(
+    "Aggregate report",
+    () => aggregateReport(auditReport, beforePackages, afterPackages)
+  );
   if (report.packageCount === 0) {
     core2.info("No update.");
     return;
