@@ -2674,6 +2674,7 @@ var require_git_host_info = __commonJS({
     var defaults = {
       sshtemplate: ({ domain, user, project, committish }) => `git@${domain}:${user}/${project}.git${maybeJoin("#", committish)}`,
       sshurltemplate: ({ domain, user, project, committish }) => `git+ssh://git@${domain}/${user}/${project}.git${maybeJoin("#", committish)}`,
+      edittemplate: ({ domain, user, project, committish, editpath, path }) => `https://${domain}/${user}/${project}${maybeJoin("/", editpath, "/", maybeEncode(committish || "master"), "/", path)}`,
       browsetemplate: ({ domain, user, project, committish, treepath }) => `https://${domain}/${user}/${project}${maybeJoin("/", treepath, "/", maybeEncode(committish))}`,
       browsefiletemplate: ({ domain, user, project, committish, treepath, path, fragment, hashformat }) => `https://${domain}/${user}/${project}/${treepath}/${maybeEncode(committish || "master")}/${path}${maybeJoin("#", hashformat(fragment || ""))}`,
       docstemplate: ({ domain, user, project, treepath, committish }) => `https://${domain}/${user}/${project}${maybeJoin("/", treepath, "/", maybeEncode(committish))}#readme`,
@@ -2689,6 +2690,7 @@ var require_git_host_info = __commonJS({
       protocols: ["git:", "http:", "git+ssh:", "git+https:", "ssh:", "https:"],
       domain: "github.com",
       treepath: "tree",
+      editpath: "edit",
       filetemplate: ({ auth, user, project, committish, path }) => `https://${maybeJoin(auth, "@")}raw.githubusercontent.com/${user}/${project}/${maybeEncode(committish) || "master"}/${path}`,
       gittemplate: ({ auth, domain, user, project, committish }) => `git://${maybeJoin(auth, "@")}${domain}/${user}/${project}.git${maybeJoin("#", committish)}`,
       tarballtemplate: ({ domain, user, project, committish }) => `https://codeload.${domain}/${user}/${project}/tar.gz/${maybeEncode(committish) || "master"}`,
@@ -2713,6 +2715,8 @@ var require_git_host_info = __commonJS({
       protocols: ["git+ssh:", "git+https:", "ssh:", "https:"],
       domain: "bitbucket.org",
       treepath: "src",
+      editpath: "?mode=edit",
+      edittemplate: ({ domain, user, project, committish, treepath, path, editpath }) => `https://${domain}/${user}/${project}${maybeJoin("/", treepath, "/", maybeEncode(committish || "master"), "/", path, editpath)}`,
       tarballtemplate: ({ domain, user, project, committish }) => `https://${domain}/${user}/${project}/get/${maybeEncode(committish) || "master"}.tar.gz`,
       extract: (url) => {
         let [, user, project, aux] = url.pathname.split("/", 4);
@@ -2732,6 +2736,7 @@ var require_git_host_info = __commonJS({
       protocols: ["git+ssh:", "git+https:", "ssh:", "https:"],
       domain: "gitlab.com",
       treepath: "tree",
+      editpath: "-/edit",
       httpstemplate: ({ auth, domain, user, project, committish }) => `git+https://${maybeJoin(auth, "@")}${domain}/${user}/${project}.git${maybeJoin("#", committish)}`,
       tarballtemplate: ({ domain, user, project, committish }) => `https://${domain}/${user}/${project}/repository/archive.tar.gz?ref=${maybeEncode(committish) || "master"}`,
       extract: (url) => {
@@ -2754,8 +2759,10 @@ var require_git_host_info = __commonJS({
     gitHosts.gist = Object.assign({}, defaults, {
       protocols: ["git:", "git+ssh:", "git+https:", "ssh:", "https:"],
       domain: "gist.github.com",
+      editpath: "edit",
       sshtemplate: ({ domain, project, committish }) => `git@${domain}:${project}.git${maybeJoin("#", committish)}`,
       sshurltemplate: ({ domain, project, committish }) => `git+ssh://git@${domain}/${project}.git${maybeJoin("#", committish)}`,
+      edittemplate: ({ domain, user, project, committish, editpath }) => `https://${domain}/${user}/${project}${maybeJoin("/", maybeEncode(committish))}/${editpath}`,
       browsetemplate: ({ domain, project, committish }) => `https://${domain}/${project}${maybeJoin("/", maybeEncode(committish))}`,
       browsefiletemplate: ({ domain, project, committish, path, hashformat }) => `https://${domain}/${project}${maybeJoin("/", maybeEncode(committish))}${maybeJoin("#", hashformat(path))}`,
       docstemplate: ({ domain, project, committish }) => `https://${domain}/${project}${maybeJoin("/", maybeEncode(committish))}`,
@@ -2900,6 +2907,9 @@ var require_git_host = __commonJS({
       }
       file(path, opts) {
         return this._fill(this.filetemplate, { ...opts, path });
+      }
+      edit(path, opts) {
+        return this._fill(this.edittemplate, { ...opts, path });
       }
       getDefaultRepresentation() {
         return this.default;
@@ -3650,8 +3660,8 @@ var require_lib2 = __commonJS({
       if (!giturl) {
         return;
       }
-      const url2 = isGitHubShorthand(giturl) ? "github:" + giturl : correctProtocol(giturl);
-      const parsed = parseGitUrl(url2);
+      const correctedUrl = isGitHubShorthand(giturl) ? "github:" + giturl : correctProtocol(giturl);
+      const parsed = parseGitUrl(correctedUrl);
       if (!parsed) {
         return parsed;
       }
@@ -3772,7 +3782,7 @@ var require_lib2 = __commonJS({
       let result;
       try {
         result = new url.URL(giturl);
-      } catch (err) {
+      } catch {
       }
       if (result) {
         return result;
@@ -3780,7 +3790,7 @@ var require_lib2 = __commonJS({
       const correctedUrl = correctUrl(giturl);
       try {
         result = new url.URL(correctedUrl);
-      } catch (err) {
+      } catch {
       }
       return result;
     };
