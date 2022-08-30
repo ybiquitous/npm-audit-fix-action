@@ -1,51 +1,51 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`aggregateReport() 1`] = `
-Object {
-  "added": Array [
-    Object {
+{
+  "added": [
+    {
       "location": null,
       "name": "arrify",
       "version": "2.0.1",
     },
   ],
   "packageCount": 4,
-  "packageUrls": Object {
-    "arrify": Object {
+  "packageUrls": {
+    "arrify": {
       "name": "arrify",
       "type": "github",
       "url": "https://github.com/sindresorhus/arrify",
     },
-    "css-select": Object {
+    "css-select": {
       "name": "css-select",
       "type": "github",
       "url": "https://github.com/fb55/css-select",
     },
-    "xmldom": Object {
+    "xmldom": {
       "name": "xmldom",
       "type": "github",
       "url": "https://github.com/xmldom/xmldom",
     },
-    "y18n": Object {
+    "y18n": {
       "name": "y18n",
       "type": "github",
       "url": "https://github.com/yargs/y18n",
     },
   },
-  "removed": Array [
-    Object {
+  "removed": [
+    {
       "location": "svgo/node_modules/css-select",
       "name": "css-select",
       "version": "3.1.2",
     },
-    Object {
+    {
       "location": null,
       "name": "xmldom",
       "version": "0.5.0",
     },
   ],
-  "updated": Array [
-    Object {
+  "updated": [
+    {
       "location": null,
       "name": "y18n",
       "previousVersion": "4.0.0",
