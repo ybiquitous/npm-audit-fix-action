@@ -30,8 +30,7 @@ jobs:
       - run: git push --tags --force origin "${MAJOR_VERSION_TAG}"
       - run: |
           gh release create "${TAG_NAME}" \
-            --generate-notes \
-            --notes "See the [changelog](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG_NAME}/CHANGELOG.md) for more details."
+            --notes "See the [changelog](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG_NAME}/CHANGELOG.md) for details."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG_NAME: ${{ steps.get_tag.outputs.tag }}
