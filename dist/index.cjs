@@ -2391,7 +2391,7 @@ var require_io = __commonJS({
     var path = require("path");
     var util_1 = require("util");
     var ioUtil = require_io_util();
-    var exec4 = util_1.promisify(childProcess.exec);
+    var exec5 = util_1.promisify(childProcess.exec);
     function cp(source, dest, options = {}) {
       return __awaiter(this, void 0, void 0, function* () {
         const { force, recursive } = readCopyOptions(options);
@@ -2445,9 +2445,9 @@ var require_io = __commonJS({
         if (ioUtil.IS_WINDOWS) {
           try {
             if (yield ioUtil.isDirectory(inputPath, true)) {
-              yield exec4(`rd /s /q "${inputPath}"`);
+              yield exec5(`rd /s /q "${inputPath}"`);
             } else {
-              yield exec4(`del /f /a "${inputPath}"`);
+              yield exec5(`del /f /a "${inputPath}"`);
             }
           } catch (err) {
             if (err.code !== "ENOENT")
@@ -2469,7 +2469,7 @@ var require_io = __commonJS({
             return;
           }
           if (isDir) {
-            yield exec4(`rm -rf "${inputPath}"`);
+            yield exec5(`rm -rf "${inputPath}"`);
           } else {
             yield ioUtil.unlink(inputPath);
           }
@@ -3128,7 +3128,7 @@ var require_exec = __commonJS({
     exports.getExecOutput = exports.exec = void 0;
     var string_decoder_1 = require("string_decoder");
     var tr = __importStar(require_toolrunner());
-    function exec4(commandLine, args, options) {
+    function exec5(commandLine, args, options) {
       return __awaiter(this, void 0, void 0, function* () {
         const commandArgs = tr.argStringToArray(commandLine);
         if (commandArgs.length === 0) {
@@ -3140,7 +3140,7 @@ var require_exec = __commonJS({
         return runner.exec();
       });
     }
-    exports.exec = exec4;
+    exports.exec = exec5;
     function getExecOutput6(commandLine, args, options) {
       var _a, _b;
       return __awaiter(this, void 0, void 0, function* () {
@@ -3163,7 +3163,7 @@ var require_exec = __commonJS({
           }
         };
         const listeners = Object.assign(Object.assign({}, options === null || options === void 0 ? void 0 : options.listeners), { stdout: stdOutListener, stderr: stdErrListener });
-        const exitCode = yield exec4(commandLine, args, Object.assign(Object.assign({}, options), { listeners }));
+        const exitCode = yield exec5(commandLine, args, Object.assign(Object.assign({}, options), { listeners }));
         stdout += stdoutDecoder.end();
         stderr += stderrDecoder.end();
         return {
@@ -3174,6 +3174,18 @@ var require_exec = __commonJS({
       });
     }
     exports.getExecOutput = getExecOutput6;
+  }
+});
+
+// node_modules/has-yarn/index.js
+var require_has_yarn = __commonJS({
+  "node_modules/has-yarn/index.js"(exports, module2) {
+    "use strict";
+    var path = require("path");
+    var fs = require("fs");
+    var hasYarn2 = (cwd = process.cwd()) => fs.existsSync(path.resolve(cwd, "yarn.lock"));
+    module2.exports = hasYarn2;
+    module2.exports.default = hasYarn2;
   }
 });
 
@@ -9595,7 +9607,8 @@ var require_github = __commonJS({
 
 // lib/index.js
 var core2 = __toESM(require_core(), 1);
-var import_exec7 = __toESM(require_exec(), 1);
+var import_exec8 = __toESM(require_exec(), 1);
+var import_has_yarn = __toESM(require_has_yarn(), 1);
 
 // lib/packageRepoUrls.js
 var import_core = __toESM(require_core(), 1);
@@ -10012,19 +10025,28 @@ async function listPackages(options = {}) {
   return packages;
 }
 
+// lib/restoreYarn.js
+var import_exec6 = __toESM(require_exec(), 1);
+async function restoreYarn(options = {}) {
+  const cwd = options.cwd || process.cwd();
+  await (0, import_exec6.exec)("rm -rf yarn.lock", void 0, { ...options, cwd });
+  await (0, import_exec6.exec)("yarn import --silent", void 0, { ...options, cwd });
+  await (0, import_exec6.exec)("rm -rf package-lock.json", void 0, { ...options, cwd });
+}
+
 // lib/updateNpm.js
 var core = __toESM(require_core(), 1);
-var import_exec6 = __toESM(require_exec(), 1);
+var import_exec7 = __toESM(require_exec(), 1);
 async function updateNpm(version) {
   const cmdArgs = npmArgs("install", "--global", `npm@${version}`);
   try {
-    await (0, import_exec6.exec)("npm", cmdArgs);
+    await (0, import_exec7.exec)("npm", cmdArgs);
   } catch (error2) {
     core.error(String(error2));
-    await (0, import_exec6.exec)("sudo", ["npm", ...cmdArgs]);
+    await (0, import_exec7.exec)("sudo", ["npm", ...cmdArgs]);
   }
-  const { stdout: actualVersion } = await (0, import_exec6.getExecOutput)("npm", ["--version"]);
-  await (0, import_exec6.exec)("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
+  const { stdout: actualVersion } = await (0, import_exec7.getExecOutput)("npm", ["--version"]);
+  await (0, import_exec7.exec)("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
   return actualVersion.trim();
 }
 
@@ -10036,7 +10058,7 @@ function commaSeparatedList(str) {
 // lib/index.js
 async function filesChanged() {
   try {
-    const exitCode = await (0, import_exec7.exec)("git", ["diff", "--exit-code"]);
+    const exitCode = await (0, import_exec8.exec)("git", ["diff", "--exit-code"]);
     return exitCode === 0;
   } catch (err) {
     return false;
@@ -10051,8 +10073,13 @@ function getFromEnv(name) {
 }
 async function run() {
   const npmVersion = await core2.group(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
+  if ((0, import_has_yarn.default)()) {
+    await core2.group("Create package-lock.json", async () => {
+      await (0, import_exec8.exec)("npm", npmArgs("i", "--package-lock-only"));
+    });
+  }
   await core2.group("Install user packages", async () => {
-    await (0, import_exec7.exec)("npm", npmArgs("ci"));
+    await (0, import_exec8.exec)("npm", npmArgs("ci"));
   });
   const auditReport = await core2.group("Get audit report", async () => {
     const res = await audit();
@@ -10062,8 +10089,11 @@ async function run() {
   const beforePackages = await core2.group("List packages before", () => listPackages());
   await core2.group("Fix vulnerabilities", () => auditFix());
   await core2.group("Re-install user packages", async () => {
-    await (0, import_exec7.exec)("npm", npmArgs("ci"));
+    await (0, import_exec8.exec)("npm", npmArgs("ci"));
   });
+  if ((0, import_has_yarn.default)()) {
+    await core2.group("Reimport yarn lock", () => restoreYarn());
+  }
   const afterPackages = await core2.group("List packages after", () => listPackages());
   const report = await core2.group(
     "Aggregate report",
