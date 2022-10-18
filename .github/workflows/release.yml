@@ -23,8 +23,7 @@ jobs:
       - run: git config --local user.name '${{ github.actor }}'
       - run: git config --local user.email '${{ github.actor }}@users.noreply.github.com'
       - run: npm run release
-      - run: echo "::set-output name=tag::$(git describe --abbrev=0)"
-        id: get_tag
+      - run: echo "TAG_NAME=$(git describe --abbrev=0)" >> "${GITHUB_ENV}"
       - run: git push --follow-tags
       - run: git tag --force --annotate --message "Release ${MAJOR_VERSION_TAG}" "${MAJOR_VERSION_TAG}"
       - run: git push --tags --force origin "${MAJOR_VERSION_TAG}"
@@ -33,4 +32,3 @@ jobs:
             --notes "See the [changelog](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG_NAME}/CHANGELOG.md) for details."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG_NAME: ${{ steps.get_tag.outputs.tag }}
