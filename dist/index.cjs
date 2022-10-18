@@ -4195,7 +4195,7 @@ var require_lib2 = __commonJS({
     "use strict";
     var LRU = require_lru_cache();
     var hosts = require_hosts();
-    var fromUrl2 = require_from_url();
+    var fromUrl = require_from_url();
     var cache2 = new LRU({ max: 1e3 });
     var _gitHosts, _protocols, _fill, fill_fn;
     var _GitHost = class {
@@ -4223,7 +4223,7 @@ var require_lib2 = __commonJS({
         }
         const key = giturl + JSON.stringify(opts || {});
         if (!cache2.has(key)) {
-          const hostArgs = fromUrl2(giturl, opts, {
+          const hostArgs = fromUrl(giturl, opts, {
             gitHosts: __privateGet(_GitHost, _gitHosts),
             protocols: __privateGet(_GitHost, _protocols)
           });
@@ -9621,7 +9621,7 @@ var import_exec7 = __toESM(require_exec(), 1);
 // lib/packageRepoUrls.js
 var import_core = __toESM(require_core(), 1);
 var import_exec = __toESM(require_exec(), 1);
-var hostedGitInfo = __toESM(require_lib2(), 1);
+var import_hosted_git_info = __toESM(require_lib2(), 1);
 var cache = /* @__PURE__ */ new Map();
 async function fetchUrl(packageName) {
   const cached = cache.get(packageName);
@@ -9644,7 +9644,7 @@ async function fetchUrl(packageName) {
     (0, import_core.info)(`No repository URL for '${packageName}'`);
     return null;
   }
-  const url = hostedGitInfo.fromUrl(stdout);
+  const url = import_hosted_git_info.default.fromUrl(stdout);
   if (!url) {
     (0, import_core.info)(`No repository URL for '${packageName}'`);
     return null;
