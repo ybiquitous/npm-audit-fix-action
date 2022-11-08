@@ -4054,20 +4054,19 @@ var require_hosts = __commonJS({
   }
 });
 
-// node_modules/hosted-git-info/lib/from-url.js
-var require_from_url = __commonJS({
-  "node_modules/hosted-git-info/lib/from-url.js"(exports, module2) {
-    "use strict";
+// node_modules/hosted-git-info/lib/parse-url.js
+var require_parse_url = __commonJS({
+  "node_modules/hosted-git-info/lib/parse-url.js"(exports, module2) {
     var url = require("url");
+    var lastIndexOfBefore = (str, char, beforeChar) => {
+      const startPosition = str.indexOf(beforeChar);
+      return str.lastIndexOf(char, startPosition > -1 ? startPosition : Infinity);
+    };
     var safeUrl = (u) => {
       try {
         return new url.URL(u);
       } catch {
       }
-    };
-    var lastIndexOfBefore = (str, char, beforeChar) => {
-      const startPosition = str.indexOf(beforeChar);
-      return str.lastIndexOf(char, startPosition > -1 ? startPosition : Infinity);
     };
     var correctProtocol = (arg, protocols) => {
       const firstColon = arg.indexOf(":");
@@ -4089,6 +4088,29 @@ var require_from_url = __commonJS({
       }
       return `${arg.slice(0, firstColon + 1)}//${arg.slice(firstColon + 1)}`;
     };
+    var correctUrl = (giturl) => {
+      const firstAt = lastIndexOfBefore(giturl, "@", "#");
+      const lastColonBeforeHash = lastIndexOfBefore(giturl, ":", "#");
+      if (lastColonBeforeHash > firstAt) {
+        giturl = giturl.slice(0, lastColonBeforeHash) + "/" + giturl.slice(lastColonBeforeHash + 1);
+      }
+      if (lastIndexOfBefore(giturl, ":", "#") === -1 && giturl.indexOf("//") === -1) {
+        giturl = `git+ssh://${giturl}`;
+      }
+      return giturl;
+    };
+    module2.exports = (giturl, protocols) => {
+      const withProtocol = protocols ? correctProtocol(giturl, protocols) : giturl;
+      return safeUrl(withProtocol) || safeUrl(correctUrl(withProtocol));
+    };
+  }
+});
+
+// node_modules/hosted-git-info/lib/from-url.js
+var require_from_url = __commonJS({
+  "node_modules/hosted-git-info/lib/from-url.js"(exports, module2) {
+    "use strict";
+    var parseUrl = require_parse_url();
     var isGitHubShorthand = (arg) => {
       const firstHash = arg.indexOf("#");
       const firstSlash = arg.indexOf("/");
@@ -4105,23 +4127,12 @@ var require_from_url = __commonJS({
       const doesNotStartWithDot = !arg.startsWith(".");
       return spaceOnlyAfterHash && hasSlash && doesNotEndWithSlash && doesNotStartWithDot && atOnlyAfterHash && colonOnlyAfterHash && secondSlashOnlyAfterHash;
     };
-    var correctUrl = (giturl) => {
-      const firstAt = lastIndexOfBefore(giturl, "@", "#");
-      const lastColonBeforeHash = lastIndexOfBefore(giturl, ":", "#");
-      if (lastColonBeforeHash > firstAt) {
-        giturl = giturl.slice(0, lastColonBeforeHash) + "/" + giturl.slice(lastColonBeforeHash + 1);
-      }
-      if (lastIndexOfBefore(giturl, ":", "#") === -1 && giturl.indexOf("//") === -1) {
-        giturl = `git+ssh://${giturl}`;
-      }
-      return giturl;
-    };
     module2.exports = (giturl, opts, { gitHosts, protocols }) => {
       if (!giturl) {
         return;
       }
-      const correctedUrl = isGitHubShorthand(giturl) ? `github:${giturl}` : correctProtocol(giturl, protocols);
-      const parsed = safeUrl(correctedUrl) || safeUrl(correctUrl(correctedUrl));
+      const correctedUrl = isGitHubShorthand(giturl) ? `github:${giturl}` : giturl;
+      const parsed = parseUrl(correctedUrl, protocols);
       if (!parsed) {
         return;
       }
@@ -4196,6 +4207,7 @@ var require_lib2 = __commonJS({
     var LRU = require_lru_cache();
     var hosts = require_hosts();
     var fromUrl = require_from_url();
+    var parseUrl = require_parse_url();
     var cache2 = new LRU({ max: 1e3 });
     var _gitHosts, _protocols, _fill, fill_fn;
     var _GitHost = class {
@@ -4230,6 +4242,9 @@ var require_lib2 = __commonJS({
           cache2.set(key, hostArgs ? new _GitHost(...hostArgs) : void 0);
         }
         return cache2.get(key);
+      }
+      static parseUrl(url) {
+        return parseUrl(url);
       }
       hash() {
         return this.committish ? `#${this.committish}` : "";
