@@ -52,7 +52,7 @@
     "@jest/globals": "^29.3.0",
     "@types/hosted-git-info": "^3.0.2",
     "@typescript-eslint/eslint-plugin": "^5.40.1",
-    "esbuild": "^0.15.13",
+    "esbuild": "^0.15.15",
     "eslint": "^8.27.0",
     "eslint-config-ybiquitous": "^16.1.0",
     "eslint-plugin-jest": "^27.1.4",
