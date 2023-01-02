@@ -9,10 +9,10 @@ jobs:
   npm-audit-fix:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       pull-requests: write
     steps:
       - uses: actions/checkout@v3
       - uses: ybiquitous/npm-audit-fix-action@v4
-        with:
-          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        # with:
+        #   github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
