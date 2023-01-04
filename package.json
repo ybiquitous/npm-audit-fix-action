@@ -24,7 +24,7 @@
     "pretest": "npm run lint",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --testTimeout 30000",
     "test:watch": "npm --ignore-scripts test -- --watch",
-    "test:coverage": "npm --ignore-scripts test --coverage",
+    "test:coverage": "npm --ignore-scripts test -- --coverage",
     "lint": "npm-run-all --print-label --silent --parallel lint:*",
     "lint:js": "eslint --cache --ext=js,jsx,cjs,mjs,ts,tsx .",
     "lint:js:fix": "npm run lint:js -- --fix",
