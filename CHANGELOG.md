@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.0.13](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.12...v4.0.13) (2023-01-04)
+
+### Bug Fixes
+
+- `permissions.contents` from `read` to `write` ([#740](https://github.com/ybiquitous/npm-audit-fix-action/issues/740)) ([51df826](https://github.com/ybiquitous/npm-audit-fix-action/commit/51df826f04ee841a77c7b38b8bb9c59e9f845820))
+
 ### [4.0.12](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.11...v4.0.12) (2022-11-08)
 
 ### Bug Fixes
