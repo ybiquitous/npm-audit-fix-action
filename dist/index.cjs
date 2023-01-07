@@ -3978,7 +3978,6 @@ var require_from_url = __commonJS({
       return spaceOnlyAfterHash && hasSlash && doesNotEndWithSlash && doesNotStartWithDot && atOnlyAfterHash && colonOnlyAfterHash && secondSlashOnlyAfterHash;
     };
     module2.exports = (giturl, opts, { gitHosts, protocols }) => {
-      var _a, _b;
       if (!giturl) {
         return;
       }
@@ -3995,7 +3994,7 @@ var require_from_url = __commonJS({
       }
       const gitHostInfo = gitHosts[gitHostShortcut || gitHostDomain];
       let auth = null;
-      if (((_a = protocols[parsed.protocol]) == null ? void 0 : _a.auth) && (parsed.username || parsed.password)) {
+      if (protocols[parsed.protocol]?.auth && (parsed.username || parsed.password)) {
         auth = `${parsed.username}${parsed.password ? ":" + parsed.password : ""}`;
       }
       let committish = null;
@@ -4037,7 +4036,7 @@ var require_from_url = __commonJS({
           user = segments.user && decodeURIComponent(segments.user);
           project = decodeURIComponent(segments.project);
           committish = decodeURIComponent(segments.committish);
-          defaultRepresentation = ((_b = protocols[parsed.protocol]) == null ? void 0 : _b.name) || parsed.protocol.slice(0, -1);
+          defaultRepresentation = protocols[parsed.protocol]?.name || parsed.protocol.slice(0, -1);
         }
       } catch (err) {
         if (err instanceof URIError) {

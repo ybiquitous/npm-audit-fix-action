@@ -20,7 +20,7 @@
   "scripts": {
     "prepare": "husky install",
     "postprepare": "npm run build",
-    "build": "esbuild lib/index.js --outfile=dist/index.cjs --bundle --platform=node --target=node16",
+    "build": "esbuild lib/index.js --outfile=dist/index.cjs --bundle --platform=node",
     "pretest": "npm run lint",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --testTimeout 30000",
     "test:watch": "npm --ignore-scripts test -- --watch",
