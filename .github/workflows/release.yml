@@ -9,7 +9,7 @@ jobs:
     permissions:
       contents: write
     env:
-      MAJOR_VERSION_TAG: v4
+      MAJOR_VERSION_TAG: v5
     steps:
       - uses: actions/checkout@v3
         with:

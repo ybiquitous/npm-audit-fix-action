@@ -24,7 +24,7 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v3
-      - uses: ybiquitous/npm-audit-fix-action@v4
+      - uses: ybiquitous/npm-audit-fix-action@v5
 ```
 
 See also [`action.yml`](action.yml) about the available options.
