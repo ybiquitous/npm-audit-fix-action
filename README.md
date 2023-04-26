@@ -27,7 +27,17 @@ jobs:
       - uses: ybiquitous/npm-audit-fix-action@v5
 ```
 
-See also [`action.yml`](action.yml) about the available options.
+### Action Inputs
+
+| Key | Value |
+| --- | ----- |
+| github_token | GitHub token |
+| github_user | GitHub user name for commit changes |
+| github_email | GitHub user email for commit changes |
+| branch | Created branch |
+| default_branch | Default branch |
+| commit_title | Commit and PR title |
+| labels | PR labels |
 
 ### Using a personal access token
 
