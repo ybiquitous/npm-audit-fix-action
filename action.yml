@@ -22,7 +22,7 @@ inputs:
     description: "Default branch"
     required: false
   commit_title:
-    description: "PR title"
+    description: "Commit and PR title"
     required: false
     default: "build(deps): npm audit fix"
   labels:
