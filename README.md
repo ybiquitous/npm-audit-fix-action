@@ -36,7 +36,7 @@ jobs:
 | github_email | GitHub user email for commit changes |
 | branch | Created branch |
 | default_branch | Default branch |
-| commit_title | PR title |
+| commit_title | Commit and PR title |
 | labels | PR labels |
 
 ### Using a personal access token
