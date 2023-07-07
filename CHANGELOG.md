@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.1.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v5.0.0...v5.1.0) (2023-07-07)
+
+### Features
+
+- add audit info to removed dependencies ([#754](https://github.com/ybiquitous/npm-audit-fix-action/issues/754)) ([f4d683d](https://github.com/ybiquitous/npm-audit-fix-action/commit/f4d683dd74cc23828bee414e6fae4557394aa4cd))
+
+### Bug Fixes
+
+- **deps:** update all dependencies and CJS build ([#751](https://github.com/ybiquitous/npm-audit-fix-action/issues/751)) ([548d3bc](https://github.com/ybiquitous/npm-audit-fix-action/commit/548d3bced148b1f7555266d30c429988580aa83f))
+
 ## [5.0.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.13...v5.0.0) (2023-01-07)
 
 ### ⚠ BREAKING CHANGES
