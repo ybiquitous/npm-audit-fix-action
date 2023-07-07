@@ -32,23 +32,6 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var __accessCheck = (obj, member, msg) => {
-  if (!member.has(obj))
-    throw TypeError("Cannot " + msg);
-};
-var __privateGet = (obj, member, getter) => {
-  __accessCheck(obj, member, "read from private field");
-  return getter ? getter.call(obj) : member.get(obj);
-};
-var __privateAdd = (obj, member, value) => {
-  if (member.has(obj))
-    throw TypeError("Cannot add the same private member more than once");
-  member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
-};
-var __privateMethod = (obj, member, method) => {
-  __accessCheck(obj, member, "access private method");
-  return method;
-};
 
 // node_modules/@actions/core/lib/utils.js
 var require_utils = __commonJS({
@@ -993,12 +976,12 @@ var require_lib = __commonJS({
     var RetryableHttpVerbs = ["OPTIONS", "GET", "DELETE", "HEAD"];
     var ExponentialBackoffCeiling = 10;
     var ExponentialBackoffTimeSlice = 5;
-    var HttpClientError = class extends Error {
+    var HttpClientError = class _HttpClientError extends Error {
       constructor(message, statusCode) {
         super(message);
         this.name = "HttpClientError";
         this.statusCode = statusCode;
-        Object.setPrototypeOf(this, HttpClientError.prototype);
+        Object.setPrototypeOf(this, _HttpClientError.prototype);
       }
     };
     exports.HttpClientError = HttpClientError;
@@ -1589,13 +1572,13 @@ var require_oidc_utils = __commonJS({
     var http_client_1 = require_lib();
     var auth_1 = require_auth();
     var core_1 = require_core();
-    var OidcClient = class {
+    var OidcClient = class _OidcClient {
       static createHttpClient(allowRetry = true, maxRetry = 10) {
         const requestOptions = {
           allowRetries: allowRetry,
           maxRetries: maxRetry
         };
-        return new http_client_1.HttpClient("actions/oidc-client", [new auth_1.BearerCredentialHandler(OidcClient.getRequestToken())], requestOptions);
+        return new http_client_1.HttpClient("actions/oidc-client", [new auth_1.BearerCredentialHandler(_OidcClient.getRequestToken())], requestOptions);
       }
       static getRequestToken() {
         const token = process.env["ACTIONS_ID_TOKEN_REQUEST_TOKEN"];
@@ -1614,7 +1597,7 @@ var require_oidc_utils = __commonJS({
       static getCall(id_token_url) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-          const httpclient = OidcClient.createHttpClient();
+          const httpclient = _OidcClient.createHttpClient();
           const res = yield httpclient.getJson(id_token_url).catch((error2) => {
             throw new Error(`Failed to get ID Token. 
  
@@ -1632,13 +1615,13 @@ var require_oidc_utils = __commonJS({
       static getIDToken(audience) {
         return __awaiter(this, void 0, void 0, function* () {
           try {
-            let id_token_url = OidcClient.getIDTokenUrl();
+            let id_token_url = _OidcClient.getIDTokenUrl();
             if (audience) {
               const encodedAudience = encodeURIComponent(audience);
               id_token_url = `${id_token_url}&audience=${encodedAudience}`;
             }
             core_1.debug(`ID token url is ${id_token_url}`);
-            const id_token = yield OidcClient.getCall(id_token_url);
+            const id_token = yield _OidcClient.getCall(id_token_url);
             core_1.setSecret(id_token);
             return id_token;
           } catch (error2) {
@@ -3079,7 +3062,7 @@ var require_toolrunner = __commonJS({
       return args;
     }
     exports.argStringToArray = argStringToArray;
-    var ExecState = class extends events.EventEmitter {
+    var ExecState = class _ExecState extends events.EventEmitter {
       constructor(options, toolPath) {
         super();
         this.processClosed = false;
@@ -3106,7 +3089,7 @@ var require_toolrunner = __commonJS({
         if (this.processClosed) {
           this._setResult();
         } else if (this.processExited) {
-          this.timeout = timers_1.setTimeout(ExecState.HandleTimeout, this.delay, this);
+          this.timeout = timers_1.setTimeout(_ExecState.HandleTimeout, this.delay, this);
         }
       }
       _debug(message) {
@@ -3358,7 +3341,7 @@ var require_lru_cache = __commonJS({
         return this.heap[--this.length];
       }
     };
-    var LRUCache = class {
+    var LRUCache = class _LRUCache {
       constructor(options = {}) {
         const {
           max = 0,
@@ -3383,7 +3366,7 @@ var require_lru_cache = __commonJS({
           allowStaleOnFetchAbort,
           ignoreFetchAbort
         } = options;
-        const { length, maxAge, stale } = options instanceof LRUCache ? {} : options;
+        const { length, maxAge, stale } = options instanceof _LRUCache ? {} : options;
         if (max !== 0 && !isPosInt(max)) {
           throw new TypeError("max option must be a nonnegative integer");
         }
@@ -3483,7 +3466,7 @@ var require_lru_cache = __commonJS({
           if (shouldWarn(code)) {
             warned.add(code);
             const msg = "TTL caching without ttlAutopurge, max, or maxSize can result in unbounded memory consumption.";
-            emitWarning(msg, "UnboundedCacheWarning", code, LRUCache);
+            emitWarning(msg, "UnboundedCacheWarning", code, _LRUCache);
           }
         }
         if (stale) {
@@ -4595,11 +4578,9 @@ var require_lib2 = __commonJS({
     var fromUrl = require_from_url();
     var parseUrl = require_parse_url();
     var cache2 = new LRU({ max: 1e3 });
-    var _gitHosts, _protocols, _fill, fill_fn;
-    var _GitHost = class {
+    var GitHost = class _GitHost {
       constructor(type, user, auth, project, committish, defaultRepresentation, opts = {}) {
-        __privateAdd(this, _fill);
-        Object.assign(this, __privateGet(_GitHost, _gitHosts)[type], {
+        Object.assign(this, _GitHost.#gitHosts[type], {
           type,
           user,
           auth,
@@ -4609,11 +4590,21 @@ var require_lib2 = __commonJS({
           opts
         });
       }
+      static #gitHosts = { byShortcut: {}, byDomain: {} };
+      static #protocols = {
+        "git+ssh:": { name: "sshurl" },
+        "ssh:": { name: "sshurl" },
+        "git+https:": { name: "https", auth: true },
+        "git:": { auth: true },
+        "http:": { auth: true },
+        "https:": { auth: true },
+        "git+http:": { auth: true }
+      };
       static addHost(name, host) {
-        __privateGet(_GitHost, _gitHosts)[name] = host;
-        __privateGet(_GitHost, _gitHosts).byDomain[host.domain] = name;
-        __privateGet(_GitHost, _gitHosts).byShortcut[`${name}:`] = name;
-        __privateGet(_GitHost, _protocols)[`${name}:`] = { name };
+        _GitHost.#gitHosts[name] = host;
+        _GitHost.#gitHosts.byDomain[host.domain] = name;
+        _GitHost.#gitHosts.byShortcut[`${name}:`] = name;
+        _GitHost.#protocols[`${name}:`] = { name };
       }
       static fromUrl(giturl, opts) {
         if (typeof giturl !== "string") {
@@ -4622,8 +4613,8 @@ var require_lib2 = __commonJS({
         const key = giturl + JSON.stringify(opts || {});
         if (!cache2.has(key)) {
           const hostArgs = fromUrl(giturl, opts, {
-            gitHosts: __privateGet(_GitHost, _gitHosts),
-            protocols: __privateGet(_GitHost, _protocols)
+            gitHosts: _GitHost.#gitHosts,
+            protocols: _GitHost.#protocols
           });
           cache2.set(key, hostArgs ? new _GitHost(...hostArgs) : void 0);
         }
@@ -4632,23 +4623,40 @@ var require_lib2 = __commonJS({
       static parseUrl(url) {
         return parseUrl(url);
       }
+      #fill(template, opts) {
+        if (typeof template !== "function") {
+          return null;
+        }
+        const options = { ...this, ...this.opts, ...opts };
+        if (!options.path) {
+          options.path = "";
+        }
+        if (options.path.startsWith("/")) {
+          options.path = options.path.slice(1);
+        }
+        if (options.noCommittish) {
+          options.committish = null;
+        }
+        const result = template(options);
+        return options.noGitPlus && result.startsWith("git+") ? result.slice(4) : result;
+      }
       hash() {
         return this.committish ? `#${this.committish}` : "";
       }
       ssh(opts) {
-        return __privateMethod(this, _fill, fill_fn).call(this, this.sshtemplate, opts);
+        return this.#fill(this.sshtemplate, opts);
       }
       sshurl(opts) {
-        return __privateMethod(this, _fill, fill_fn).call(this, this.sshurltemplate, opts);
+        return this.#fill(this.sshurltemplate, opts);
       }
       browse(path, ...args) {
         if (typeof path !== "string") {
-          return __privateMethod(this, _fill, fill_fn).call(this, this.browsetemplate, path);
+          return this.#fill(this.browsetemplate, path);
         }
         if (typeof args[0] !== "string") {
-          return __privateMethod(this, _fill, fill_fn).call(this, this.browsetreetemplate, { ...args[0], path });
+          return this.#fill(this.browsetreetemplate, { ...args[0], path });
         }
-        return __privateMethod(this, _fill, fill_fn).call(this, this.browsetreetemplate, { ...args[1], fragment: args[0], path });
+        return this.#fill(this.browsetreetemplate, { ...args[1], fragment: args[0], path });
       }
       // If the path is known to be a file, then browseFile should be used. For some hosts
       // the url is the same as browse, but for others like GitHub a file can use both `/tree/`
@@ -4657,36 +4665,36 @@ var require_lib2 = __commonJS({
       // does not redirect to a different commit.
       browseFile(path, ...args) {
         if (typeof args[0] !== "string") {
-          return __privateMethod(this, _fill, fill_fn).call(this, this.browseblobtemplate, { ...args[0], path });
+          return this.#fill(this.browseblobtemplate, { ...args[0], path });
         }
-        return __privateMethod(this, _fill, fill_fn).call(this, this.browseblobtemplate, { ...args[1], fragment: args[0], path });
+        return this.#fill(this.browseblobtemplate, { ...args[1], fragment: args[0], path });
       }
       docs(opts) {
-        return __privateMethod(this, _fill, fill_fn).call(this, this.docstemplate, opts);
+        return this.#fill(this.docstemplate, opts);
       }
       bugs(opts) {
-        return __privateMethod(this, _fill, fill_fn).call(this, this.bugstemplate, opts);
+        return this.#fill(this.bugstemplate, opts);
       }
       https(opts) {
-        return __privateMethod(this, _fill, fill_fn).call(this, this.httpstemplate, opts);
+        return this.#fill(this.httpstemplate, opts);
       }
       git(opts) {
-        return __privateMethod(this, _fill, fill_fn).call(this, this.gittemplate, opts);
+        return this.#fill(this.gittemplate, opts);
       }
       shortcut(opts) {
-        return __privateMethod(this, _fill, fill_fn).call(this, this.shortcuttemplate, opts);
+        return this.#fill(this.shortcuttemplate, opts);
       }
       path(opts) {
-        return __privateMethod(this, _fill, fill_fn).call(this, this.pathtemplate, opts);
+        return this.#fill(this.pathtemplate, opts);
       }
       tarball(opts) {
-        return __privateMethod(this, _fill, fill_fn).call(this, this.tarballtemplate, { ...opts, noCommittish: false });
+        return this.#fill(this.tarballtemplate, { ...opts, noCommittish: false });
       }
       file(path, opts) {
-        return __privateMethod(this, _fill, fill_fn).call(this, this.filetemplate, { ...opts, path });
+        return this.#fill(this.filetemplate, { ...opts, path });
       }
       edit(path, opts) {
-        return __privateMethod(this, _fill, fill_fn).call(this, this.edittemplate, { ...opts, path });
+        return this.#fill(this.edittemplate, { ...opts, path });
       }
       getDefaultRepresentation() {
         return this.default;
@@ -4698,37 +4706,6 @@ var require_lib2 = __commonJS({
         return this.sshurl(opts);
       }
     };
-    var GitHost = _GitHost;
-    _gitHosts = new WeakMap();
-    _protocols = new WeakMap();
-    _fill = new WeakSet();
-    fill_fn = function(template, opts) {
-      if (typeof template !== "function") {
-        return null;
-      }
-      const options = { ...this, ...this.opts, ...opts };
-      if (!options.path) {
-        options.path = "";
-      }
-      if (options.path.startsWith("/")) {
-        options.path = options.path.slice(1);
-      }
-      if (options.noCommittish) {
-        options.committish = null;
-      }
-      const result = template(options);
-      return options.noGitPlus && result.startsWith("git+") ? result.slice(4) : result;
-    };
-    __privateAdd(GitHost, _gitHosts, { byShortcut: {}, byDomain: {} });
-    __privateAdd(GitHost, _protocols, {
-      "git+ssh:": { name: "sshurl" },
-      "ssh:": { name: "sshurl" },
-      "git+https:": { name: "https", auth: true },
-      "git:": { auth: true },
-      "http:": { auth: true },
-      "https:": { auth: true },
-      "git+http:": { auth: true }
-    });
     for (const [name, host] of Object.entries(hosts)) {
       GitHost.addHost(name, host);
     }
@@ -7129,7 +7106,7 @@ var require_lib4 = __commonJS({
     var Readable = Stream.Readable;
     var BUFFER = Symbol("buffer");
     var TYPE = Symbol("type");
-    var Blob = class {
+    var Blob = class _Blob {
       constructor() {
         this[TYPE] = "";
         const blobParts = arguments[0];
@@ -7148,7 +7125,7 @@ var require_lib4 = __commonJS({
               buffer = Buffer.from(element.buffer, element.byteOffset, element.byteLength);
             } else if (element instanceof ArrayBuffer) {
               buffer = Buffer.from(element);
-            } else if (element instanceof Blob) {
+            } else if (element instanceof _Blob) {
               buffer = element[BUFFER];
             } else {
               buffer = Buffer.from(typeof element === "string" ? element : String(element));
@@ -7210,7 +7187,7 @@ var require_lib4 = __commonJS({
         const span = Math.max(relativeEnd - relativeStart, 0);
         const buffer = this[BUFFER];
         const slicedBuffer = buffer.slice(relativeStart, relativeStart + span);
-        const blob = new Blob([], { type: arguments[2] });
+        const blob = new _Blob([], { type: arguments[2] });
         blob[BUFFER] = slicedBuffer;
         return blob;
       }
@@ -7587,7 +7564,7 @@ var require_lib4 = __commonJS({
       return void 0;
     }
     var MAP = Symbol("map");
-    var Headers = class {
+    var Headers = class _Headers {
       /**
        * Headers class
        *
@@ -7597,7 +7574,7 @@ var require_lib4 = __commonJS({
       constructor() {
         let init = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : void 0;
         this[MAP] = /* @__PURE__ */ Object.create(null);
-        if (init instanceof Headers) {
+        if (init instanceof _Headers) {
           const rawHeaders = init.raw();
           const headerNames = Object.keys(rawHeaders);
           for (const headerName of headerNames) {
@@ -7866,7 +7843,7 @@ var require_lib4 = __commonJS({
     }
     var INTERNALS$1 = Symbol("Response internals");
     var STATUS_CODES = http.STATUS_CODES;
-    var Response = class {
+    var Response = class _Response {
       constructor() {
         let body = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : null;
         let opts = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
@@ -7914,7 +7891,7 @@ var require_lib4 = __commonJS({
        * @return  Response
        */
       clone() {
-        return new Response(clone(this), {
+        return new _Response(clone(this), {
           url: this.url,
           status: this.status,
           statusText: this.statusText,
@@ -7958,7 +7935,7 @@ var require_lib4 = __commonJS({
       const proto = signal && typeof signal === "object" && Object.getPrototypeOf(signal);
       return !!(proto && proto.constructor.name === "AbortSignal");
     }
-    var Request = class {
+    var Request = class _Request {
       constructor(input) {
         let init = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
         let parsedURL;
@@ -8028,7 +8005,7 @@ var require_lib4 = __commonJS({
        * @return  Request
        */
       clone() {
-        return new Request(this);
+        return new _Request(this);
       }
     };
     Body.mixIn(Request.prototype);
