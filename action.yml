@@ -8,12 +8,12 @@ inputs:
     default: ${{ github.token }}
   github_user:
     description: "GitHub user name for commit changes"
-    default: ${{ github.actor }}
     required: false
+    default: ${{ github.actor }}
   github_email:
     description: "GitHub user email for commit changes"
-    default: "${{ github.actor }}@users.noreply.github.com"
     required: false
+    default: "${{ github.actor }}@users.noreply.github.com"
   branch:
     description: "Created branch"
     required: false

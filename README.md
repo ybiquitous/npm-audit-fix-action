@@ -27,17 +27,19 @@ jobs:
       - uses: ybiquitous/npm-audit-fix-action@v5
 ```
 
-### Action Inputs
+### Inputs
 
-| Key            | Value                                |
-| -------------- | ------------------------------------ |
-| github_token   | GitHub token                         |
-| github_user    | GitHub user name for commit changes  |
-| github_email   | GitHub user email for commit changes |
-| branch         | Created branch                       |
-| default_branch | Default branch                       |
-| commit_title   | Commit and PR title                  |
-| labels         | PR labels                            |
+| Name           | Value                                | Default                                        |
+| -------------- | ------------------------------------ | ---------------------------------------------- |
+| github_token   | GitHub token                         | `${{ github.token }}`                          |
+| github_user    | GitHub user name for commit changes  | `${{ github.actor }}`                          |
+| github_email   | GitHub user email for commit changes | `${{ github.actor }}@users.noreply.github.com` |
+| branch         | Created branch                       | `npm-audit-fix-action/fix`                     |
+| default_branch | Default branch                       | n/a                                            |
+| commit_title   | Commit and PR title                  | `build(deps): npm audit fix`                   |
+| labels         | PR labels                            | `dependencies, javascript, security`           |
+
+See [`action.yml`](action.yml).
 
 ### Using a personal access token
 
