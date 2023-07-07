@@ -31,17 +31,16 @@ type UrlInfo = { name: string; url: string; type: string };
 
 type PackageInfo = { name: string; version: string; location: string | null };
 
+type PackageInfoWithAudit = PackageInfo & {
+  severity: string | null;
+  title: string | null;
+  url: string | null;
+};
+
 type Report = {
   added: Array<PackageInfo>;
-  removed: Array<PackageInfo>;
-  updated: Array<
-    PackageInfo & {
-      previousVersion: string;
-      severity: string | null;
-      title: string | null;
-      url: string | null;
-    }
-  >;
+  removed: Array<PackageInfoWithAudit>;
+  updated: Array<PackageInfoWithAudit & { previousVersion: string }>;
   packageCount: number;
   packageUrls: Record<string, UrlInfo>;
 };
