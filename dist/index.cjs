@@ -10525,6 +10525,12 @@ var repoLink = (report, name) => {
   return url ? `[${url.type}](${url.url})` : EMPTY;
 };
 var versionLabel = (version2) => `\`${version2}\``;
+var detail = ({ severity, title, url }) => {
+  if (severity != null && title != null && url != null) {
+    return `**[${severity}]** ${title} ([ref](${url}))`;
+  }
+  return EMPTY;
+};
 function buildPullRequestBody(report, npmVersion) {
   const header = [];
   header.push("| Package | Version | Source | Detail |");
@@ -10540,16 +10546,12 @@ function buildPullRequestBody(report, npmVersion) {
     lines.push("");
     lines.push(...header);
     report.updated.forEach(({ name, version: version2, location, previousVersion, severity, title, url }) => {
-      let extra = EMPTY;
-      if (severity != null && title != null && url != null) {
-        extra = `**[${severity}]** ${title} ([ref](${url}))`;
-      }
       lines.push(
         buildTableRow(
           npmPackage(name, version2, location),
           `${versionLabel(previousVersion)} \u2192 ${versionLabel(version2)}`,
           repoLink(report, name),
-          extra
+          detail({ severity, title, url })
         )
       );
     });
@@ -10568,7 +10570,7 @@ function buildPullRequestBody(report, npmVersion) {
           npmPackage(name, version2, location),
           versionLabel(version2),
           repoLink(report, name),
-          EMPTY
+          detail({})
         )
       );
     });
@@ -10581,13 +10583,13 @@ function buildPullRequestBody(report, npmVersion) {
     lines.push(`<summary><strong>Removed (${report.removed.length})</strong></summary>`);
     lines.push("");
     lines.push(...header);
-    report.removed.forEach(({ name, version: version2, location }) => {
+    report.removed.forEach(({ name, version: version2, location, severity, title, url }) => {
       lines.push(
         buildTableRow(
           npmPackage(name, version2, location),
           versionLabel(version2),
           repoLink(report, name),
-          EMPTY
+          detail({ severity, title, url })
         )
       );
     });
