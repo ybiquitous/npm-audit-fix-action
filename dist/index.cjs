@@ -10768,10 +10768,11 @@ async function run() {
     await (0, import_exec7.exec)("npm", npmArgs("ci"));
   });
   const afterPackages = await core2.group("List packages after", () => listPackages());
-  const report = await core2.group(
-    "Aggregate report",
-    () => aggregateReport(auditReport, beforePackages, afterPackages)
-  );
+  const report = await core2.group("Aggregate report", async () => {
+    const res = await aggregateReport(auditReport, beforePackages, afterPackages);
+    core2.info(JSON.stringify(res, null, 2));
+    return res;
+  });
   if (report.packageCount === 0) {
     core2.info("No update.");
     return;
