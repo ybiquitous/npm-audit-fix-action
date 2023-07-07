@@ -10367,7 +10367,7 @@ function splitPackageName(packageName) {
 }
 
 // lib/aggregateReport.js
-var byNameAndVersion = (a, b) => {
+function byNameAndVersion(a, b) {
   const res = a.name.localeCompare(b.name);
   if (res > 0) {
     return 1;
@@ -10376,41 +10376,42 @@ var byNameAndVersion = (a, b) => {
     return -1;
   }
   return semverToNumber(a.version) - semverToNumber(b.version);
-};
+}
+function getAuditInfo(audit2, name) {
+  const info4 = audit2.get(name);
+  const severity = info4 == null ? null : capitalize(info4.severity);
+  const title = info4 == null ? null : info4.title;
+  const url = info4 == null ? null : info4.url;
+  return { severity, title, url };
+}
 async function aggregateReport(audit2, beforePackages, afterPackages) {
   const added = [];
-  afterPackages.forEach((version2, name) => {
-    if (!beforePackages.has(name)) {
-      const pkg = splitPackageName(name);
-      added.push({ name: pkg.name, location: pkg.location, version: version2 });
+  afterPackages.forEach((version2, pkgName) => {
+    if (!beforePackages.has(pkgName)) {
+      const { name, location } = splitPackageName(pkgName);
+      added.push({ name, location, version: version2 });
     }
   });
   added.sort(byNameAndVersion);
   const removed = [];
-  beforePackages.forEach((version2, name) => {
-    if (!afterPackages.has(name)) {
-      const pkg = splitPackageName(name);
-      removed.push({ name: pkg.name, location: pkg.location, version: version2 });
+  beforePackages.forEach((version2, pkgName) => {
+    if (!afterPackages.has(pkgName)) {
+      const { name, location } = splitPackageName(pkgName);
+      removed.push({ name, location, version: version2, ...getAuditInfo(audit2, name) });
     }
   });
   removed.sort(byNameAndVersion);
   const updated = [];
-  afterPackages.forEach((version2, name) => {
-    const previousVersion = beforePackages.get(name);
+  afterPackages.forEach((version2, pkgName) => {
+    const previousVersion = beforePackages.get(pkgName);
     if (version2 !== previousVersion && previousVersion != null) {
-      const pkg = splitPackageName(name);
-      const info4 = audit2.get(pkg.name);
-      const severity = info4 == null ? null : capitalize(info4.severity);
-      const title = info4 == null ? null : info4.title;
-      const url = info4 == null ? null : info4.url;
+      const { name, location } = splitPackageName(pkgName);
       updated.push({
-        name: pkg.name,
-        location: pkg.location,
+        name,
+        location,
         version: version2,
         previousVersion,
-        severity,
-        title,
-        url
+        ...getAuditInfo(audit2, name)
       });
     }
   });
@@ -10442,15 +10443,13 @@ async function audit(execFn = import_exec2.getExecOutput) {
   });
   const { vulnerabilities } = JSON.parse(stdout);
   if (vulnerabilities != null && typeof vulnerabilities === "object") {
-    const map = (
-      /** @type {AuditReport} */
-      /* @__PURE__ */ new Map()
-    );
-    Object.values(vulnerabilities).forEach(({ name, severity, via }) => {
+    const map = /* @__PURE__ */ new Map();
+    for (const { name, severity, via } of Object.values(vulnerabilities)) {
       if (Array.isArray(via)) {
         const [viaFirst] = via;
-        if (typeof viaFirst.title === "string" && typeof viaFirst.url === "string") {
-          map.set(name, { name, severity, title: viaFirst.title, url: viaFirst.url });
+        const { title, url } = viaFirst;
+        if (typeof title === "string" && typeof url === "string") {
+          map.set(name, { name, severity, title, url });
         } else if (typeof viaFirst === "string") {
         } else {
           throw new Error(`"via" of "${name}" is invalid: ${JSON.stringify(via)}`);
@@ -10458,7 +10457,7 @@ async function audit(execFn = import_exec2.getExecOutput) {
       } else {
         throw new Error('"via" is not an array');
       }
-    });
+    }
     return map;
   }
   throw new Error('"vulnerabilities" is missing');
@@ -10480,21 +10479,24 @@ async function auditFix() {
 }
 
 // lib/buildCommitBody.js
-function buildCommitBody(report) {
+function buildCommitBody({ updated, added, removed }) {
   const lines = [];
   lines.push("Summary:");
-  lines.push(`- Updated packages: ${report.updated.length}`);
-  lines.push(`- Added packages: ${report.added.length}`);
-  lines.push(`- Removed packages: ${report.removed.length}`);
+  lines.push(`- Updated packages: ${updated.length}`);
+  lines.push(`- Added packages: ${added.length}`);
+  lines.push(`- Removed packages: ${removed.length}`);
   lines.push("");
-  if (report.updated.length > 0) {
-    lines.push("Fixed vulnerabilities:");
-    const vulnerabilities = /* @__PURE__ */ new Set();
-    report.updated.forEach(({ name, severity, title, url }) => {
+  const vulnerabilities = /* @__PURE__ */ new Set();
+  for (const entry of [...updated, ...added, ...removed]) {
+    if ("severity" in entry && "title" in entry && "url" in entry) {
+      const { name, severity, title, url } = entry;
       if (severity != null && title != null && url != null) {
         vulnerabilities.add(`- ${name}: "${title}" (${url})`);
       }
-    });
+    }
+  }
+  if (vulnerabilities.size > 0) {
+    lines.push("Fixed vulnerabilities:");
     lines.push(...Array.from(vulnerabilities));
   } else {
     lines.push("No fixed vulnerabilities.");
@@ -10523,6 +10525,12 @@ var repoLink = (report, name) => {
   return url ? `[${url.type}](${url.url})` : EMPTY;
 };
 var versionLabel = (version2) => `\`${version2}\``;
+var detail = ({ severity, title, url }) => {
+  if (severity != null && title != null && url != null) {
+    return `**[${severity}]** ${title} ([ref](${url}))`;
+  }
+  return EMPTY;
+};
 function buildPullRequestBody(report, npmVersion) {
   const header = [];
   header.push("| Package | Version | Source | Detail |");
@@ -10538,16 +10546,12 @@ function buildPullRequestBody(report, npmVersion) {
     lines.push("");
     lines.push(...header);
     report.updated.forEach(({ name, version: version2, location, previousVersion, severity, title, url }) => {
-      let extra = EMPTY;
-      if (severity != null && title != null && url != null) {
-        extra = `**[${severity}]** ${title} ([ref](${url}))`;
-      }
       lines.push(
         buildTableRow(
           npmPackage(name, version2, location),
           `${versionLabel(previousVersion)} \u2192 ${versionLabel(version2)}`,
           repoLink(report, name),
-          extra
+          detail({ severity, title, url })
         )
       );
     });
@@ -10566,7 +10570,7 @@ function buildPullRequestBody(report, npmVersion) {
           npmPackage(name, version2, location),
           versionLabel(version2),
           repoLink(report, name),
-          EMPTY
+          detail({})
         )
       );
     });
@@ -10579,13 +10583,13 @@ function buildPullRequestBody(report, npmVersion) {
     lines.push(`<summary><strong>Removed (${report.removed.length})</strong></summary>`);
     lines.push("");
     lines.push(...header);
-    report.removed.forEach(({ name, version: version2, location }) => {
+    report.removed.forEach(({ name, version: version2, location, severity, title, url }) => {
       lines.push(
         buildTableRow(
           npmPackage(name, version2, location),
           versionLabel(version2),
           repoLink(report, name),
-          EMPTY
+          detail({ severity, title, url })
         )
       );
     });
@@ -10766,10 +10770,11 @@ async function run() {
     await (0, import_exec7.exec)("npm", npmArgs("ci"));
   });
   const afterPackages = await core2.group("List packages after", () => listPackages());
-  const report = await core2.group(
-    "Aggregate report",
-    () => aggregateReport(auditReport, beforePackages, afterPackages)
-  );
+  const report = await core2.group("Aggregate report", async () => {
+    const res = await aggregateReport(auditReport, beforePackages, afterPackages);
+    core2.info(JSON.stringify(res, null, 2));
+    return res;
+  });
   if (report.packageCount === 0) {
     core2.info("No update.");
     return;

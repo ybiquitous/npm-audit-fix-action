@@ -36,11 +36,17 @@ exports[`aggregateReport() 1`] = `
     {
       "location": "svgo/node_modules/css-select",
       "name": "css-select",
+      "severity": null,
+      "title": null,
+      "url": null,
       "version": "3.1.2",
     },
     {
       "location": null,
       "name": "xmldom",
+      "severity": "Low",
+      "title": "Misinterpretation of malicious XML input",
+      "url": "https://npmjs.com/advisories/1650",
       "version": "0.5.0",
     },
   ],
