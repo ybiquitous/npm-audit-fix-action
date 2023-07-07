@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: ["**"]
 
+env:
+  # HACK: Dependabot uses Node.js 16.20.1 and npm 8.19.4, so `engine-strict=true` in `.npmrc` fails Dependabot.
+  # See https://github.com/ybiquitous/npm-audit-fix-action/network/updates/689567062
+  npm_config_engine_strict: true
+
 jobs:
   unit:
     runs-on: ubuntu-latest
