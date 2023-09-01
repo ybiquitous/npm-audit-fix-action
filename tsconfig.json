@@ -10,6 +10,7 @@
     "noUnusedParameters": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
     "module": "ES2020",
     "moduleResolution": "node",
     "lib": ["ES2020"]
