@@ -10495,6 +10495,7 @@ var require_github = __commonJS({
 });
 
 // lib/index.js
+var import_node_process = __toESM(require("node:process"), 1);
 var core2 = __toESM(require_core(), 1);
 var import_exec7 = __toESM(require_exec(), 1);
 
@@ -10951,13 +10952,14 @@ async function filesChanged() {
   }
 }
 function getFromEnv(name) {
-  const value = process.env[name];
+  const value = import_node_process.default.env[name];
   if (value) {
     return value;
   }
   throw new Error(`Not found '${name}' in the environment variables`);
 }
 async function run() {
+  core2.info(`Running on Node.js ${import_node_process.default.version}`);
   const npmVersion = await core2.group(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
   await core2.group("Install user packages", async () => {
     await (0, import_exec7.exec)("npm", npmArgs("ci"));
