@@ -22,7 +22,7 @@ jobs:
         with:
           node-version-file: .node-version
           cache: npm
-      - run: npm install --global npm@latest
+      - run: npm install --global npm@9
       - run: npm ci
       - run: git diff --exit-code # check dist/
       - run: npm test --ignore-scripts
