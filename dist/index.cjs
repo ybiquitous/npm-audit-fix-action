@@ -2064,7 +2064,7 @@ var require_core = __commonJS({
       command_1.issueCommand("add-mask", {}, secret);
     }
     exports.setSecret = setSecret;
-    function addPath(inputPath) {
+    function addPath2(inputPath) {
       const filePath = process.env["GITHUB_PATH"] || "";
       if (filePath) {
         file_command_1.issueFileCommand("PATH", inputPath);
@@ -2073,7 +2073,7 @@ var require_core = __commonJS({
       }
       process.env["PATH"] = `${inputPath}${path.delimiter}${process.env["PATH"]}`;
     }
-    exports.addPath = addPath;
+    exports.addPath = addPath2;
     function getInput2(name, options) {
       const val = process.env[`INPUT_${name.replace(/ /g, "_").toUpperCase()}`] || "";
       if (options && options.required && !val) {
@@ -10960,6 +10960,7 @@ function getFromEnv(name) {
 }
 async function run() {
   core2.info(`Running on Node.js ${import_node_process.default.version}`);
+  core2.addPath(import_node_process.default.execPath.replace(/\/node$/u, ""));
   const npmVersion = await core2.group(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
   await (0, import_exec7.exec)("npm", ["version"]);
   await (0, import_exec7.exec)("node", ["--version"]);
