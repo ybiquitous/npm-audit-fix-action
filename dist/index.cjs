@@ -10495,6 +10495,7 @@ var require_github = __commonJS({
 });
 
 // lib/index.js
+var import_node_process3 = __toESM(require("node:process"), 1);
 var core2 = __toESM(require_core(), 1);
 var import_exec7 = __toESM(require_exec(), 1);
 
@@ -10892,9 +10893,10 @@ async function getDefaultBranch({ token, repository }) {
 }
 
 // lib/listPackages.js
+var import_node_process = __toESM(require("node:process"), 1);
 var import_exec5 = __toESM(require_exec(), 1);
 async function listPackages(options = {}) {
-  const cwd = options.cwd || process.cwd();
+  const cwd = options.cwd || import_node_process.default.cwd();
   const { exitCode, stdout, stderr } = await (0, import_exec5.getExecOutput)(
     "npm",
     npmArgs("ls", "--parseable", "--long", "--all", "--package-lock-only"),
@@ -10921,6 +10923,7 @@ async function listPackages(options = {}) {
 }
 
 // lib/updateNpm.js
+var import_node_process2 = __toESM(require("node:process"), 1);
 var core = __toESM(require_core(), 1);
 var import_exec6 = __toESM(require_exec(), 1);
 async function updateNpm(version2) {
@@ -10932,7 +10935,7 @@ async function updateNpm(version2) {
     await (0, import_exec6.exec)("sudo", ["npm", ...cmdArgs]);
   }
   const { stdout: actualVersion } = await (0, import_exec6.getExecOutput)("npm", ["--version"]);
-  await (0, import_exec6.exec)("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
+  await (0, import_exec6.exec)("sudo", ["chown", "-R", `${import_node_process2.default.env["USER"]}:`, `${import_node_process2.default.env["HOME"]}/.config`]);
   return actualVersion.trim();
 }
 
@@ -10951,7 +10954,7 @@ async function filesChanged() {
   }
 }
 function getFromEnv(name) {
-  const value = process.env[name];
+  const value = import_node_process3.default.env[name];
   if (value) {
     return value;
   }
