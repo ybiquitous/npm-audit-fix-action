@@ -10962,6 +10962,7 @@ async function run() {
   core2.info(`Running on Node.js ${import_node_process.default.version}`);
   const npmVersion = await core2.group(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
   await (0, import_exec7.exec)("npm", ["version"]);
+  await (0, import_exec7.exec)("node", ["--version"]);
   await (0, import_exec7.exec)("which", ["npm"]);
   await (0, import_exec7.exec)("which", ["node"]);
   await core2.group("Install user packages", async () => {
