@@ -10964,6 +10964,9 @@ async function run() {
   core2.info(`Running on Node.js ${import_node_process3.default.version}`);
   core2.addPath(import_node_process3.default.execPath.replace(/\/node$/u, ""));
   const npmVersion = await core2.group(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
+  await core2.group("Show runtime info", async () => {
+    await (0, import_exec7.exec)("npm", ["version"]);
+  });
   await core2.group("Install user packages", async () => {
     await (0, import_exec7.exec)("npm", npmArgs("ci"));
   });
