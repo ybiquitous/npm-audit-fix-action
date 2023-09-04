@@ -11,7 +11,7 @@ jobs:
     env:
       MAJOR_VERSION_TAG: v5
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: actions/setup-node@v3
