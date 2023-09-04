@@ -1,19 +1,10 @@
 {
+  "extends": "@tsconfig/strictest",
   "compilerOptions": {
-    "checkJs": true,
-    "strict": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noUncheckedIndexedAccess": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "module": "ES2020",
-    "moduleResolution": "node",
-    "lib": ["ES2020"]
+    "lib": ["es2023"],
+    "target": "es2022",
+    "module": "node16",
+    "moduleResolution": "node16"
   },
   "exclude": ["dist/**", "coverage/**"]
 }
