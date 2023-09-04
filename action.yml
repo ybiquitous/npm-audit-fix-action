@@ -31,4 +31,4 @@ inputs:
     default: "dependencies, javascript, security"
 runs:
   using: "node20"
-  main: "dist/index.cjs"
+  main: "lib/index.js"

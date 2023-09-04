@@ -16,7 +16,6 @@
     "npm": "9"
   },
   "type": "module",
-  "main": "lib/index.js",
   "scripts": {
     "prepare": "husky install",
     "postprepare": "npm run build",
