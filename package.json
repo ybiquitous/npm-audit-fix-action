@@ -51,7 +51,7 @@
   "devDependencies": {
     "@jest/globals": "^29.7.0",
     "@tsconfig/strictest": "^2.0.2",
-    "@types/hosted-git-info": "^3.0.4",
+    "@types/hosted-git-info": "^3.0.5",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "esbuild": "^0.19.5",
     "eslint": "^8.53.0",
