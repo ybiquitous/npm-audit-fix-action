@@ -24743,7 +24743,7 @@ function buildCommitBody({ updated, added, removed }) {
 // lib/constants.js
 var PACKAGE_NAME = "ybiquitous/npm-audit-fix-action";
 var PACKAGE_URL = "https://github.com/ybiquitous/npm-audit-fix-action";
-var NPM_VERSION = "9";
+var NPM_VERSION = "10";
 
 // lib/buildPullRequestBody.js
 var EMPTY = "-";

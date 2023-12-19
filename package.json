@@ -13,7 +13,7 @@
   "repository": "ybiquitous/npm-audit-fix-action",
   "engines": {
     "node": "20",
-    "npm": "9"
+    "npm": "10"
   },
   "type": "module",
   "main": "lib/index.js",
