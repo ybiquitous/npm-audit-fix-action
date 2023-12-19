@@ -6,13 +6,6 @@ on:
   pull_request:
     branches: ["**"]
 
-env:
-  # HACK: Dependabot uses Node.js 16.20.1 and npm 8.19.4, so `engine-strict=true` in `.npmrc` fails Dependabot.
-  # See https://github.com/ybiquitous/npm-audit-fix-action/network/updates/689567062
-  # TODO: Temporarily turn off to work around the CI failure.
-  # See https://github.com/ybiquitous/npm-audit-fix-action/actions/runs/6306636027/job/17122073778#step:3:66
-  npm_config_engine_strict: false # should be true
-
 jobs:
   unit:
     runs-on: ubuntu-latest
@@ -24,7 +17,7 @@ jobs:
         with:
           node-version-file: .node-version
           cache: npm
-      - run: npm install --global npm@9
+      - run: npm install --global npm@"$(npm pkg get 'engines.npm' | jq -r .)" && npm -v
       - run: npm ci
       - run: git diff --exit-code # check dist/
       - run: npm test --ignore-scripts
