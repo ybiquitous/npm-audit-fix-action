@@ -18,7 +18,7 @@
   "type": "module",
   "main": "lib/index.js",
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "husky",
     "postprepare": "npm run build",
     "build": "esbuild lib/index.js --outfile=dist/index.cjs --bundle --platform=node",
     "pretest": "npm run lint",
@@ -64,7 +64,7 @@
   },
   "lint-staged": {
     "!(dist)/**/*.{js,jsx,cjs,mjs,ts,tsx}": "eslint --cache --fix",
-    "!(dist)/**/*": "prettier --cache --write",
+    "!(dist/**|**/*.snap|.husky/**)": "prettier --cache --write",
     "!(CHANGELOG).md": "remark --frail"
   },
   "standard-version": {
@@ -86,7 +86,7 @@
       "body-max-line-length": [
         1,
         "always",
-        200
+        300
       ]
     }
   },
