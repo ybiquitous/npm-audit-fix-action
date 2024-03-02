@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.1.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.0.0...v6.1.0) (2024-03-02)
+
+### Features
+
+- add `npm_args` input ([#855](https://github.com/ybiquitous/npm-audit-fix-action/issues/855)) ([7c5b5ed](https://github.com/ybiquitous/npm-audit-fix-action/commit/7c5b5ede01196365225d89d478dd158efc020afd))
+
 ## [6.0.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v5.2.1...v6.0.0) (2023-12-19)
 
 ### ⚠ BREAKING CHANGES
