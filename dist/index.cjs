@@ -18157,7 +18157,7 @@ var require_core = __commonJS({
       process.env["PATH"] = `${inputPath}${path.delimiter}${process.env["PATH"]}`;
     }
     exports2.addPath = addPath2;
-    function getInput2(name, options) {
+    function getInput3(name, options) {
       const val = process.env[`INPUT_${name.replace(/ /g, "_").toUpperCase()}`] || "";
       if (options && options.required && !val) {
         throw new Error(`Input required and not supplied: ${name}`);
@@ -18167,9 +18167,9 @@ var require_core = __commonJS({
       }
       return val.trim();
     }
-    exports2.getInput = getInput2;
+    exports2.getInput = getInput3;
     function getMultilineInput(name, options) {
-      const inputs = getInput2(name, options).split("\n").filter((x) => x !== "");
+      const inputs = getInput3(name, options).split("\n").filter((x) => x !== "");
       if (options && options.trimWhitespace === false) {
         return inputs;
       }
@@ -18179,7 +18179,7 @@ var require_core = __commonJS({
     function getBooleanInput(name, options) {
       const trueValue = ["true", "True", "TRUE"];
       const falseValue = ["false", "False", "FALSE"];
-      const val = getInput2(name, options);
+      const val = getInput3(name, options);
       if (trueValue.includes(val))
         return true;
       if (falseValue.includes(val))
@@ -25095,8 +25095,10 @@ async function aggregateReport(audit2, beforePackages, afterPackages) {
 var import_exec2 = __toESM(require_exec(), 1);
 
 // lib/npmArgs.js
+var import_core2 = __toESM(require_core(), 1);
 function npmArgs(...args) {
-  return [...args, "--ignore-scripts", "--no-progress"];
+  const defaultArgs = ((0, import_core2.getInput)("npm_args") ?? "").split(/\s+/u).filter(Boolean);
+  return [...args, ...defaultArgs, "--ignore-scripts", "--no-progress"];
 }
 
 // lib/audit.js
@@ -25127,7 +25129,7 @@ async function audit(execFn = import_exec2.getExecOutput) {
 }
 
 // lib/auditFix.js
-var import_core2 = __toESM(require_core(), 1);
+var import_core3 = __toESM(require_core(), 1);
 var import_exec3 = __toESM(require_exec(), 1);
 async function auditFix() {
   const { exitCode, stderr } = await (0, import_exec3.getExecOutput)("npm", npmArgs("audit", "fix"), {
@@ -25137,7 +25139,7 @@ async function auditFix() {
     throw new Error("Unexpected error occurred");
   }
   if (exitCode !== 0) {
-    (0, import_core2.warning)(stderr);
+    (0, import_core3.warning)(stderr);
   }
 }
 
@@ -25267,7 +25269,7 @@ function buildPullRequestBody(report, npmVersion) {
 }
 
 // lib/createOrUpdatePullRequest.js
-var import_core3 = __toESM(require_core(), 1);
+var import_core4 = __toESM(require_core(), 1);
 var import_exec4 = __toESM(require_exec(), 1);
 var github = __toESM(require_github(), 1);
 
@@ -25322,7 +25324,7 @@ ${commitBody}`]);
       title,
       body: pullBody
     });
-    (0, import_core3.info)(`The pull request was updated successfully: ${pull.html_url}`);
+    (0, import_core4.info)(`The pull request was updated successfully: ${pull.html_url}`);
   } else {
     const newPull = await octokit.rest.pulls.create({
       owner,
@@ -25332,14 +25334,14 @@ ${commitBody}`]);
       head: branch,
       base: baseBranch
     });
-    (0, import_core3.info)(`The pull request was created successfully: ${newPull.data.html_url}`);
+    (0, import_core4.info)(`The pull request was created successfully: ${newPull.data.html_url}`);
     const newLabels = await octokit.rest.issues.addLabels({
       owner,
       repo,
       issue_number: newPull.data.number,
       labels
     });
-    (0, import_core3.info)(`The labels were added successfully: ${newLabels.data.map((l) => l.name).join(", ")}`);
+    (0, import_core4.info)(`The labels were added successfully: ${newLabels.data.map((l) => l.name).join(", ")}`);
   }
 }
 
