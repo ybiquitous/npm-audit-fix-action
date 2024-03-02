@@ -29,6 +29,9 @@ inputs:
     description: "PR labels"
     required: false
     default: "dependencies, javascript, security"
+  npm_args:
+    description: "Arguments for the `npm` command"
+    required: false
 runs:
   using: "node20"
   main: "dist/index.cjs"
