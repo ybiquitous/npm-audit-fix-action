@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.1.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.1.0...v6.1.1) (2024-04-04)
+
+### Bug Fixes
+
+- **deps:** bump undici from 5.28.3 to 5.28.4 ([#866](https://github.com/ybiquitous/npm-audit-fix-action/issues/866)) ([e8a0fe3](https://github.com/ybiquitous/npm-audit-fix-action/commit/e8a0fe3546d5c9d247b6d74d0b994980d51c7239))
+
 ## [6.1.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.0.0...v6.1.0) (2024-03-02)
 
 ### Features
