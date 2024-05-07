@@ -20881,7 +20881,7 @@ var require_hosts = __commonJS({
       filetemplate: ({ domain, user, project, committish, path }) => `https://${domain}/${user}/${project}/blob/${maybeEncode(committish) || "HEAD"}/${path}`,
       httpstemplate: ({ domain, user, project, committish }) => `https://${domain}/${user}/${project}.git${maybeJoin("#", committish)}`,
       tarballtemplate: ({ domain, user, project, committish }) => `https://${domain}/${user}/${project}/archive/${maybeEncode(committish) || "HEAD"}.tar.gz`,
-      bugstemplate: ({ user, project }) => null,
+      bugstemplate: () => null,
       extract: (url) => {
         let [, user, project, aux] = url.pathname.split("/", 4);
         if (["archive"].includes(aux)) {
