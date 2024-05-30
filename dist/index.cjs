@@ -25390,7 +25390,7 @@ async function createOrUpdatePullRequest({
 
 ${commitBody}`]);
   await (0, import_exec4.exec)("git", ["checkout", "-B", branch]);
-  await (0, import_exec4.exec)("git", ["push", remote, `HEAD:${branch}`, ...pull ? ["--force"] : []]);
+  await (0, import_exec4.exec)("git", ["push", "--force", remote, `HEAD:${branch}`]);
   if (pull) {
     await octokit.rest.pulls.update({
       owner,
