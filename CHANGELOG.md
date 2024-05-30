@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.1.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.1.1...v6.1.2) (2024-05-30)
+
+### Bug Fixes
+
+- always overwrite branch even if PR were already closed ([#885](https://github.com/ybiquitous/npm-audit-fix-action/issues/885)) ([32a5730](https://github.com/ybiquitous/npm-audit-fix-action/commit/32a573034104a051b38c979825217548dbb743e3)), closes [#884](https://github.com/ybiquitous/npm-audit-fix-action/issues/884)
+- **deps-dev:** bump esbuild from 0.20.2 to 0.21.2 ([#877](https://github.com/ybiquitous/npm-audit-fix-action/issues/877)) ([cc2990e](https://github.com/ybiquitous/npm-audit-fix-action/commit/cc2990e638a078c620263cc526499315304fc720))
+- **deps:** bump hosted-git-info from 7.0.1 to 7.0.2 ([#874](https://github.com/ybiquitous/npm-audit-fix-action/issues/874)) ([17cc5ac](https://github.com/ybiquitous/npm-audit-fix-action/commit/17cc5ac124dfc94ec7ade7be5c62fbe6b3db6b59))
+
 ### [6.1.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.1.0...v6.1.1) (2024-04-04)
 
 ### Bug Fixes
