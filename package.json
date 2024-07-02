@@ -20,7 +20,7 @@
   "scripts": {
     "prepare": "husky",
     "postprepare": "npm run build",
-    "build": "esbuild lib/index.js --outfile=dist/index.cjs --bundle --platform=node",
+    "build": "esbuild lib/index.js --outfile=dist/index.cjs --bundle --platform=node --packages=bundle",
     "pretest": "npm run lint",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --testTimeout 30000",
     "test:watch": "npm --ignore-scripts test -- --watch",
@@ -53,7 +53,7 @@
     "@tsconfig/strictest": "^2.0.5",
     "@types/hosted-git-info": "^3.0.5",
     "@typescript-eslint/eslint-plugin": "^7.4.0",
-    "esbuild": "^0.21.5",
+    "esbuild": "^0.22.0",
     "eslint": "^8.57.0",
     "eslint-config-ybiquitous": "^20.0.0",
     "eslint-plugin-jest": "^27.9.0",
