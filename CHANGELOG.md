@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.1.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.1.2...v6.1.3) (2024-09-10)
+
+### Bug Fixes
+
+- **deps:** bump hosted-git-info from 7.0.2 to 8.0.0 ([#919](https://github.com/ybiquitous/npm-audit-fix-action/issues/919)) ([04d3a9d](https://github.com/ybiquitous/npm-audit-fix-action/commit/04d3a9d06278fa33c395bad1629592ce936f73a0))
+
 ### [6.1.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.1.1...v6.1.2) (2024-05-30)
 
 ### Bug Fixes
