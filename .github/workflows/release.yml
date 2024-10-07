@@ -18,17 +18,26 @@ jobs:
         with:
           node-version-file: .node-version
           cache: npm
-      - run: npm --global install npm@latest
-      - run: npm ci
-      - run: git config --local user.name '${{ github.actor }}'
-      - run: git config --local user.email '${{ github.actor }}@users.noreply.github.com'
-      - run: npm run release
-      - run: echo "TAG_NAME=$(git describe --abbrev=0)" >> "${GITHUB_ENV}"
-      - run: git push --follow-tags
-      - run: git tag --force --annotate --message "Release ${MAJOR_VERSION_TAG}" "${MAJOR_VERSION_TAG}"
-      - run: git push --tags --force origin "${MAJOR_VERSION_TAG}"
-      - run: |
-          gh release create "${TAG_NAME}" \
-            --notes "See the [changelog](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG_NAME}/CHANGELOG.md) for details."
+      - name: Install dependencies
+        run: |
+          npm --global install npm@latest
+          npm ci
+      - name: Set up Git
+        run: |
+          git config --local user.name "${GITHUB_ACTOR}"
+          git config --local user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+      - name: Run release script
+        run: npm run release
+      - name: Save a new tag name to the environment
+        run: echo "NEW_TAG_NAME=$(git describe --abbrev=0)" >> "${GITHUB_ENV}"
+      - name: Push new tags
+        run: |
+          git push --follow-tags
+          git tag --force --annotate --message "Release ${MAJOR_VERSION_TAG}" "${MAJOR_VERSION_TAG}"
+          git push --tags --force origin "${MAJOR_VERSION_TAG}"
+      - name: Create a release
+        run: |
+          gh release create "${NEW_TAG_NAME}" \
+            --notes "See the [changelog](https://github.com/${GITHUB_REPOSITORY}/blob/${NEW_TAG_NAME}/CHANGELOG.md) for details."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
