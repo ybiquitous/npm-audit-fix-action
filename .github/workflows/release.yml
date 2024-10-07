@@ -27,9 +27,9 @@ jobs:
           git config --local user.name "${GITHUB_ACTOR}"
           git config --local user.email "${GITHUB_ACTOR}@users.noreply.github.com"
       - name: Run release script
-        run: npm run release
-      - name: Save a new tag name to the environment
-        run: echo "NEW_TAG_NAME=$(git describe --abbrev=0)" >> "${GITHUB_ENV}"
+        run: |
+          npm run release
+          echo "NEW_TAG_NAME=$(git describe --abbrev=0)" >> "${GITHUB_ENV}"
       - name: Push new tags
         run: |
           git push --follow-tags
