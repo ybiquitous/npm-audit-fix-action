@@ -30,7 +30,7 @@ jobs:
         run: |
           npm run release
           echo "NEW_TAG_NAME=$(git describe --abbrev=0)" >> "${GITHUB_ENV}"
-      - name: Push new tags
+      - name: Push a release commit and new tags
         run: |
           git push --follow-tags
           git tag --force --annotate --message "Release ${MAJOR_VERSION_TAG}" "${MAJOR_VERSION_TAG}"
