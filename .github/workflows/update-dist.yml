@@ -7,23 +7,28 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
-          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
       - uses: actions/setup-node@v4
         with:
           node-version-file: .node-version
           cache: npm
-      - run: npm --global install npm@latest
-      - run: npm ci
-      - run: git config --local user.name '${{ github.actor }}'
-      - run: git config --local user.email '${{ github.actor }}@users.noreply.github.com'
-      - run: git add -f dist/index.cjs
-      - run: |
-          git commit --message 'build: update dist'
-        continue-on-error: true
-        id: commit
-      - run: git push
-        if: ${{ steps.commit.outcome == 'success' }}
+      - name: Install dependencies
+        run: |
+          npm --global install npm@latest
+          npm ci
+      - name: Commit and push a built file if any changes
+        run: |
+          if git diff --exit-code; then
+            echo "No changes."
+            exit 0
+          fi
+          git config --local user.name "${GITHUB_ACTOR}"
+          git config --local user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git add -f dist/index.cjs
+          git commit --message 'build: update dist/index.cjs'
+          git push
