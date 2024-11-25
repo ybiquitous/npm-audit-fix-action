@@ -20610,7 +20610,7 @@ var require_hosts = __commonJS({
     "use strict";
     var maybeJoin = (...args) => args.every((arg) => arg) ? args.join("") : "";
     var maybeEncode = (arg) => arg ? encodeURIComponent(arg) : "";
-    var formatHashFragment = (f) => f.toLowerCase().replace(/^\W+|\/|\W+$/g, "").replace(/\W+/g, "-");
+    var formatHashFragment = (f) => f.toLowerCase().replace(/^\W+/g, "").replace(/(?<!\W)\W+$/, "").replace(/\//g, "").replace(/\W+/g, "-");
     var defaults = {
       sshtemplate: ({ domain, user, project, committish }) => `git@${domain}:${user}/${project}.git${maybeJoin("#", committish)}`,
       sshurltemplate: ({ domain, user, project, committish }) => `git+ssh://git@${domain}/${user}/${project}.git${maybeJoin("#", committish)}`,
