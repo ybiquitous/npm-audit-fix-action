@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.2.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.1.5...v6.2.0) (2025-01-06)
+
+### Features
+
+- add PR assignees support ([#957](https://github.com/ybiquitous/npm-audit-fix-action/issues/957)) ([a63f993](https://github.com/ybiquitous/npm-audit-fix-action/commit/a63f993bb1362a2818a7cae4ac5244252682437a))
+
 ### [6.1.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.1.4...v6.1.5) (2024-11-25)
 
 ### Bug Fixes
