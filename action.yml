@@ -26,11 +26,11 @@ inputs:
     required: false
     default: "build(deps): npm audit fix"
   labels:
-    description: "PR labels"
+    description: "PR labels (comma-separated)"
     required: false
     default: "dependencies, javascript, security"
   assignees:
-    description: "PR assignees"
+    description: "PR assignees (comma-separated)"
     required: false
   npm_args:
     description: "Arguments for the `npm` command"
