@@ -29,7 +29,7 @@ jobs:
 
 ### Inputs
 
-| Name             | Value                                | Default                                        |
+| Name             | Description                          | Default                                        |
 | ---------------- | ------------------------------------ | ---------------------------------------------- |
 | `github_token`   | GitHub token                         | `${{ github.token }}`                          |
 | `github_user`    | GitHub user name for commit changes  | `${{ github.actor }}`                          |
