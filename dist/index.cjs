@@ -25312,7 +25312,8 @@ async function createOrUpdatePullRequest({
   repository,
   author,
   email,
-  labels
+  labels,
+  assignees
 }) {
   const remote = `https://${author}:${token}@github.com/${repository}.git`;
   const { owner, repo } = splitRepo(repository);
@@ -25361,6 +25362,17 @@ ${commitBody}`]);
       labels
     });
     (0, import_core4.info)(`The labels were added successfully: ${newLabels.data.map((l) => l.name).join(", ")}`);
+    if (assignees.length > 0) {
+      const newAssignees = await octokit.rest.issues.addAssignees({
+        owner,
+        repo,
+        issue_number: newPull.data.number,
+        assignees
+      });
+      (0, import_core4.info)(
+        `The assignee(s) were added successfully: ${newAssignees.data.assignees?.map((a) => a.login).join(", ") ?? newAssignees.data.assignee}`
+      );
+    }
   }
 }
 
@@ -25484,6 +25496,7 @@ async function run() {
     }
     const author = core2.getInput("github_user");
     const email = core2.getInput("github_email");
+    const assignees = commaSeparatedList(core2.getInput("assignees"));
     return createOrUpdatePullRequest({
       branch: core2.getInput("branch"),
       token,
@@ -25494,7 +25507,8 @@ async function run() {
       repository,
       author,
       email,
-      labels: commaSeparatedList(core2.getInput("labels"))
+      labels: commaSeparatedList(core2.getInput("labels")),
+      assignees
     });
   });
 }
