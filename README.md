@@ -38,6 +38,7 @@ jobs:
 | default_branch | Default branch                       | n/a                                            |
 | commit_title   | Commit and PR title                  | `build(deps): npm audit fix`                   |
 | labels         | PR labels                            | `dependencies, javascript, security`           |
+| assignees      | PR assignees                         | n/a                                            |
 | npm_args       | Arguments for the `npm` command      | n/a                                            |
 
 See [`action.yml`](action.yml).

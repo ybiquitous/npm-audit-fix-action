@@ -29,6 +29,9 @@ inputs:
     description: "PR labels"
     required: false
     default: "dependencies, javascript, security"
+  assignees:
+    description: "PR assignees"
+    required: false
   npm_args:
     description: "Arguments for the `npm` command"
     required: false
