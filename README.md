@@ -29,17 +29,17 @@ jobs:
 
 ### Inputs
 
-| Name           | Value                                | Default                                        |
-| -------------- | ------------------------------------ | ---------------------------------------------- |
-| github_token   | GitHub token                         | `${{ github.token }}`                          |
-| github_user    | GitHub user name for commit changes  | `${{ github.actor }}`                          |
-| github_email   | GitHub user email for commit changes | `${{ github.actor }}@users.noreply.github.com` |
-| branch         | Created branch                       | `npm-audit-fix-action/fix`                     |
-| default_branch | Default branch                       | n/a                                            |
-| commit_title   | Commit and PR title                  | `build(deps): npm audit fix`                   |
-| labels         | PR labels (comma-separated)          | `dependencies, javascript, security`           |
-| assignees      | PR assignees (comma-separated)       | n/a                                            |
-| npm_args       | Arguments for the `npm` command      | n/a                                            |
+| Name             | Value                                | Default                                        |
+| ---------------- | ------------------------------------ | ---------------------------------------------- |
+| `github_token`   | GitHub token                         | `${{ github.token }}`                          |
+| `github_user`    | GitHub user name for commit changes  | `${{ github.actor }}`                          |
+| `github_email`   | GitHub user email for commit changes | `${{ github.actor }}@users.noreply.github.com` |
+| `branch`         | Created branch                       | `npm-audit-fix-action/fix`                     |
+| `default_branch` | Default branch                       | n/a                                            |
+| `commit_title`   | Commit and PR title                  | `build(deps): npm audit fix`                   |
+| `labels`         | PR labels (comma-separated)          | `dependencies, javascript, security`           |
+| `assignees`      | PR assignees (comma-separated)       | n/a                                            |
+| `npm_args`       | Arguments for the `npm` command      | n/a                                            |
 
 See [`action.yml`](action.yml).
 
