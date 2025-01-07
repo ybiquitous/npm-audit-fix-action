@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.3.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.2.0...v6.3.0) (2025-01-07)
+
+### Features
+
+- add custom project path support ([#963](https://github.com/ybiquitous/npm-audit-fix-action/issues/963)) ([ae95078](https://github.com/ybiquitous/npm-audit-fix-action/commit/ae950783bc2f7fb8d060ccce1a31efb8e3ba37b2))
+
 ## [6.2.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.1.5...v6.2.0) (2025-01-06)
 
 ### Features
