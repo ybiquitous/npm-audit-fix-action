@@ -40,7 +40,7 @@ jobs:
 | `labels`         | PR labels (comma-separated)          | `dependencies, javascript, security`           |
 | `assignees`      | PR assignees (comma-separated)       | n/a                                            |
 | `npm_args`       | Arguments for the `npm` command      | n/a                                            |
-| `path`           | Path to the project root directory   | `./`                                           |
+| `path`           | Path to the project root directory   | `.`                                            |
 
 See [`action.yml`](action.yml).
 

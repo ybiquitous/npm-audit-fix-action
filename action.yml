@@ -36,9 +36,9 @@ inputs:
     description: "Arguments for the `npm` command"
     required: false
   path:
-    description: "Path to the project root directory "
+    description: "Path to the project root directory"
     required: false
-    default: "./"
+    default: "."
 runs:
   using: "node20"
   main: "dist/index.cjs"
