@@ -2,14 +2,18 @@ name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      major_version_tag:
+        description: "Major version tag"
+        required: true
+        default: "v6"
+        type: string
 
 jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    env:
-      MAJOR_VERSION_TAG: v6
     steps:
       - uses: actions/checkout@v4
         with:
@@ -27,17 +31,21 @@ jobs:
           git config --local user.name "${GITHUB_ACTOR}"
           git config --local user.email "${GITHUB_ACTOR}@users.noreply.github.com"
       - name: Run release script
+        id: release
         run: |
           npm run release
-          echo "NEW_TAG_NAME=$(git describe --abbrev=0)" >> "${GITHUB_ENV}"
+          echo "new_tag_name=$(git describe --abbrev=0)" >> "${GITHUB_OUTPUT}"
       - name: Push a release commit and new tags
+        env:
+          MAJOR_VERSION_TAG: ${{ inputs.major_version_tag }}
         run: |
           git push --follow-tags
           git tag --force --annotate --message "Release ${MAJOR_VERSION_TAG}" "${MAJOR_VERSION_TAG}"
           git push --tags --force origin "${MAJOR_VERSION_TAG}"
       - name: Create a release
+        env:
+          NEW_TAG_NAME: ${{ steps.release.outputs.new_tag_name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "${NEW_TAG_NAME}" \
             --notes "See the [changelog](https://github.com/${GITHUB_REPOSITORY}/blob/${NEW_TAG_NAME}/CHANGELOG.md) for details."
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
