@@ -2,12 +2,6 @@ name: Release
 
 on:
   workflow_dispatch:
-    inputs:
-      major_version_tag:
-        description: "Major version tag"
-        required: true
-        default: "v7"
-        type: string
 
 jobs:
   release:
@@ -37,8 +31,17 @@ jobs:
           echo "new_tag_name=$(git describe --abbrev=0)" >> "${GITHUB_OUTPUT}"
       - name: Push a release commit and new tags
         env:
-          MAJOR_VERSION_TAG: ${{ inputs.major_version_tag }}
+          NEW_TAG_NAME: ${{ steps.release.outputs.new_tag_name }}
         run: |
+          # Extract the major version from the tag, e.g., "v1.2.3" -> "v1"
+          MAJOR_VERSION_TAG=${NEW_TAG_NAME:0:2}
+
+          pattern='^v[0-9]$'
+          if [[ ! "${MAJOR_VERSION_TAG}" =~ $pattern ]]; then
+            echo "Failed to extract the major version from the tag: ${NEW_TAG_NAME}"
+            exit 1
+          fi
+
           git push --follow-tags
           git tag --force --annotate --message "Release ${MAJOR_VERSION_TAG}" "${MAJOR_VERSION_TAG}"
           git push --tags --force origin "${MAJOR_VERSION_TAG}"
