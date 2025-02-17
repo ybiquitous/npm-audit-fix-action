@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [6.3.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.3.1...v6.3.2) (2025-02-17)
+
+### Bug Fixes
+
+- **deps:** bump @octokit/request-error from 5.0.1 to 5.1.1 ([#979](https://github.com/ybiquitous/npm-audit-fix-action/issues/979)) ([a621c97](https://github.com/ybiquitous/npm-audit-fix-action/commit/a621c977e25e0da126409a6302b0fdc517e94dc5))
+
 ### [6.3.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.3.0...v6.3.1) (2025-01-28)
 
 ### Bug Fixes
