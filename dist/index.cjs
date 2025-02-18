@@ -1606,13 +1606,13 @@ var require_HeaderParser = __commonJS({
         this._parseHeader();
       }
       this.ss.matches = this.ss.maxMatches;
-      const header = this.header;
+      const header2 = this.header;
       this.header = {};
       this.buffer = "";
       this.finished = true;
       this.nread = this.npairs = 0;
       this.maxed = false;
-      this.emit("header", header);
+      this.emit("header", header2);
     };
     HeaderParser.prototype._parseHeader = function() {
       if (this.npairs === this.maxHeaderPairs) {
@@ -1691,9 +1691,9 @@ var require_Dicer = __commonJS({
       this._pause = false;
       const self = this;
       this._hparser = new HeaderParser(cfg);
-      this._hparser.on("header", function(header) {
+      this._hparser.on("header", function(header2) {
         self._inHeader = false;
-        self._part.emit("header", header);
+        self._part.emit("header", header2);
       });
     }
     inherits(Dicer, WritableStream);
@@ -2140,7 +2140,7 @@ var require_multipart = __commonJS({
           field.emit("end");
           field.removeAllListeners("end");
         }
-        part.on("header", function(header) {
+        part.on("header", function(header2) {
           let contype;
           let fieldname;
           let parsed;
@@ -2148,8 +2148,8 @@ var require_multipart = __commonJS({
           let encoding;
           let filename;
           let nsize = 0;
-          if (header["content-type"]) {
-            parsed = parseParams(header["content-type"][0]);
+          if (header2["content-type"]) {
+            parsed = parseParams(header2["content-type"][0]);
             if (parsed[0]) {
               contype = parsed[0].toLowerCase();
               for (i = 0, len = parsed.length; i < len; ++i) {
@@ -2166,8 +2166,8 @@ var require_multipart = __commonJS({
           if (charset === void 0) {
             charset = defCharset;
           }
-          if (header["content-disposition"]) {
-            parsed = parseParams(header["content-disposition"][0]);
+          if (header2["content-disposition"]) {
+            parsed = parseParams(header2["content-disposition"][0]);
             if (!RE_FIELD.test(parsed[0])) {
               return skipPart(part);
             }
@@ -2184,8 +2184,8 @@ var require_multipart = __commonJS({
           } else {
             return skipPart(part);
           }
-          if (header["content-transfer-encoding"]) {
-            encoding = header["content-transfer-encoding"][0].toLowerCase();
+          if (header2["content-transfer-encoding"]) {
+            encoding = header2["content-transfer-encoding"][0].toLowerCase();
           } else {
             encoding = "7bit";
           }
@@ -3173,9 +3173,9 @@ var require_util2 = __commonJS({
       return "success";
     }
     function appendFetchMetadata(httpRequest) {
-      let header = null;
-      header = httpRequest.mode;
-      httpRequest.headersList.set("sec-fetch-mode", header);
+      let header2 = null;
+      header2 = httpRequest.mode;
+      httpRequest.headersList.set("sec-fetch-mode", header2);
     }
     function appendRequestOriginHeader(request) {
       let serializedOrigin = request.origin;
@@ -5336,8 +5336,8 @@ var require_request = __commonJS({
       static [kHTTP2CopyHeaders](raw) {
         const rawHeaders = raw.split("\r\n");
         const headers = {};
-        for (const header of rawHeaders) {
-          const [key, value] = header.split(": ");
+        for (const header2 of rawHeaders) {
+          const [key, value] = header2.split(": ");
           if (value == null || value.length === 0) continue;
           if (headers[key]) headers[key] += `,${value}`;
           else headers[key] = value;
@@ -6207,15 +6207,15 @@ var require_RedirectHandler = __commonJS({
         }
       }
     }
-    function shouldRemoveHeader(header, removeContent, unknownOrigin) {
-      if (header.length === 4) {
-        return util.headerNameToString(header) === "host";
+    function shouldRemoveHeader(header2, removeContent, unknownOrigin) {
+      if (header2.length === 4) {
+        return util.headerNameToString(header2) === "host";
       }
-      if (removeContent && util.headerNameToString(header).startsWith("content-")) {
+      if (removeContent && util.headerNameToString(header2).startsWith("content-")) {
         return true;
       }
-      if (unknownOrigin && (header.length === 13 || header.length === 6 || header.length === 19)) {
-        const name = util.headerNameToString(header);
+      if (unknownOrigin && (header2.length === 13 || header2.length === 6 || header2.length === 19)) {
+        const name = util.headerNameToString(header2);
         return name === "authorization" || name === "cookie" || name === "proxy-authorization";
       }
       return false;
@@ -7457,44 +7457,44 @@ var require_client = __commonJS({
       if (blocking) {
         socket[kBlocking] = true;
       }
-      let header = `${method} ${path} HTTP/1.1\r
+      let header2 = `${method} ${path} HTTP/1.1\r
 `;
       if (typeof host === "string") {
-        header += `host: ${host}\r
+        header2 += `host: ${host}\r
 `;
       } else {
-        header += client[kHostHeader];
+        header2 += client[kHostHeader];
       }
       if (upgrade) {
-        header += `connection: upgrade\r
+        header2 += `connection: upgrade\r
 upgrade: ${upgrade}\r
 `;
       } else if (client[kPipelining] && !socket[kReset]) {
-        header += "connection: keep-alive\r\n";
+        header2 += "connection: keep-alive\r\n";
       } else {
-        header += "connection: close\r\n";
+        header2 += "connection: close\r\n";
       }
       if (headers) {
-        header += headers;
+        header2 += headers;
       }
       if (channels.sendHeaders.hasSubscribers) {
-        channels.sendHeaders.publish({ request, headers: header, socket });
+        channels.sendHeaders.publish({ request, headers: header2, socket });
       }
       if (!body || bodyLength === 0) {
         if (contentLength === 0) {
-          socket.write(`${header}content-length: 0\r
+          socket.write(`${header2}content-length: 0\r
 \r
 `, "latin1");
         } else {
           assert(contentLength === null, "no body must not have content length");
-          socket.write(`${header}\r
+          socket.write(`${header2}\r
 `, "latin1");
         }
         request.onRequestSent();
       } else if (util.isBuffer(body)) {
         assert(contentLength === body.byteLength, "buffer body must have content length");
         socket.cork();
-        socket.write(`${header}content-length: ${contentLength}\r
+        socket.write(`${header2}content-length: ${contentLength}\r
 \r
 `, "latin1");
         socket.write(body);
@@ -7506,14 +7506,14 @@ upgrade: ${upgrade}\r
         }
       } else if (util.isBlobLike(body)) {
         if (typeof body.stream === "function") {
-          writeIterable({ body: body.stream(), client, request, socket, contentLength, header, expectsPayload });
+          writeIterable({ body: body.stream(), client, request, socket, contentLength, header: header2, expectsPayload });
         } else {
-          writeBlob({ body, client, request, socket, contentLength, header, expectsPayload });
+          writeBlob({ body, client, request, socket, contentLength, header: header2, expectsPayload });
         }
       } else if (util.isStream(body)) {
-        writeStream({ body, client, request, socket, contentLength, header, expectsPayload });
+        writeStream({ body, client, request, socket, contentLength, header: header2, expectsPayload });
       } else if (util.isIterable(body)) {
-        writeIterable({ body, client, request, socket, contentLength, header, expectsPayload });
+        writeIterable({ body, client, request, socket, contentLength, header: header2, expectsPayload });
       } else {
         assert(false);
       }
@@ -7698,7 +7698,7 @@ upgrade: ${upgrade}\r
         }
       }
     }
-    function writeStream({ h2stream, body, client, request, socket, contentLength, header, expectsPayload }) {
+    function writeStream({ h2stream, body, client, request, socket, contentLength, header: header2, expectsPayload }) {
       assert(contentLength !== 0 || client[kRunning] === 0, "stream body cannot be pipelined");
       if (client[kHTTPConnVersion] === "h2") {
         let onPipeData = function(chunk) {
@@ -7724,7 +7724,7 @@ upgrade: ${upgrade}\r
         return;
       }
       let finished = false;
-      const writer = new AsyncWriter({ socket, request, contentLength, client, expectsPayload, header });
+      const writer = new AsyncWriter({ socket, request, contentLength, client, expectsPayload, header: header2 });
       const onData = function(chunk) {
         if (finished) {
           return;
@@ -7780,7 +7780,7 @@ upgrade: ${upgrade}\r
       }
       socket.on("drain", onDrain).on("error", onFinished);
     }
-    async function writeBlob({ h2stream, body, client, request, socket, contentLength, header, expectsPayload }) {
+    async function writeBlob({ h2stream, body, client, request, socket, contentLength, header: header2, expectsPayload }) {
       assert(contentLength === body.size, "blob body must have content length");
       const isH2 = client[kHTTPConnVersion] === "h2";
       try {
@@ -7794,7 +7794,7 @@ upgrade: ${upgrade}\r
           h2stream.uncork();
         } else {
           socket.cork();
-          socket.write(`${header}content-length: ${contentLength}\r
+          socket.write(`${header2}content-length: ${contentLength}\r
 \r
 `, "latin1");
           socket.write(buffer);
@@ -7810,7 +7810,7 @@ upgrade: ${upgrade}\r
         util.destroy(isH2 ? h2stream : socket, err);
       }
     }
-    async function writeIterable({ h2stream, body, client, request, socket, contentLength, header, expectsPayload }) {
+    async function writeIterable({ h2stream, body, client, request, socket, contentLength, header: header2, expectsPayload }) {
       assert(contentLength !== 0 || client[kRunning] === 0, "iterator body cannot be pipelined");
       let callback = null;
       function onDrain() {
@@ -7851,7 +7851,7 @@ upgrade: ${upgrade}\r
         return;
       }
       socket.on("close", onDrain).on("drain", onDrain);
-      const writer = new AsyncWriter({ socket, request, contentLength, client, expectsPayload, header });
+      const writer = new AsyncWriter({ socket, request, contentLength, client, expectsPayload, header: header2 });
       try {
         for await (const chunk of body) {
           if (socket[kError]) {
@@ -7869,18 +7869,18 @@ upgrade: ${upgrade}\r
       }
     }
     var AsyncWriter = class {
-      constructor({ socket, request, contentLength, client, expectsPayload, header }) {
+      constructor({ socket, request, contentLength, client, expectsPayload, header: header2 }) {
         this.socket = socket;
         this.request = request;
         this.contentLength = contentLength;
         this.client = client;
         this.bytesWritten = 0;
         this.expectsPayload = expectsPayload;
-        this.header = header;
+        this.header = header2;
         socket[kWriting] = true;
       }
       write(chunk) {
-        const { socket, request, contentLength, client, bytesWritten, expectsPayload, header } = this;
+        const { socket, request, contentLength, client, bytesWritten, expectsPayload, header: header2 } = this;
         if (socket[kError]) {
           throw socket[kError];
         }
@@ -7903,10 +7903,10 @@ upgrade: ${upgrade}\r
             socket[kReset] = true;
           }
           if (contentLength === null) {
-            socket.write(`${header}transfer-encoding: chunked\r
+            socket.write(`${header2}transfer-encoding: chunked\r
 `, "latin1");
           } else {
-            socket.write(`${header}content-length: ${contentLength}\r
+            socket.write(`${header2}content-length: ${contentLength}\r
 \r
 `, "latin1");
           }
@@ -7930,7 +7930,7 @@ ${len.toString(16)}\r
         return ret;
       }
       end() {
-        const { socket, contentLength, client, bytesWritten, expectsPayload, header, request } = this;
+        const { socket, contentLength, client, bytesWritten, expectsPayload, header: header2, request } = this;
         request.onRequestSent();
         socket[kWriting] = false;
         if (socket[kError]) {
@@ -7941,11 +7941,11 @@ ${len.toString(16)}\r
         }
         if (bytesWritten === 0) {
           if (expectsPayload) {
-            socket.write(`${header}content-length: 0\r
+            socket.write(`${header2}content-length: 0\r
 \r
 `, "latin1");
           } else {
-            socket.write(`${header}\r
+            socket.write(`${header2}\r
 `, "latin1");
           }
         } else if (contentLength === null) {
@@ -10982,14 +10982,14 @@ var require_headers = __commonJS({
     function fill(headers, object) {
       if (Array.isArray(object)) {
         for (let i = 0; i < object.length; ++i) {
-          const header = object[i];
-          if (header.length !== 2) {
+          const header2 = object[i];
+          if (header2.length !== 2) {
             throw webidl.errors.exception({
               header: "Headers constructor",
-              message: `expected name/value pair to be length 2, found ${header.length}.`
+              message: `expected name/value pair to be length 2, found ${header2.length}.`
             });
           }
-          appendHeader(headers, header[0], header[1]);
+          appendHeader(headers, header2[0], header2[1]);
         }
       } else if (typeof object === "object" && object !== null) {
         const keys = Object.keys(object);
@@ -14229,10 +14229,10 @@ var require_util5 = __commonJS({
       const serializedB = URLSerializer(B, excludeFragment);
       return serializedA === serializedB;
     }
-    function fieldValues(header) {
-      assert(header !== null);
+    function fieldValues(header2) {
+      assert(header2 !== null);
       const values = [];
-      for (let value of header.split(",")) {
+      for (let value of header2.split(",")) {
         value = value.trim();
         if (!value.length) {
           continue;
@@ -15068,20 +15068,20 @@ var require_parse = __commonJS({
     var { isCTLExcludingHtab } = require_util6();
     var { collectASequenceOfCodePointsFast } = require_dataURL();
     var assert = require("assert");
-    function parseSetCookie(header) {
-      if (isCTLExcludingHtab(header)) {
+    function parseSetCookie(header2) {
+      if (isCTLExcludingHtab(header2)) {
         return null;
       }
       let nameValuePair = "";
       let unparsedAttributes = "";
       let name = "";
       let value = "";
-      if (header.includes(";")) {
+      if (header2.includes(";")) {
         const position = { position: 0 };
-        nameValuePair = collectASequenceOfCodePointsFast(";", header, position);
-        unparsedAttributes = header.slice(position.position);
+        nameValuePair = collectASequenceOfCodePointsFast(";", header2, position);
+        unparsedAttributes = header2.slice(position.position);
       } else {
-        nameValuePair = header;
+        nameValuePair = header2;
       }
       if (!nameValuePair.includes("=")) {
         value = nameValuePair;
@@ -17036,9 +17036,9 @@ var require_lib = __commonJS({
               }
               yield response.readBody();
               if (parsedRedirectUrl.hostname !== parsedUrl.hostname) {
-                for (const header in headers) {
-                  if (header.toLowerCase() === "authorization") {
-                    delete headers[header];
+                for (const header2 in headers) {
+                  if (header2.toLowerCase() === "authorization") {
+                    delete headers[header2];
                   }
                 }
               }
@@ -17184,12 +17184,12 @@ var require_lib = __commonJS({
         }
         return lowercaseKeys(headers || {});
       }
-      _getExistingOrDefaultHeader(additionalHeaders, header, _default) {
+      _getExistingOrDefaultHeader(additionalHeaders, header2, _default) {
         let clientHeader;
         if (this.requestOptions && this.requestOptions.headers) {
-          clientHeader = lowercaseKeys(this.requestOptions.headers)[header];
+          clientHeader = lowercaseKeys(this.requestOptions.headers)[header2];
         }
-        return additionalHeaders[header] || clientHeader || _default;
+        return additionalHeaders[header2] || clientHeader || _default;
       }
       _getAgent(parsedUrl) {
         let agent;
@@ -17724,8 +17724,8 @@ var require_summary = __commonJS({
             if (typeof cell === "string") {
               return this.wrap("td", cell);
             }
-            const { header, data, colspan, rowspan } = cell;
-            const tag = header ? "th" : "td";
+            const { header: header2, data, colspan, rowspan } = cell;
+            const tag = header2 ? "th" : "td";
             const attrs = Object.assign(Object.assign({}, colspan && { colspan }), rowspan && { rowspan });
             return this.wrap(tag, data, attrs);
           }).join("");
@@ -25179,10 +25179,10 @@ function buildCommitBody({ updated, added, removed }) {
   lines.push("");
   const vulnerabilities = /* @__PURE__ */ new Set();
   for (const entry of [...updated, ...added, ...removed]) {
-    if ("severity" in entry && "title" in entry && "url" in entry) {
-      const { name, severity, title, url } = entry;
-      if (severity != null && title != null && url != null) {
-        vulnerabilities.add(`- ${name}: "${title}" (${url})`);
+    if ("severity" in entry && "url" in entry) {
+      const { name, severity, url } = entry;
+      if (severity && url) {
+        vulnerabilities.add(`- ${name}: ${severity} (${url})`);
       }
     }
   }
@@ -25216,16 +25216,21 @@ var repoLink = (report, name) => {
   return url ? `[${url.type}](${url.url})` : EMPTY;
 };
 var versionLabel = (version) => `\`${version}\``;
-var detail = ({ severity, title, url }) => {
-  if (severity != null && title != null && url != null) {
-    return `**[${severity}]** ${title} ([ref](${url}))`;
+var header = (forUpdate) => {
+  if (forUpdate) {
+    return [
+      // With details
+      "| Package | Version | Source | Severity | Link |",
+      "|:--------|:-------:|:------:|:--------:|:-----|"
+    ];
   }
-  return EMPTY;
+  return [
+    // Without details
+    "| Package | Version | Source |",
+    "|:--------|:-------:|:------:|"
+  ];
 };
 function buildPullRequestBody({ report, npmVersion, github: github2 }) {
-  const header = [];
-  header.push("| Package | Version | Source | Detail |");
-  header.push("|:--------|:-------:|:------:|:-------|");
   const lines = [];
   lines.push(
     `This pull request fixes the vulnerable packages via npm [${npmVersion}](https://github.com/npm/cli/releases/tag/v${npmVersion}).`
@@ -25235,14 +25240,15 @@ function buildPullRequestBody({ report, npmVersion, github: github2 }) {
     lines.push("<details open>");
     lines.push(`<summary><strong>Updated (${report.updated.length})</strong></summary>`);
     lines.push("");
-    lines.push(...header);
-    report.updated.forEach(({ name, version, location, previousVersion, severity, title, url }) => {
+    lines.push(...header(true));
+    report.updated.forEach(({ name, version, location, previousVersion, severity, url }) => {
       lines.push(
         buildTableRow(
           npmPackage(name, version, location),
           `${versionLabel(previousVersion)}\u2192${versionLabel(version)}`,
           repoLink(report, name),
-          detail({ severity, title, url })
+          severity ? `**${severity}**` : EMPTY,
+          url ? `<${url}>` : EMPTY
         )
       );
     });
@@ -25254,14 +25260,13 @@ function buildPullRequestBody({ report, npmVersion, github: github2 }) {
     lines.push("<details open>");
     lines.push(`<summary><strong>Added (${report.added.length})</strong></summary>`);
     lines.push("");
-    lines.push(...header);
+    lines.push(...header(false));
     report.added.forEach(({ name, version, location }) => {
       lines.push(
         buildTableRow(
           npmPackage(name, version, location),
           versionLabel(version),
-          repoLink(report, name),
-          detail({})
+          repoLink(report, name)
         )
       );
     });
@@ -25273,14 +25278,13 @@ function buildPullRequestBody({ report, npmVersion, github: github2 }) {
     lines.push("<details open>");
     lines.push(`<summary><strong>Removed (${report.removed.length})</strong></summary>`);
     lines.push("");
-    lines.push(...header);
-    report.removed.forEach(({ name, version, location, severity, title, url }) => {
+    lines.push(...header(false));
+    report.removed.forEach(({ name, version, location }) => {
       lines.push(
         buildTableRow(
           npmPackage(name, version, location),
           versionLabel(version),
-          repoLink(report, name),
-          detail({ severity, title, url })
+          repoLink(report, name)
         )
       );
     });
