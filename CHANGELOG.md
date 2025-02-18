@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [7.1.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.0.0...v7.1.0) (2025-02-18)
+
+### Features
+
+- add action run link to generated pull request body ([#988](https://github.com/ybiquitous/npm-audit-fix-action/issues/988)) ([d878b05](https://github.com/ybiquitous/npm-audit-fix-action/commit/d878b050fbda25f08517cab910ef317a2a5cdee5))
+- show notice message for generated pull requests ([#990](https://github.com/ybiquitous/npm-audit-fix-action/issues/990)) ([af716c7](https://github.com/ybiquitous/npm-audit-fix-action/commit/af716c737c24a4bf741c9c3254f72a58c2c9081d))
+- simplify information on pull request body and commit message ([#993](https://github.com/ybiquitous/npm-audit-fix-action/issues/993)) ([7df900b](https://github.com/ybiquitous/npm-audit-fix-action/commit/7df900b5efeb6e1b708a14355296c4ac266c5411))
+
+### Bug Fixes
+
+- **deps:** npm audit fix ([#994](https://github.com/ybiquitous/npm-audit-fix-action/issues/994)) ([1924d2b](https://github.com/ybiquitous/npm-audit-fix-action/commit/1924d2becdf6a3b74681136a0f74278a2cbf0111))
+- prevent linebreaks between versions in pull request body's table ([#991](https://github.com/ybiquitous/npm-audit-fix-action/issues/991)) ([9c62a4c](https://github.com/ybiquitous/npm-audit-fix-action/commit/9c62a4c99c9314f270ac33d9254c3b34c44f5589))
+- prevent too long column in pull request body's table ([#992](https://github.com/ybiquitous/npm-audit-fix-action/issues/992)) ([ba410c0](https://github.com/ybiquitous/npm-audit-fix-action/commit/ba410c0d07046cdda11971da323dbc0cc9ffb9b0))
+
 ## [7.0.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.3.2...v7.0.0) (2025-02-17)
 
 ### ⚠ BREAKING CHANGES
