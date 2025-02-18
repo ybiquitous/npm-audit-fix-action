@@ -25222,7 +25222,7 @@ var detail = ({ severity, title, url }) => {
   }
   return EMPTY;
 };
-function buildPullRequestBody(report, npmVersion) {
+function buildPullRequestBody({ report, npmVersion, github: github2 }) {
   const header = [];
   header.push("| Package | Version | Source | Detail |");
   header.push("|:--------|:-------:|:------:|:-------|");
@@ -25290,7 +25290,9 @@ function buildPullRequestBody(report, npmVersion) {
   lines.push("");
   lines.push("***");
   lines.push("");
-  lines.push(`Created by [${PACKAGE_NAME}](${PACKAGE_URL})`);
+  lines.push(
+    `Created by [${PACKAGE_NAME}](${PACKAGE_URL}) in the [action run](${github2.serverUrl}/${github2.repository}/actions/runs/${github2.runId})`
+  );
   return lines.join("\n").trim();
 }
 
@@ -25506,12 +25508,18 @@ async function run() {
     const author = core2.getInput("github_user");
     const email = core2.getInput("github_email");
     const assignees = commaSeparatedList(core2.getInput("assignees"));
+    const serverUrl = getFromEnv("GITHUB_SERVER_URL");
+    const runId = getFromEnv("GITHUB_RUN_ID");
     return createOrUpdatePullRequest({
       branch: core2.getInput("branch"),
       token,
       baseBranch,
       title: core2.getInput("commit_title"),
-      pullBody: buildPullRequestBody(report, npmVersion),
+      pullBody: buildPullRequestBody({
+        report,
+        npmVersion,
+        github: { serverUrl, repository, runId }
+      }),
       commitBody: buildCommitBody(report),
       repository,
       author,
