@@ -25240,7 +25240,7 @@ function buildPullRequestBody({ report, npmVersion, github: github2 }) {
       lines.push(
         buildTableRow(
           npmPackage(name, version, location),
-          `${versionLabel(previousVersion)} \u2192 ${versionLabel(version)}`,
+          `${versionLabel(previousVersion)}\u2192${versionLabel(version)}`,
           repoLink(report, name),
           detail({ severity, title, url })
         )
