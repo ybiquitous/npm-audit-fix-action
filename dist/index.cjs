@@ -25206,7 +25206,7 @@ var EMPTY = "-";
 var npmPackage = (name, version, location) => {
   let result = `[${name}](https://www.npmjs.com/package/${name}/v/${version})`;
   if (location != null) {
-    result += ` (\`${location}\`)`;
+    result += `<br>(\`${location}\`)`;
   }
   return result;
 };
