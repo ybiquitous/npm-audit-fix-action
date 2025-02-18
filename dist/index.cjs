@@ -19165,10 +19165,10 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       (0, command_1.issueCommand)("warning", (0, utils_1.toCommandProperties)(properties), message instanceof Error ? message.toString() : message);
     }
     exports2.warning = warning2;
-    function notice(message, properties = {}) {
+    function notice2(message, properties = {}) {
       (0, command_1.issueCommand)("notice", (0, utils_1.toCommandProperties)(properties), message instanceof Error ? message.toString() : message);
     }
-    exports2.notice = notice;
+    exports2.notice = notice2;
     function info4(message) {
       process.stdout.write(message + os.EOL);
     }
@@ -25354,6 +25354,7 @@ ${commitBody}`]);
       body: pullBody
     });
     (0, import_core4.info)(`The pull request was updated successfully: ${pull.html_url}`);
+    (0, import_core4.notice)(`${PACKAGE_NAME} successfully updated PR #${pull.number}: ${pull.html_url}`);
   } else {
     const newPull = await octokit.rest.pulls.create({
       owner,
@@ -25364,6 +25365,9 @@ ${commitBody}`]);
       base: baseBranch
     });
     (0, import_core4.info)(`The pull request was created successfully: ${newPull.data.html_url}`);
+    (0, import_core4.notice)(
+      `${PACKAGE_NAME} successfully created PR #${newPull.data.number}: ${newPull.data.html_url}`
+    );
     const newLabels = await octokit.rest.issues.addLabels({
       owner,
       repo,
