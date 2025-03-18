@@ -25248,7 +25248,7 @@ var header = (forUpdate) => {
 function buildPullRequestBody({ report, npmVersion, github: github2 }) {
   const lines = [];
   lines.push(
-    `This pull request fixes the vulnerable packages via npm [${npmVersion}](https://github.com/npm/cli/releases/tag/v${npmVersion}).`
+    `This pull request fixes the vulnerable packages via [npm v${npmVersion}](https://github.com/npm/cli/releases/tag/v${npmVersion}).`
   );
   if (report.updated.length > 0) {
     lines.push("");
@@ -25307,10 +25307,8 @@ function buildPullRequestBody({ report, npmVersion, github: github2 }) {
     lines.push("</details>");
   }
   lines.push("");
-  lines.push("***");
-  lines.push("");
   lines.push(
-    `Created by [${PACKAGE_NAME}](${PACKAGE_URL}) in the [action run](${github2.serverUrl}/${github2.repository}/actions/runs/${github2.runId})`
+    `This pull request was created by [${PACKAGE_NAME}](${PACKAGE_URL}) in the [action run](${github2.serverUrl}/${github2.repository}/actions/runs/${github2.runId}).`
   );
   return lines.join("\n").trim();
 }
