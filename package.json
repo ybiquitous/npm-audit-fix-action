@@ -18,8 +18,6 @@
   "type": "module",
   "scripts": {
     "prepare": "husky",
-    "postprepare": "echo 'npm run build'",
-    "build": "echo 'esbuild lib/index.js --outfile=dist/index.cjs --bundle --platform=node --packages=bundle'",
     "pretest": "npm run lint",
     "test": "node --test",
     "test:watch": "node --test --watch",
@@ -51,7 +49,6 @@
     "@tsconfig/strictest": "^2.0.5",
     "@types/hosted-git-info": "^3.0.5",
     "@typescript-eslint/eslint-plugin": "^8.29.0",
-    "esbuild": "^0.25.2",
     "eslint": "^8.57.0",
     "eslint-config-ybiquitous": "^21.1.0",
     "remark-preset-ybiquitous": "^0.4.4",
