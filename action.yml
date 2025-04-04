@@ -41,4 +41,5 @@ inputs:
     default: "."
 runs:
   using: "node20"
+  pre: "lib/pre.js"
   main: "lib/index.js"
