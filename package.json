@@ -16,11 +16,10 @@
     "npm": "11"
   },
   "type": "module",
-  "main": "lib/index.js",
   "scripts": {
     "prepare": "husky",
-    "postprepare": "npm run build",
-    "build": "esbuild lib/index.js --outfile=dist/index.cjs --bundle --platform=node --packages=bundle",
+    "postprepare": "echo 'npm run build'",
+    "build": "echo 'esbuild lib/index.js --outfile=dist/index.cjs --bundle --platform=node --packages=bundle'",
     "pretest": "npm run lint",
     "test": "node --test",
     "test:watch": "node --test --watch",
