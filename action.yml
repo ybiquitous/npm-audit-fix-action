@@ -1,6 +1,7 @@
-name: "npm audit fix"
-description: "Run `npm audit fix` and create a pull request"
-author: "Masafumi Koba"
+name: "npm-audit-fix action"
+description: "Run `npm audit fix` and create a pull request."
+author: "ybiquitous"
+
 inputs:
   github_token:
     description: "GitHub token"
@@ -39,6 +40,11 @@ inputs:
     description: "Path to the project root directory"
     required: false
     default: "."
+
 runs:
   using: "node20"
   main: "dist/index.js"
+
+branding:
+  icon: "alert-triangle"
+  color: "red"
