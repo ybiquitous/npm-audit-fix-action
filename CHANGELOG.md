@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [7.1.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.1.2...v7.1.3) (2025-04-05)
+
+### Bug Fixes
+
+- prepare for publishing on marketplace ([#1012](https://github.com/ybiquitous/npm-audit-fix-action/issues/1012)) ([b9ccd30](https://github.com/ybiquitous/npm-audit-fix-action/commit/b9ccd30dffa96e50f7949a00370a8b2fc68605b0))
+
 ### [7.1.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.1.1...v7.1.2) (2025-04-05)
 
 ### Bug Fixes
