@@ -37,7 +37,7 @@ jobs:
 | `github_email`   | GitHub user email for commit changes.         | `${{ github.actor }}@users.noreply.github.com` |
 | `branch`         | Created branch.                               | `npm-audit-fix-action/fix`                     |
 | `default_branch` | Default branch.                               | Auto-detected.                                 |
-| `commit_title`   | Commit and pull request title.                | `build(deps): npm audit fix`                   |
+| `commit_title`   | Commit message and pull request title.        | `build(deps): npm audit fix`                   |
 | `labels`         | Labels for pull request (comma-separated).    | `dependencies, javascript, security`           |
 | `assignees`      | Assignees for pull request (comma-separated). | n/a                                            |
 | `npm_args`       | Arguments for the `npm` command.              | n/a                                            |
