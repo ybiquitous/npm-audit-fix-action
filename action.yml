@@ -4,40 +4,40 @@ author: "ybiquitous"
 
 inputs:
   github_token:
-    description: "GitHub token"
+    description: "GitHub token."
     required: false
     default: ${{ github.token }}
   github_user:
-    description: "GitHub user name for commit changes"
+    description: "GitHub user name for commit changes."
     required: false
     default: ${{ github.actor }}
   github_email:
-    description: "GitHub user email for commit changes"
+    description: "GitHub user email for commit changes."
     required: false
     default: "${{ github.actor }}@users.noreply.github.com"
   branch:
-    description: "Created branch"
+    description: "Created branch."
     required: false
     default: "npm-audit-fix-action/fix"
   default_branch:
-    description: "Default branch"
+    description: "Default branch. If not specified, it will be auto-detected."
     required: false
   commit_title:
-    description: "Commit and PR title"
+    description: "Commit message and pull request title."
     required: false
     default: "build(deps): npm audit fix"
   labels:
-    description: "PR labels (comma-separated)"
+    description: "Labels for pull request (comma-separated)."
     required: false
     default: "dependencies, javascript, security"
   assignees:
-    description: "PR assignees (comma-separated)"
+    description: "Assignees for pull request (comma-separated)"
     required: false
   npm_args:
-    description: "Arguments for the `npm` command"
+    description: "Arguments for the `npm` command."
     required: false
   path:
-    description: "Path to the project root directory"
+    description: "Path to the project root directory."
     required: false
     default: "."
 
