@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [7.1.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.1.1...v7.1.2) (2025-04-05)
+
+### Bug Fixes
+
+- run ESM code without compilation to CJS ([#1010](https://github.com/ybiquitous/npm-audit-fix-action/issues/1010)) ([8dfd00c](https://github.com/ybiquitous/npm-audit-fix-action/commit/8dfd00c9d5f6b9683ad55f6bf7c816eab66e97b6))
+
 ### [7.1.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.1.0...v7.1.1) (2025-03-18)
 
 ### Bug Fixes
