@@ -1,4 +1,5 @@
 [![Test](https://github.com/ybiquitous/npm-audit-fix-action/actions/workflows/test.yml/badge.svg)](https://github.com/ybiquitous/npm-audit-fix-action/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/ybiquitous/npm-audit-fix-action/graph/badge.svg?token=lcWzWUkwEy)](https://codecov.io/gh/ybiquitous/npm-audit-fix-action)
 
 # `npm audit fix` Action
 

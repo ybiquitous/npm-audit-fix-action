@@ -12,15 +12,27 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Check out
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version-file: .node-version
           cache: npm
-      - run: npm install --global npm@"$(npm pkg get 'engines.npm' | jq -r .)" && npm -v
-      - run: npm ci
-      - run: git diff --exit-code # check dist/
-      - run: npm test --ignore-scripts
+      - name: Install npm
+        run: |
+          npm install --global npm@"$(npm pkg get 'engines.npm' | jq -r .)"
+          npm -v
+      - name: Install dependencies
+        run: npm ci
+      - name: Check built files
+        run: git diff --exit-code
+      - name: Test
+        run: npm run test:coverage
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   smoke:
     runs-on: ubuntu-latest
@@ -28,10 +40,12 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: ./
+      - name: Run local action
+        uses: ./
 
   lint:
     uses: ybiquitous/.github/.github/workflows/nodejs-lint-reusable.yml@main
