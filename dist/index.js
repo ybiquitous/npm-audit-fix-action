@@ -34061,6 +34061,7 @@ async function createOrUpdatePullRequest({
 
   await (0,exec.exec)("git", ["config", "user.name", author]);
   await (0,exec.exec)("git", ["config", "user.email", email]);
+  await (0,exec.exec)("git", ["add", "package.json"]);
   await (0,exec.exec)("git", ["add", "package-lock.json"]);
   await (0,exec.exec)("git", ["commit", "--message", `${title}\n\n${commitBody}`]);
   await (0,exec.exec)("git", ["checkout", "-B", branch]);
