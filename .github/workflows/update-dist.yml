@@ -44,8 +44,7 @@ jobs:
           script: |
             const fs = require('fs');
             const { owner, repo } = context.repo;
-            const { sha } = context;
-            const branch = context.payload.pull_request.head.ref;
+            const { ref: branch, sha } = context.payload.pull_request.head;
 
             for (const filename of fs.readdirSync('dist')) {
               const path = `dist/${filename}`;
