@@ -10,26 +10,51 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }} # PAT is necessary to trigger other workflows on push
-      - uses: actions/setup-node@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version-file: .node-version
           cache: npm
+
       - name: Install dependencies
         run: |
           npm --global install npm@latest
           npm ci
-      - name: Commit and push a built file if any changes
+
+      - name: Check for file changes
+        id: check-changes
+        shell: bash
         run: |
           if git diff --exit-code; then
             echo "No changes."
-            exit 0
+          else
+            echo "continue=true" >> "${GITHUB_OUTPUT}"
           fi
-          git config --local user.name "${GITHUB_ACTOR}"
-          git config --local user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          git add -f dist/
-          git commit --message 'build: update built files'
-          git push
+
+      - name: Commit and push a built file if any changes
+        if: ${{ steps.check-changes.outputs.continue == 'true' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const { owner, repo } = context.repo;
+
+            for (const filename of fs.readdirSync('dist')) {
+              const path = `dist/${filename}`;
+              const content = fs.readFileSync(path, 'utf8');
+              await github.rest.repos.createOrUpdateFileContents({
+                owner,
+                repo,
+                path,
+                message: `build: update \`${filename}\``,
+                content: Buffer.from(content).toString('base64'),
+                branch: context.ref,
+                sha: context.sha,
+              });
+            }
