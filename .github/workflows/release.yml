@@ -9,10 +9,13 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version-file: .node-version
           cache: npm
@@ -48,7 +51,7 @@ jobs:
       - name: Create a release
         env:
           NEW_TAG_NAME: ${{ steps.release.outputs.new_tag_name }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           gh release create "${NEW_TAG_NAME}" \
             --notes "See the [changelog](https://github.com/${GITHUB_REPOSITORY}/blob/${NEW_TAG_NAME}/CHANGELOG.md) for details."
