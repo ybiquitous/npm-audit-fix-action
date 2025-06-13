@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [7.2.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.1.5...v7.2.0) (2025-06-13)
+
+### Features
+
+- add outputs `pull_request_url` and `branch_name` ([#1037](https://github.com/ybiquitous/npm-audit-fix-action/issues/1037)) ([80f95ea](https://github.com/ybiquitous/npm-audit-fix-action/commit/80f95ea65a929bc72c792682744cfa7e1dea0442))
+- change `github_email` input default to include `github.actor_id` ([#1041](https://github.com/ybiquitous/npm-audit-fix-action/issues/1041)) ([33bcfb8](https://github.com/ybiquitous/npm-audit-fix-action/commit/33bcfb80219b986edd0fc0d2706d7eec8d5ffeb3))
+
+### Bug Fixes
+
+- **deps:** bump @actions/github from 6.0.0 to 6.0.1 ([#1028](https://github.com/ybiquitous/npm-audit-fix-action/issues/1028)) ([fc41e94](https://github.com/ybiquitous/npm-audit-fix-action/commit/fc41e946d43f88aed6b21d41413514a68ca37f59))
+
 ### [7.1.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.1.4...v7.1.5) (2025-04-16)
 
 ### Bug Fixes
