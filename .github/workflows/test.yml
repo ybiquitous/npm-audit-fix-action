@@ -45,7 +45,24 @@ jobs:
         with:
           fetch-depth: 0
       - name: Run local action
+        id: npm-audit-fix
         uses: ./
+      - name: Verify outputs
+        shell: bash
+        env:
+          pull_request_url: ${{ steps.npm-audit-fix.outputs.pull_request_url }}
+          branch_name: ${{ steps.npm-audit-fix.outputs.branch_name }}
+        run: |
+          echo "pull_request_url: ${pull_request_url}"
+          echo "branch_name: ${branch_name}"
+
+          head_ref_name=$(gh pr view "${pull_request_url}" --json headRefName --jq .headRefName)
+          echo "head_ref_name: ${head_ref_name}"
+
+          if [[ "${branch_name}" != "${head_ref_name}" ]]; then
+            echo "::error::Branch names are unexpected: '${branch_name}' != '${head_ref_name}'"
+            exit 1
+          fi
 
   lint:
     uses: ybiquitous/.github/.github/workflows/nodejs-lint-reusable.yml@main
