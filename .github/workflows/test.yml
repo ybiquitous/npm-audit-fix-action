@@ -48,6 +48,7 @@ jobs:
         id: npm-audit-fix
         uses: ./
       - name: Verify outputs
+        if: ${{ steps.npm-audit-fix.outputs.pull_request_url }}
         shell: bash
         env:
           pull_request_url: ${{ steps.npm-audit-fix.outputs.pull_request_url }}
