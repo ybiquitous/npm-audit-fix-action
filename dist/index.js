@@ -34251,17 +34251,19 @@ async function createOrUpdatePullRequest({
   await (0,exec.exec)("git", ["push", "--force", remote, `HEAD:${branch}`]);
 
   if (pull) {
-    await octokit.rest.pulls.update({
+    const { data: updated } = await octokit.rest.pulls.update({
       owner,
       repo,
       pull_number: pull.number,
       title,
       body: pullBody,
     });
-    (0,core.info)(`The pull request was updated successfully: ${pull.html_url}`);
-    (0,core.notice)(`${PACKAGE_NAME} successfully updated PR #${pull.number}: ${pull.html_url}`);
+    (0,core.info)(`The pull request was updated successfully: ${updated.html_url}`);
+    (0,core.notice)(`${PACKAGE_NAME} successfully updated PR #${updated.number}: ${updated.html_url}`);
+    (0,core.setOutput)("pull_request_url", updated.html_url);
+    (0,core.setOutput)("branch_name", updated.head.ref);
   } else {
-    const newPull = await octokit.rest.pulls.create({
+    const { data: created } = await octokit.rest.pulls.create({
       owner,
       repo,
       title,
@@ -34269,15 +34271,15 @@ async function createOrUpdatePullRequest({
       head: branch,
       base: baseBranch,
     });
-    (0,core.info)(`The pull request was created successfully: ${newPull.data.html_url}`);
-    (0,core.notice)(
-      `${PACKAGE_NAME} successfully created PR #${newPull.data.number}: ${newPull.data.html_url}`,
-    );
+    (0,core.info)(`The pull request was created successfully: ${created.html_url}`);
+    (0,core.notice)(`${PACKAGE_NAME} successfully created PR #${created.number}: ${created.html_url}`);
+    (0,core.setOutput)("pull_request_url", created.html_url);
+    (0,core.setOutput)("branch_name", created.head.ref);
 
     const newLabels = await octokit.rest.issues.addLabels({
       owner,
       repo,
-      issue_number: newPull.data.number,
+      issue_number: created.number,
       labels,
     });
     (0,core.info)(`The labels were added successfully: ${newLabels.data.map((l) => l.name).join(", ")}`);
@@ -34286,7 +34288,7 @@ async function createOrUpdatePullRequest({
       const newAssignees = await octokit.rest.issues.addAssignees({
         owner,
         repo,
-        issue_number: newPull.data.number,
+        issue_number: created.number,
         assignees,
       });
       (0,core.info)(

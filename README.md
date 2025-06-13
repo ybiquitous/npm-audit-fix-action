@@ -45,6 +45,15 @@ jobs:
 
 See [`action.yml`](action.yml).
 
+### Outputs
+
+| Name               | Description                      |
+| ------------------ | -------------------------------- |
+| `pull_request_url` | URL of the created pull request. |
+| `branch_name`      | Name of the created branch.      |
+
+See [`action.yml`](action.yml).
+
 ### Using a personal access token
 
 If you want to run your CI with pull requests created by this action, you may need to set your [personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) instead of the GitHub's default token:
