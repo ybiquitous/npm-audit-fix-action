@@ -14,7 +14,7 @@ inputs:
   github_email:
     description: "GitHub user email for commit changes."
     required: false
-    default: "${{ github.actor }}@users.noreply.github.com"
+    default: "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
   branch:
     description: "Created branch."
     required: false
