@@ -33727,8 +33727,6 @@ exports.LRUCache = LRUCache;
 /************************************************************************/
 var __webpack_exports__ = {};
 
-;// CONCATENATED MODULE: external "node:process"
-const external_node_process_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:process");
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(7484);
 // EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
@@ -34334,13 +34332,12 @@ async function getDefaultBranch({ token, repository }) {
 
 
 
-
 /**
  * @param {import("@actions/exec").ExecOptions} [options]
  * @returns {Promise<Map<string, string>>}
  */
 async function listPackages(options = {}) {
-  const cwd = options.cwd || external_node_process_namespaceObject.cwd();
+  const cwd = options.cwd || process.cwd();
   const { exitCode, stdout, stderr } = await (0,exec.getExecOutput)(
     "npm",
     npmArgs("ls", "--parseable", "--long", "--all", "--package-lock-only"),
@@ -34381,7 +34378,6 @@ async function listPackages(options = {}) {
 
 
 
-
 /**
  * @param {string} version
  */
@@ -34399,7 +34395,7 @@ async function updateNpm(version) {
 
   // HACK: Fix the error "npm update check failed".
   // eslint-disable-next-line dot-notation -- Prevent TS4111
-  await (0,exec.exec)("sudo", ["chown", "-R", `${external_node_process_namespaceObject.env["USER"]}:`, `${external_node_process_namespaceObject.env["HOME"]}/.config`]);
+  await (0,exec.exec)("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
 
   return actualVersion.trim();
 }
@@ -34432,7 +34428,6 @@ function commaSeparatedList(str) {
 
 
 
-
 /**
  * @returns {Promise<boolean>}
  */
@@ -34450,7 +34445,7 @@ async function filesChanged() {
  * @returns {string}
  */
 function getFromEnv(name) {
-  const value = external_node_process_namespaceObject.env[name];
+  const value = process.env[name];
   if (value) {
     return value;
   }
@@ -34459,13 +34454,13 @@ function getFromEnv(name) {
 
 // eslint-disable-next-line max-lines-per-function, max-statements
 async function run() {
-  core.info(`Running on Node.js ${external_node_process_namespaceObject.version}`);
-  core.addPath(external_node_process_namespaceObject.execPath.replace(/\/node$/u, ""));
+  core.info(`Running on Node.js ${process.version}`);
+  core.addPath(process.execPath.replace(/\/node$/u, ""));
 
   const npmVersion = await core.group(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
 
-  external_node_process_namespaceObject.chdir(core.getInput("path"));
-  core.info(`Current directory: ${external_node_process_namespaceObject.cwd()}`);
+  process.chdir(core.getInput("path"));
+  core.info(`Current directory: ${process.cwd()}`);
 
   await core.group("Show runtime info", async () => {
     await (0,exec.exec)("npm", ["version"]);
