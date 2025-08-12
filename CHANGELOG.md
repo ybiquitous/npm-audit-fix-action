@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [7.3.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.2.0...v7.3.0) (2025-08-12)
+
+### Features
+
+- update Node.js version from 20 to 24 ([#1060](https://github.com/ybiquitous/npm-audit-fix-action/issues/1060)) ([5bb5992](https://github.com/ybiquitous/npm-audit-fix-action/commit/5bb59927ff2fe904a63cbb47323773285f254c6c))
+
+### Bug Fixes
+
+- **deps:** bump hosted-git-info from 8.1.0 to 9.0.0 ([#1054](https://github.com/ybiquitous/npm-audit-fix-action/issues/1054)) ([1a19213](https://github.com/ybiquitous/npm-audit-fix-action/commit/1a19213231da355548e9df08842609d3d460bfe2))
+
 ## [7.2.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.1.5...v7.2.0) (2025-06-13)
 
 ### Features
