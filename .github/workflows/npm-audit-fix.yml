@@ -13,7 +13,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - uses: ybiquitous/npm-audit-fix-action@main
         id: npm-audit-fix
         with:
