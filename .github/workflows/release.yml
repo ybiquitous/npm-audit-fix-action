@@ -5,50 +5,6 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    uses: ybiquitous/.github/.github/workflows/action-release-reusable.yml@main
     permissions:
       contents: write
-    steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
-        with:
-          node-version-file: .node-version
-          cache: npm
-      - name: Install dependencies
-        run: |
-          npm --global install npm@latest
-          npm ci
-      - name: Set up Git
-        run: |
-          git config user.name "${GITHUB_ACTOR}"
-          git config user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
-      - name: Run release script
-        id: release
-        run: |
-          npm run release
-          echo "new_tag_name=$(git describe --abbrev=0)" >> "${GITHUB_OUTPUT}"
-      - name: Push a release commit and new tags
-        env:
-          NEW_TAG_NAME: ${{ steps.release.outputs.new_tag_name }}
-        run: |
-          # Extract the major version from the tag, e.g., "v1.2.3" -> "v1"
-          MAJOR_VERSION_TAG=${NEW_TAG_NAME:0:2}
-
-          pattern='^v[0-9]$'
-          if [[ ! "${MAJOR_VERSION_TAG}" =~ $pattern ]]; then
-            echo "Failed to extract the major version from the tag: ${NEW_TAG_NAME}"
-            exit 1
-          fi
-
-          git push --follow-tags
-          git tag --force --annotate --message "Release ${MAJOR_VERSION_TAG}" "${MAJOR_VERSION_TAG}"
-          git push --tags --force origin "${MAJOR_VERSION_TAG}"
-      - name: Create a release
-        env:
-          NEW_TAG_NAME: ${{ steps.release.outputs.new_tag_name }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release create "${NEW_TAG_NAME}" \
-            --notes "See the [changelog](https://github.com/${GITHUB_REPOSITORY}/blob/${NEW_TAG_NAME}/CHANGELOG.md) for details."
