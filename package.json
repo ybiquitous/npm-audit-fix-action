@@ -55,7 +55,7 @@
     "@vercel/ncc": "^0.38.3",
     "eslint": "^8.57.0",
     "eslint-config-ybiquitous": "^22.0.0",
-    "remark-preset-ybiquitous": "^0.4.4",
+    "remark-preset-ybiquitous": "^0.5.0",
     "typescript": "^5.9.2",
     "ybiq": "^18.1.0"
   },
