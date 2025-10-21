@@ -48,7 +48,7 @@ outputs:
     description: "Name of the created branch."
 
 runs:
-  using: "node24"
+  using: "node22"
   main: "dist/index.js"
 
 branding:
