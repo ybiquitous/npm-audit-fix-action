@@ -34464,16 +34464,19 @@ function getFromEnv(name) {
 
 // eslint-disable-next-line max-lines-per-function
 async function run() {
-  await core.group("Runtime info", () => {
+  await core.group("Runtime info", async () => {
     core.info(`Node.js version: ${process.version}`);
     core.info(`Node.js location: ${process.execPath}`);
+
+    const { stdout: npmLocation } = await (0,exec.getExecOutput)("which", ["npm"]);
+    core.info(`npm location: ${npmLocation.trim()}`);
+
     // eslint-disable-next-line dot-notation -- Prevent TS4111
     core.info(`PATH variable: ${process.env["PATH"]}`);
 
     core.addPath(process.execPath.replace(/\/node$/u, ""));
     // eslint-disable-next-line dot-notation -- Prevent TS4111
     core.info(`Updated PATH variable: ${process.env["PATH"]}`);
-    return Promise.resolve();
   });
 
   const npmVersion = await core.group(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
