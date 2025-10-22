@@ -34379,10 +34379,18 @@ async function listPackages(options = {}) {
 
 
 
+async function getNpmVersion() {
+  const { stdout: version } = await (0,exec.getExecOutput)("npm", ["--version"]);
+  return version.trim();
+}
+
 /**
  * @param {string} version
  */
 async function updateNpm(version) {
+  const currentVersion = await getNpmVersion();
+  core.info(`The current npm version: ${currentVersion}`);
+
   const cmdArgs = npmArgs("install", "--global", `npm@${version}`);
   try {
     await (0,exec.exec)("npm", cmdArgs);
@@ -34392,13 +34400,14 @@ async function updateNpm(version) {
     await (0,exec.exec)("sudo", ["npm", ...cmdArgs]);
   }
 
-  const { stdout: actualVersion } = await (0,exec.getExecOutput)("npm", ["--version"]);
+  const newVersion = await getNpmVersion();
+  core.info(`The updated npm version: ${newVersion}`);
 
   // HACK: Fix the error "npm update check failed".
   // eslint-disable-next-line dot-notation -- Prevent TS4111
   await (0,exec.exec)("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
 
-  return actualVersion.trim();
+  return newVersion;
 }
 
 ;// CONCATENATED MODULE: ./lib/utils/commaSeparatedList.js
