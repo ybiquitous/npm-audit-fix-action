@@ -1,3 +1,11 @@
+## [7.3.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.1...v7.3.2) (2025-10-23)
+
+### Bug Fixes
+
+- `SyntaxError` with `npm` command ([#1090](https://github.com/ybiquitous/npm-audit-fix-action/issues/1090)) ([7a0c44d](https://github.com/ybiquitous/npm-audit-fix-action/commit/7a0c44d1ec43354faef5cf4005eb9aa400d5e6bf))
+- **deps:** bump hosted-git-info from 9.0.0 to 9.0.2 ([#1085](https://github.com/ybiquitous/npm-audit-fix-action/issues/1085)) ([1a6f5b6](https://github.com/ybiquitous/npm-audit-fix-action/commit/1a6f5b6b3ad33cc51fd0b12a088c70f3deb0733b))
+- update `package-lock.json` to reflect recent dependency changes ([#1093](https://github.com/ybiquitous/npm-audit-fix-action/issues/1093)) ([d6dc8ac](https://github.com/ybiquitous/npm-audit-fix-action/commit/d6dc8acf58048bb3f62a2d9d8292128492e5b001))
+
 ## [7.3.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.0...v7.3.1) (2025-09-04)
 
 ## [7.3.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.2.0...v7.3.0) (2025-08-12)
