@@ -34335,7 +34335,7 @@ async function getDefaultBranch({ token, repository }) {
 
 
 async function getNpmVersion() {
-  const options = { ignoreReturnCode: true };
+  const options = { ignoreReturnCode: true, silent: true };
   const { exitCode, stdout, stderr } = await (0,exec.getExecOutput)("npm", ["--version"], options);
 
   if (exitCode === 0) {
@@ -34453,7 +34453,7 @@ function commaSeparatedList(str) {
 
 
 async function getNpmLocation() {
-  return (await (0,exec.getExecOutput)("which", ["npm"])).stdout.trim();
+  return (await (0,exec.getExecOutput)("which", ["npm"], { silent: true })).stdout.trim();
 }
 
 /**
@@ -34489,7 +34489,7 @@ async function fallbackToLocalNpm(error) {
     // @ts-expect-error -- TS2339: Property 'dirname' does not exist on type 'ImportMeta'.
     core.addPath(external_node_path_namespaceObject.resolve(import.meta.dirname, "node_modules", ".bin"));
 
-    core.info(`Fallback to local npm due to error: ${error.message}`);
+    core.info(`Fallback to local npm due to SyntaxError`);
     core.info(`npm location: ${await getNpmLocation()}`);
 
     const npmVersion = await getNpmVersion();
