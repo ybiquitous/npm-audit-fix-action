@@ -34335,7 +34335,7 @@ async function getDefaultBranch({ token, repository }) {
 
 
 async function getNpmVersion() {
-  const options = { ignoreReturnCode: true, silent: true };
+  const options = { ignoreReturnCode: true };
   const { exitCode, stdout, stderr } = await (0,exec.getExecOutput)("npm", ["--version"], options);
 
   if (exitCode === 0) {
@@ -34490,10 +34490,10 @@ async function fallbackToLocalNpm(error) {
     core.addPath(external_node_path_namespaceObject.resolve(import.meta.dirname, "node_modules", ".bin"));
 
     core.info(`Fallback to local npm due to SyntaxError`);
-    core.info(`npm location: ${await getNpmLocation()}`);
+    core.info(`local npm location: ${await getNpmLocation()}`);
 
     const npmVersion = await getNpmVersion();
-    core.info(`The local npm version: ${npmVersion}`);
+    core.info(`local npm version: ${npmVersion}`);
 
     if (!npmVersion.startsWith(NPM_VERSION)) {
       throw new Error(
