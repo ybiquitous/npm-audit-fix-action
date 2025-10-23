@@ -33728,8 +33728,8 @@ exports.LRUCache = LRUCache;
 /************************************************************************/
 var __webpack_exports__ = {};
 
-;// CONCATENATED MODULE: external "node:fs/promises"
-const promises_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs/promises");
+;// CONCATENATED MODULE: external "node:path"
+const external_node_path_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:path");
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(7484);
 // EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
@@ -34376,42 +34376,6 @@ async function listPackages(options = {}) {
   return packages;
 }
 
-;// CONCATENATED MODULE: ./lib/updateNpm.js
-
-
-
-
-async function getNpmVersion() {
-  const { stdout: version } = await (0,exec.getExecOutput)("npm", ["--version"]);
-  return version.trim();
-}
-
-/**
- * @param {string} version
- */
-async function updateNpm(version) {
-  const currentVersion = await getNpmVersion();
-  core.info(`The current npm version: ${currentVersion}`);
-
-  const cmdArgs = npmArgs("install", "--global", `npm@${version}`);
-  try {
-    await (0,exec.exec)("npm", cmdArgs);
-  } catch (error) {
-    // NOTE: Without actions/setup-node, sudo is required.
-    core.error(String(error));
-    await (0,exec.exec)("sudo", ["npm", ...cmdArgs]);
-  }
-
-  const newVersion = await getNpmVersion();
-  core.info(`The updated npm version: ${newVersion}`);
-
-  // HACK: Fix the error "npm update check failed".
-  // eslint-disable-next-line dot-notation -- Prevent TS4111
-  await (0,exec.exec)("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
-
-  return newVersion;
-}
-
 ;// CONCATENATED MODULE: ./lib/utils/commaSeparatedList.js
 /**
  * @param {string} str
@@ -34433,12 +34397,12 @@ function commaSeparatedList(str) {
 
 
 
+// import { NPM_VERSION } from "./constants.js";
 
 
 
 
-
-
+// import updateNpm from "./updateNpm.js";
 
 
 /**
@@ -34472,20 +34436,18 @@ async function run() {
     core.info(`Node.js location: ${process.execPath}`);
 
     core.addPath(process.execPath.replace(/\/node$/u, ""));
+    // @ts-expect-error -- TS2339: Property 'dirname' does not exist on type 'ImportMeta'.
+    core.addPath(external_node_path_namespaceObject.resolve(import.meta.dirname, "node_modules", ".bin"));
 
-    const npmLocation = `${process.execPath.replace(/\/bin\/node$/u, "")}/lib/node_modules/npm`;
-    core.info(`npm location: ${npmLocation}`);
+    // eslint-disable-next-line dot-notation -- Prevent TS4111: Property 'PATH' comes from an index signature, so it must be accessed with ['PATH'].
+    core.info(`PATH variable: ${process.env["PATH"]}`);
 
-    core.info(`npm package.json: ${await promises_namespaceObject.readFile(`${npmLocation}/package.json`, "utf8")}`);
-
-    core.info(`features: ${JSON.stringify(process.features, null, 2)}`);
-
-    core.info(
-      `exit-handler.js: ${await promises_namespaceObject.readFile(`${npmLocation}/lib/cli/exit-handler.js`, "utf8")}`,
-    );
+    const { stdout: npmLocation } = await (0,exec.getExecOutput)("which", ["npm"]);
+    core.info(`npm location: ${npmLocation.trim()}`);
   });
 
-  const npmVersion = await core.group(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
+  // const npmVersion = await core.group(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
+  const npmVersion = "11.6.2";
 
   process.chdir(core.getInput("path"));
   core.info(`Current directory: ${process.cwd()}`);
