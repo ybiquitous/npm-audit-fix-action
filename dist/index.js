@@ -34479,6 +34479,10 @@ async function run() {
     core.info(`npm package.json: ${await promises_namespaceObject.readFile(`${npmLocation}/package.json`, "utf8")}`);
 
     core.info(`features: ${JSON.stringify(process.features, null, 2)}`);
+
+    core.info(
+      `exit-handler.js: ${await promises_namespaceObject.readFile(`${npmLocation}/lib/cli/exit-handler.js`, "utf8")}`,
+    );
   });
 
   const npmVersion = await core.group(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
