@@ -556,32 +556,6 @@
 
 - bump npm from 6.14.4 to 6.14.5 ([#93](https://github.com/ybiquitous/npm-audit-fix-action/issues/93)) ([e08e379](https://github.com/ybiquitous/npm-audit-fix-action/commit/e08e37904ace0c1db85fb54cf685d948486b5b6b))
 
-### Reverts
-
-- Revert "ci: action test on master branch" ([0b7508f](https://github.com/ybiquitous/npm-audit-fix-action/commit/0b7508f5bee344aaeb8628e09e776384eabfefcb))
-
 ## [1.0.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/5cd7651e8e526332be12e9c99bdfc390d6d67ca4...v1.0.0) (2020-04-14)
 
-### Features
-
-- add link to author in PR body ([5cd7651](https://github.com/ybiquitous/npm-audit-fix-action/commit/5cd7651e8e526332be12e9c99bdfc390d6d67ca4))
-- add repo lint for package ([#34](https://github.com/ybiquitous/npm-audit-fix-action/issues/34)) ([137d190](https://github.com/ybiquitous/npm-audit-fix-action/commit/137d190366e428779952276a4e0df089f653165d))
-- bump npm from 6.13.7 to 6.14.1 ([#20](https://github.com/ybiquitous/npm-audit-fix-action/issues/20)) ([92de0fb](https://github.com/ybiquitous/npm-audit-fix-action/commit/92de0fbcd51e8db0f8d49a672e4bedf57841f2b4))
-- read `NPM_VERSION` from `package.json` ([#14](https://github.com/ybiquitous/npm-audit-fix-action/issues/14)) ([bfbf2c1](https://github.com/ybiquitous/npm-audit-fix-action/commit/bfbf2c147a7d027185cf762497f9251e456ba8b6))
-- update pull request if exist ([#49](https://github.com/ybiquitous/npm-audit-fix-action/issues/49)) ([4b6cf27](https://github.com/ybiquitous/npm-audit-fix-action/commit/4b6cf27f5a498d1d9d087a8ca608d4caf09088aa))
-
-### Bug Fixes
-
-- bump npm from 6.14.1 to 6.14.2 ([#36](https://github.com/ybiquitous/npm-audit-fix-action/issues/36)) ([ad6cf59](https://github.com/ybiquitous/npm-audit-fix-action/commit/ad6cf59c74b04e45bc66a0b87c343a0232a55acb))
-- bump npm from 6.14.2 to 6.14.3 ([#42](https://github.com/ybiquitous/npm-audit-fix-action/issues/42)) ([9ab2f5f](https://github.com/ybiquitous/npm-audit-fix-action/commit/9ab2f5fdcc9e2885fa381c4fcd6a3fa36083eadd))
-- bump npm from 6.14.3 to 6.14.4 ([#67](https://github.com/ybiquitous/npm-audit-fix-action/issues/67)) ([88c3ff8](https://github.com/ybiquitous/npm-audit-fix-action/commit/88c3ff88c80b5428cdfdc7e758cc143cac5cc9d6))
-- check a file change ([#24](https://github.com/ybiquitous/npm-audit-fix-action/issues/24)) ([bf7b066](https://github.com/ybiquitous/npm-audit-fix-action/commit/bf7b066cd11e8a6a324efa4e6d0c61dc04876fba))
-- consider no repository URL ([#56](https://github.com/ybiquitous/npm-audit-fix-action/issues/56)) ([5d508a9](https://github.com/ybiquitous/npm-audit-fix-action/commit/5d508a9af35dfdab3ce8bb9666b20b5472da7749))
-- error "npm update check failed" ([#22](https://github.com/ybiquitous/npm-audit-fix-action/issues/22)) ([a473e22](https://github.com/ybiquitous/npm-audit-fix-action/commit/a473e22ba44346bc330b866a02f81677dd7415aa))
-- generate package-lock.json if not exists ([#17](https://github.com/ybiquitous/npm-audit-fix-action/issues/17)) ([c0bbe65](https://github.com/ybiquitous/npm-audit-fix-action/commit/c0bbe65f7db8601040ab756fa62efd75ed5e3573))
-- handle `git diff` exit code ([#25](https://github.com/ybiquitous/npm-audit-fix-action/issues/25)) ([13679aa](https://github.com/ybiquitous/npm-audit-fix-action/commit/13679aadad23a2133661e5a2b2d1b3797c950636))
-- invalid pull request body ([#19](https://github.com/ybiquitous/npm-audit-fix-action/issues/19)) ([744b299](https://github.com/ybiquitous/npm-audit-fix-action/commit/744b29973d6f0aac9b85e7e22c6a05886c260b86))
-- remove package duplication in PR body ([#71](https://github.com/ybiquitous/npm-audit-fix-action/issues/71)) ([79e9ea5](https://github.com/ybiquitous/npm-audit-fix-action/commit/79e9ea5489614933a996f2297fc0b63c109417b4))
-- replace `npm config set` with direct CLI options ([#18](https://github.com/ybiquitous/npm-audit-fix-action/issues/18)) ([cacdfdc](https://github.com/ybiquitous/npm-audit-fix-action/commit/cacdfdc9cc8d1a687f759f279610399a4ef8be74))
-- shorten wordy link text in PR body ([#28](https://github.com/ybiquitous/npm-audit-fix-action/issues/28)) ([366e986](https://github.com/ybiquitous/npm-audit-fix-action/commit/366e9860824104bdf5543aa85b82926fc5d6ca61))
-- sort packages by name ([#45](https://github.com/ybiquitous/npm-audit-fix-action/issues/45)) ([afa88a6](https://github.com/ybiquitous/npm-audit-fix-action/commit/afa88a6bb2a76a4dc8380c44a4db7907afdd676f))
+Initial release.
