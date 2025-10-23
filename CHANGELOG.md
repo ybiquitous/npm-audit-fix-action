@@ -1,3 +1,5 @@
+## [7.3.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.0...v7.3.1) (2025-09-04)
+
 ## [7.3.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.2.0...v7.3.0) (2025-08-12)
 
 ### Features
@@ -69,6 +71,8 @@
 
 - bump npm from 10 to 11 ([#981](https://github.com/ybiquitous/npm-audit-fix-action/issues/981)) ([6e5777d](https://github.com/ybiquitous/npm-audit-fix-action/commit/6e5777d49766d81797353408b3e01aeb317acbc6))
 
+## [6.3.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.3.1...v6.3.2) (2025-02-17)
+
 ### Bug Fixes
 
 - **deps:** bump @octokit/request-error from 5.0.1 to 5.1.1 ([#979](https://github.com/ybiquitous/npm-audit-fix-action/issues/979)) ([a621c97](https://github.com/ybiquitous/npm-audit-fix-action/commit/a621c977e25e0da126409a6302b0fdc517e94dc5))
@@ -139,6 +143,8 @@
 
 - bump npm from 9 to 10 ([#834](https://github.com/ybiquitous/npm-audit-fix-action/issues/834)) ([09aebbb](https://github.com/ybiquitous/npm-audit-fix-action/commit/09aebbbe992833b0a89a0287efe5b4c1517d7d5f))
 
+## [5.2.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v5.2.0...v5.2.1) (2023-10-16)
+
 ### Bug Fixes
 
 - **deps:** bump @actions/github from 5.1.1 to 6.0.0 ([#813](https://github.com/ybiquitous/npm-audit-fix-action/issues/813)) ([b52066e](https://github.com/ybiquitous/npm-audit-fix-action/commit/b52066e9dcdc56e0608de2fcab3b4c556f737624))
@@ -174,6 +180,8 @@
 ### Features
 
 - bump npm from 8 to 9 ([#747](https://github.com/ybiquitous/npm-audit-fix-action/issues/747)) ([64f1ed7](https://github.com/ybiquitous/npm-audit-fix-action/commit/64f1ed72ec7b7208cbb40db9cab2b2e54ee3903e))
+
+## [4.0.13](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.12...v4.0.13) (2023-01-04)
 
 ### Bug Fixes
 
@@ -290,6 +298,8 @@
 
 - add configurable user and email ([#501](https://github.com/ybiquitous/npm-audit-fix-action/issues/501)) ([b5611f8](https://github.com/ybiquitous/npm-audit-fix-action/commit/b5611f8fc30e23f645932d5d897dd02195a000d1))
 
+## [3.2.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.2.4...v3.2.5) (2021-10-08)
+
 ### Bug Fixes
 
 - allow npm@8 ([#498](https://github.com/ybiquitous/npm-audit-fix-action/issues/498)) ([5bfc9cc](https://github.com/ybiquitous/npm-audit-fix-action/commit/5bfc9ccefd3648187ffdf9022053f46ab578c05b))
@@ -386,10 +396,15 @@
 
 ### Bug Fixes
 
-- **actions:** fix releasing ([75eb03a](https://github.com/ybiquitous/npm-audit-fix-action/commit/75eb03aaf046c521bce1126ac768708c12d6844c))
 - bugfix ([#367](https://github.com/ybiquitous/npm-audit-fix-action/issues/367)) ([35cc9be](https://github.com/ybiquitous/npm-audit-fix-action/commit/35cc9be45f671141c787cbfcea508046bb40aded))
 - incorrect updated packages list ([#372](https://github.com/ybiquitous/npm-audit-fix-action/issues/372)) ([7c502cc](https://github.com/ybiquitous/npm-audit-fix-action/commit/7c502ccbcf54561a1979e9ac6eabe62af139e77b))
 - remove needless `npm install` ([#371](https://github.com/ybiquitous/npm-audit-fix-action/issues/371)) ([6f268a5](https://github.com/ybiquitous/npm-audit-fix-action/commit/6f268a508986758b6af3541e49a2777842cf81f4))
+
+## [2.1.12](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.11...v2.1.12) (2021-04-05)
+
+### Bug Fixes
+
+- **actions:** fix releasing ([75eb03a](https://github.com/ybiquitous/npm-audit-fix-action/commit/75eb03aaf046c521bce1126ac768708c12d6844c))
 
 ## [2.1.11](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.10...v2.1.11) (2021-04-05)
 
@@ -477,13 +492,15 @@
 - change default branch from `master` to `main` ([#190](https://github.com/ybiquitous/npm-audit-fix-action/issues/190)) ([135de4c](https://github.com/ybiquitous/npm-audit-fix-action/commit/135de4ce82cb3827c4748bb30159ea2efbbe3500)), closes [#175](https://github.com/ybiquitous/npm-audit-fix-action/issues/175)
 - set default branch automatically ([#192](https://github.com/ybiquitous/npm-audit-fix-action/issues/192)) ([8ab3e33](https://github.com/ybiquitous/npm-audit-fix-action/commit/8ab3e335273ae2aabda3e563ed6a7e77b89b9c75))
 
-### Bug Fixes
-
-- **deps:** bump npm from 6.14.6 to 6.14.7 ([#167](https://github.com/ybiquitous/npm-audit-fix-action/issues/167)) ([239201b](https://github.com/ybiquitous/npm-audit-fix-action/commit/239201b71b5360303a98aa2d1bf6d8a556f9bad2))
-
 ### Reverts
 
 - Revert "ci(actions): use `$default-branch` macro" (#170) ([da55314](https://github.com/ybiquitous/npm-audit-fix-action/commit/da55314e2205e37201cd8f5af74f813883c5af7c)), closes [#170](https://github.com/ybiquitous/npm-audit-fix-action/issues/170)
+
+## [1.3.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.3.2...v1.3.3) (2020-07-22)
+
+### Bug Fixes
+
+- **deps:** bump npm from 6.14.6 to 6.14.7 ([#167](https://github.com/ybiquitous/npm-audit-fix-action/issues/167)) ([239201b](https://github.com/ybiquitous/npm-audit-fix-action/commit/239201b71b5360303a98aa2d1bf6d8a556f9bad2))
 
 ## [1.3.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.3.1...v1.3.2) (2020-07-17)
 
