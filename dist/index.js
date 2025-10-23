@@ -34477,6 +34477,9 @@ async function run() {
     core.addPath(process.execPath.replace(/\/node$/u, ""));
     // eslint-disable-next-line dot-notation -- Prevent TS4111
     core.info(`Updated PATH variable: ${process.env["PATH"]}`);
+
+    const { stdout: updatedNpmLocation } = await (0,exec.getExecOutput)("which", ["npm"]);
+    core.info(`npm location (updated): ${updatedNpmLocation.trim()}`);
   });
 
   const npmVersion = await core.group(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
