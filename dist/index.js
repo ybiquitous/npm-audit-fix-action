@@ -33728,6 +33728,8 @@ exports.LRUCache = LRUCache;
 /************************************************************************/
 var __webpack_exports__ = {};
 
+;// CONCATENATED MODULE: external "node:path"
+const external_node_path_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:path");
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(7484);
 // EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
@@ -34329,6 +34331,20 @@ async function getDefaultBranch({ token, repository }) {
   return res.data.default_branch;
 }
 
+;// CONCATENATED MODULE: ./lib/getNpmVersion.js
+
+
+async function getNpmVersion() {
+  const options = { ignoreReturnCode: true };
+  const { exitCode, stdout, stderr } = await (0,exec.getExecOutput)("npm", ["--version"], options);
+
+  if (exitCode === 0) {
+    return stdout.trim();
+  }
+
+  throw new Error(`"npm --version" failed due to:\n${stderr.trim()}`);
+}
+
 ;// CONCATENATED MODULE: ./lib/listPackages.js
 
 
@@ -34379,10 +34395,14 @@ async function listPackages(options = {}) {
 
 
 
+
 /**
  * @param {string} version
  */
 async function updateNpm(version) {
+  const currentVersion = await getNpmVersion();
+  core.info(`The current npm version: ${currentVersion}`);
+
   const cmdArgs = npmArgs("install", "--global", `npm@${version}`);
   try {
     await (0,exec.exec)("npm", cmdArgs);
@@ -34392,13 +34412,14 @@ async function updateNpm(version) {
     await (0,exec.exec)("sudo", ["npm", ...cmdArgs]);
   }
 
-  const { stdout: actualVersion } = await (0,exec.getExecOutput)("npm", ["--version"]);
+  const newVersion = await getNpmVersion();
+  core.info(`The updated npm version: ${newVersion}`);
 
   // HACK: Fix the error "npm update check failed".
   // eslint-disable-next-line dot-notation -- Prevent TS4111
   await (0,exec.exec)("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
 
-  return actualVersion.trim();
+  return newVersion;
 }
 
 ;// CONCATENATED MODULE: ./lib/utils/commaSeparatedList.js
@@ -34429,6 +34450,63 @@ function commaSeparatedList(str) {
 
 
 
+
+
+async function getNpmLocation() {
+  return (await (0,exec.getExecOutput)("which", ["npm"], { silent: true })).stdout.trim();
+}
+
+/**
+ * HACK: This fallback works around the following error.
+ *
+ * ```
+ * /home/runner/actions-runner/cached/externals/node24/bin/npm --version
+ * ERROR: npm v11.6.1 is known not to run on Node.js v24.10.0.  This version of npm supports the following node versions: `^20.17.0 || >=22.9.0`. You can find the latest version at https://nodejs.org/.
+ *
+ * ERROR:
+ * /home/runner/actions-runner/cached/externals/node24/lib/node_modules/npm/lib/cli/exit-handler.js:175
+ * s.#process.exitCode || getExitCodeFromError(err) || 1)
+ * ^
+ *
+ * SyntaxError: Private field '#process' must be declared in an enclosing class
+ *     at wrapSafe (node:internal/modules/cjs/loader:1691:18)
+ *     at Module._compile (node:internal/modules/cjs/loader:1734:20)
+ *     at Object..js (node:internal/modules/cjs/loader:1893:10)
+ *     at Module.load (node:internal/modules/cjs/loader:1480:32)
+ *     at Module._load (node:internal/modules/cjs/loader:1299:12)
+ *     at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+ *     at wrapModuleLoad (node:internal/modules/cjs/loader:244:24)
+ *     at Module.require (node:internal/modules/cjs/loader:1503:12)
+ *     at require (node:internal/modules/helpers:152:16)
+ *     at module.exports (/home/runner/actions-runner/cached/externals/node24/lib/node_modules/npm/lib/cli/entry.js:11:23)
+ * Error: The process '/home/runner/actions-runner/cached/externals/node24/bin/npm' failed with exit code 1
+ * ```
+ *
+ * @param {unknown} error
+ */
+async function fallbackToLocalNpm(error) {
+  if (error instanceof Error && error.message.includes("SyntaxError: Private field")) {
+    // @ts-expect-error -- TS2339: Property 'dirname' does not exist on type 'ImportMeta'.
+    core.addPath(external_node_path_namespaceObject.resolve(import.meta.dirname, "node_modules", ".bin"));
+
+    core.info(`Fallback to local npm due to SyntaxError`);
+    core.info(`local npm location: ${await getNpmLocation()}`);
+
+    const npmVersion = await getNpmVersion();
+    core.info(`local npm version: ${npmVersion}`);
+
+    if (!npmVersion.startsWith(NPM_VERSION)) {
+      throw new Error(
+        `The local npm version "${npmVersion}" does not match the required version "${NPM_VERSION}"`,
+      );
+    }
+
+    return npmVersion;
+  }
+
+  throw error;
+}
+
 /**
  * @returns {Promise<boolean>}
  */
@@ -34453,19 +34531,27 @@ function getFromEnv(name) {
   throw new Error(`Not found '${name}' in the environment variables`);
 }
 
-// eslint-disable-next-line max-lines-per-function, max-statements
+// eslint-disable-next-line max-lines-per-function
 async function run() {
-  core.info(`Running on Node.js ${process.version}`);
-  core.addPath(process.execPath.replace(/\/node$/u, ""));
+  await core.group("Show runtime info", async () => {
+    core.info(`Node.js version: ${process.version}`);
+    core.info(`Node.js location: ${process.execPath}`);
 
-  const npmVersion = await core.group(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
+    core.addPath(process.execPath.replace(/\/node$/u, ""));
+
+    core.info(`npm location: ${await getNpmLocation()}`);
+  });
+
+  const npmVersion = await core.group(`Update npm to ${NPM_VERSION}`, async () => {
+    try {
+      return await updateNpm(NPM_VERSION);
+    } catch (e) {
+      return await fallbackToLocalNpm(e);
+    }
+  });
 
   process.chdir(core.getInput("path"));
   core.info(`Current directory: ${process.cwd()}`);
-
-  await core.group("Show runtime info", async () => {
-    await (0,exec.exec)("npm", ["version"]);
-  });
 
   await core.group("Install user packages", async () => {
     await (0,exec.exec)("npm", npmArgs("ci"));
