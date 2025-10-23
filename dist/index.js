@@ -34335,7 +34335,14 @@ async function getDefaultBranch({ token, repository }) {
 
 
 async function getNpmVersion() {
-  return (await (0,exec.getExecOutput)("npm", ["--version"])).stdout.trim();
+  const options = { ignoreReturnCode: false };
+  const { exitCode, stdout, stderr } = await (0,exec.getExecOutput)("npm", ["--version"], options);
+
+  if (exitCode === 0) {
+    return stdout.trim();
+  }
+
+  throw new Error(`"npm --version" failed due to:\n${stderr.trim()}`);
 }
 
 ;// CONCATENATED MODULE: ./lib/listPackages.js
