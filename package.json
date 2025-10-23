@@ -38,8 +38,6 @@
     "prettier": "prettier --cache .",
     "format": "npm-run-all --print-label --silent --parallel lint:*:fix",
     "prerelease": "git switch main && git pull && npm ci && npm run clean && npm test && npm run clean",
-    "release": "standard-version",
-    "release:dry-run": "standard-version --dry-run",
     "clean": "git clean -dx --force --exclude=node_modules --exclude=.husky",
     "changelog": "if [ ! -f CHANGELOG.md ]; then opts='--first-release' ; fi && conventional-changelog --preset conventional-changelog-conventionalcommits $opts && prettier --write CHANGELOG.md",
     "changelog:dryrun": "npm version \"${NEW_VERSION:-major}\" --no-git-tag-version && git --no-pager diff CHANGELOG.md && git checkout CHANGELOG.md package.json package-lock.json",
@@ -66,12 +64,6 @@
     "!(dist)/**/*.{js,jsx,cjs,mjs,ts,tsx}": "eslint --cache --fix",
     "!(dist/**|**/*.snap|.husky/**)": "prettier --cache --write",
     "!(CHANGELOG).md": "remark --frail"
-  },
-  "standard-version": {
-    "sign": false,
-    "scripts": {
-      "postchangelog": "prettier --write CHANGELOG.md"
-    }
   },
   "remarkConfig": {
     "plugins": [
