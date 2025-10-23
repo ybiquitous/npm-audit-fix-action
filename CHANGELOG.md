@@ -556,6 +556,6 @@
 
 - bump npm from 6.14.4 to 6.14.5 ([#93](https://github.com/ybiquitous/npm-audit-fix-action/issues/93)) ([e08e379](https://github.com/ybiquitous/npm-audit-fix-action/commit/e08e37904ace0c1db85fb54cf685d948486b5b6b))
 
-## [1.0.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/5cd7651e8e526332be12e9c99bdfc390d6d67ca4...v1.0.0) (2020-04-14)
+## 1.0.0 (2020-04-14)
 
 Initial release.
