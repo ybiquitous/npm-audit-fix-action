@@ -1,8 +1,4 @@
-# Changelog
-
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
-
-### [7.3.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.0...v7.3.1) (2025-09-04)
+## [7.3.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.0...v7.3.1) (2025-09-04)
 
 ## [7.3.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.2.0...v7.3.0) (2025-08-12)
 
@@ -25,27 +21,27 @@ All notable changes to this project will be documented in this file. See [standa
 
 - **deps:** bump @actions/github from 6.0.0 to 6.0.1 ([#1028](https://github.com/ybiquitous/npm-audit-fix-action/issues/1028)) ([fc41e94](https://github.com/ybiquitous/npm-audit-fix-action/commit/fc41e946d43f88aed6b21d41413514a68ca37f59))
 
-### [7.1.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.1.4...v7.1.5) (2025-04-16)
+## [7.1.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.1.4...v7.1.5) (2025-04-16)
 
 ### Bug Fixes
 
 - also commit `package.json` ([#1019](https://github.com/ybiquitous/npm-audit-fix-action/issues/1019)) ([44071c4](https://github.com/ybiquitous/npm-audit-fix-action/commit/44071c4c112929a1285327f0a636ee8b8c68a166))
 
-### [7.1.4](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.1.3...v7.1.4) (2025-04-05)
+## [7.1.4](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.1.3...v7.1.4) (2025-04-05)
 
-### [7.1.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.1.2...v7.1.3) (2025-04-05)
+## [7.1.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.1.2...v7.1.3) (2025-04-05)
 
 ### Bug Fixes
 
 - prepare for publishing on marketplace ([#1012](https://github.com/ybiquitous/npm-audit-fix-action/issues/1012)) ([b9ccd30](https://github.com/ybiquitous/npm-audit-fix-action/commit/b9ccd30dffa96e50f7949a00370a8b2fc68605b0))
 
-### [7.1.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.1.1...v7.1.2) (2025-04-05)
+## [7.1.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.1.1...v7.1.2) (2025-04-05)
 
 ### Bug Fixes
 
 - run ESM code without compilation to CJS ([#1010](https://github.com/ybiquitous/npm-audit-fix-action/issues/1010)) ([8dfd00c](https://github.com/ybiquitous/npm-audit-fix-action/commit/8dfd00c9d5f6b9683ad55f6bf7c816eab66e97b6))
 
-### [7.1.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.1.0...v7.1.1) (2025-03-18)
+## [7.1.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.1.0...v7.1.1) (2025-03-18)
 
 ### Bug Fixes
 
@@ -75,13 +71,13 @@ All notable changes to this project will be documented in this file. See [standa
 
 - bump npm from 10 to 11 ([#981](https://github.com/ybiquitous/npm-audit-fix-action/issues/981)) ([6e5777d](https://github.com/ybiquitous/npm-audit-fix-action/commit/6e5777d49766d81797353408b3e01aeb317acbc6))
 
-### [6.3.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.3.1...v6.3.2) (2025-02-17)
+## [6.3.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.3.1...v6.3.2) (2025-02-17)
 
 ### Bug Fixes
 
 - **deps:** bump @octokit/request-error from 5.0.1 to 5.1.1 ([#979](https://github.com/ybiquitous/npm-audit-fix-action/issues/979)) ([a621c97](https://github.com/ybiquitous/npm-audit-fix-action/commit/a621c977e25e0da126409a6302b0fdc517e94dc5))
 
-### [6.3.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.3.0...v6.3.1) (2025-01-28)
+## [6.3.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.3.0...v6.3.1) (2025-01-28)
 
 ### Bug Fixes
 
@@ -99,25 +95,25 @@ All notable changes to this project will be documented in this file. See [standa
 
 - add PR assignees support ([#957](https://github.com/ybiquitous/npm-audit-fix-action/issues/957)) ([a63f993](https://github.com/ybiquitous/npm-audit-fix-action/commit/a63f993bb1362a2818a7cae4ac5244252682437a))
 
-### [6.1.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.1.4...v6.1.5) (2024-11-25)
+## [6.1.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.1.4...v6.1.5) (2024-11-25)
 
 ### Bug Fixes
 
 - **deps:** bump hosted-git-info from 8.0.0 to 8.0.2 ([#947](https://github.com/ybiquitous/npm-audit-fix-action/issues/947)) ([8bbc5ec](https://github.com/ybiquitous/npm-audit-fix-action/commit/8bbc5ec44220c71d510cc83f951e0130fcd6bb68))
 
-### [6.1.4](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.1.3...v6.1.4) (2024-10-07)
+## [6.1.4](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.1.3...v6.1.4) (2024-10-07)
 
 ### Bug Fixes
 
 - **deps:** bump @actions/core from 1.10.1 to 1.11.1 ([#928](https://github.com/ybiquitous/npm-audit-fix-action/issues/928)) ([a9e0572](https://github.com/ybiquitous/npm-audit-fix-action/commit/a9e05728fdb6b91372aa0767b2eef23de2cf9835))
 
-### [6.1.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.1.2...v6.1.3) (2024-09-10)
+## [6.1.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.1.2...v6.1.3) (2024-09-10)
 
 ### Bug Fixes
 
 - **deps:** bump hosted-git-info from 7.0.2 to 8.0.0 ([#919](https://github.com/ybiquitous/npm-audit-fix-action/issues/919)) ([04d3a9d](https://github.com/ybiquitous/npm-audit-fix-action/commit/04d3a9d06278fa33c395bad1629592ce936f73a0))
 
-### [6.1.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.1.1...v6.1.2) (2024-05-30)
+## [6.1.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.1.1...v6.1.2) (2024-05-30)
 
 ### Bug Fixes
 
@@ -125,7 +121,7 @@ All notable changes to this project will be documented in this file. See [standa
 - **deps-dev:** bump esbuild from 0.20.2 to 0.21.2 ([#877](https://github.com/ybiquitous/npm-audit-fix-action/issues/877)) ([cc2990e](https://github.com/ybiquitous/npm-audit-fix-action/commit/cc2990e638a078c620263cc526499315304fc720))
 - **deps:** bump hosted-git-info from 7.0.1 to 7.0.2 ([#874](https://github.com/ybiquitous/npm-audit-fix-action/issues/874)) ([17cc5ac](https://github.com/ybiquitous/npm-audit-fix-action/commit/17cc5ac124dfc94ec7ade7be5c62fbe6b3db6b59))
 
-### [6.1.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.1.0...v6.1.1) (2024-04-04)
+## [6.1.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v6.1.0...v6.1.1) (2024-04-04)
 
 ### Bug Fixes
 
@@ -147,7 +143,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 - bump npm from 9 to 10 ([#834](https://github.com/ybiquitous/npm-audit-fix-action/issues/834)) ([09aebbb](https://github.com/ybiquitous/npm-audit-fix-action/commit/09aebbbe992833b0a89a0287efe5b4c1517d7d5f))
 
-### [5.2.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v5.2.0...v5.2.1) (2023-10-16)
+## [5.2.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v5.2.0...v5.2.1) (2023-10-16)
 
 ### Bug Fixes
 
@@ -185,38 +181,38 @@ All notable changes to this project will be documented in this file. See [standa
 
 - bump npm from 8 to 9 ([#747](https://github.com/ybiquitous/npm-audit-fix-action/issues/747)) ([64f1ed7](https://github.com/ybiquitous/npm-audit-fix-action/commit/64f1ed72ec7b7208cbb40db9cab2b2e54ee3903e))
 
-### [4.0.13](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.12...v4.0.13) (2023-01-04)
+## [4.0.13](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.12...v4.0.13) (2023-01-04)
 
 ### Bug Fixes
 
 - `permissions.contents` from `read` to `write` ([#740](https://github.com/ybiquitous/npm-audit-fix-action/issues/740)) ([51df826](https://github.com/ybiquitous/npm-audit-fix-action/commit/51df826f04ee841a77c7b38b8bb9c59e9f845820))
 
-### [4.0.12](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.11...v4.0.12) (2022-11-08)
+## [4.0.12](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.11...v4.0.12) (2022-11-08)
 
 ### Bug Fixes
 
 - **deps:** bump hosted-git-info from 6.0.0 to 6.1.1 ([#700](https://github.com/ybiquitous/npm-audit-fix-action/issues/700)) ([d86ffbc](https://github.com/ybiquitous/npm-audit-fix-action/commit/d86ffbc47826054a5853cb4f71de60080fa2cba4))
 
-### [4.0.11](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.10...v4.0.11) (2022-10-18)
+## [4.0.11](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.10...v4.0.11) (2022-10-18)
 
 ### Bug Fixes
 
 - **deps:** bump hosted-git-info from 5.1.0 to 6.0.0 ([#689](https://github.com/ybiquitous/npm-audit-fix-action/issues/689)) ([5124076](https://github.com/ybiquitous/npm-audit-fix-action/commit/51240765702c79bd2216e9b70cc73574caaa59b5))
 
-### [4.0.10](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.9...v4.0.10) (2022-10-04)
+## [4.0.10](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.9...v4.0.10) (2022-10-04)
 
 ### Bug Fixes
 
 - **deps:** bump @actions/core from 1.9.1 to 1.10.0 ([#679](https://github.com/ybiquitous/npm-audit-fix-action/issues/679)) ([b67bafc](https://github.com/ybiquitous/npm-audit-fix-action/commit/b67bafc1967fd0992a662936d16363e949780f14))
 - **deps:** bump @actions/github from 5.1.0 to 5.1.1 ([#678](https://github.com/ybiquitous/npm-audit-fix-action/issues/678)) ([2e8d0a3](https://github.com/ybiquitous/npm-audit-fix-action/commit/2e8d0a3807b31f246dd09c070f494eada51a7c32))
 
-### [4.0.9](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.8...v4.0.9) (2022-09-27)
+## [4.0.9](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.8...v4.0.9) (2022-09-27)
 
 ### Bug Fixes
 
 - **deps:** bump @actions/github from 5.0.3 to 5.1.0 ([#669](https://github.com/ybiquitous/npm-audit-fix-action/issues/669)) ([5ee3539](https://github.com/ybiquitous/npm-audit-fix-action/commit/5ee35397861cee7bd3347d2b6133caab3214eb41))
 
-### [4.0.8](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.7...v4.0.8) (2022-08-16)
+## [4.0.8](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.7...v4.0.8) (2022-08-16)
 
 ### Bug Fixes
 
@@ -224,45 +220,45 @@ All notable changes to this project will be documented in this file. See [standa
 - **deps:** bump @actions/core from 1.9.0 to 1.9.1 ([#637](https://github.com/ybiquitous/npm-audit-fix-action/issues/637)) ([5562ff3](https://github.com/ybiquitous/npm-audit-fix-action/commit/5562ff398c7d19cfae7c3fd69ea4c3de6445b9fa))
 - **deps:** bump hosted-git-info from 5.0.0 to 5.1.0 ([#645](https://github.com/ybiquitous/npm-audit-fix-action/issues/645)) ([61691eb](https://github.com/ybiquitous/npm-audit-fix-action/commit/61691eb2eab77b003f99a98f15eb6125814e7f15))
 
-### [4.0.7](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.6...v4.0.7) (2022-07-04)
+## [4.0.7](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.6...v4.0.7) (2022-07-04)
 
 ### Bug Fixes
 
 - retry `sudo npm install npm` ([#620](https://github.com/ybiquitous/npm-audit-fix-action/issues/620)) ([a8ac4d8](https://github.com/ybiquitous/npm-audit-fix-action/commit/a8ac4d89b5d5e92b586304b351524d4cf0092d4d))
 
-### [4.0.6](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.5...v4.0.6) (2022-06-21)
+## [4.0.6](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.5...v4.0.6) (2022-06-21)
 
 ### Bug Fixes
 
 - **deps:** bump esbuild from 0.14.43 to 0.14.47 ([#608](https://github.com/ybiquitous/npm-audit-fix-action/issues/608)) ([0e82d26](https://github.com/ybiquitous/npm-audit-fix-action/commit/0e82d2676041340a23c9e47195304e55e80beeb2))
 
-### [4.0.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.4...v4.0.5) (2022-05-31)
+## [4.0.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.4...v4.0.5) (2022-05-31)
 
 ### Bug Fixes
 
 - **deps:** bump @actions/core from 1.8.0 to 1.8.2 ([#576](https://github.com/ybiquitous/npm-audit-fix-action/issues/576)) ([14c7cad](https://github.com/ybiquitous/npm-audit-fix-action/commit/14c7cadbdcca01855d399cf5420628b9983753ea))
 - **deps:** bump @actions/github from 5.0.1 to 5.0.3 ([#577](https://github.com/ybiquitous/npm-audit-fix-action/issues/577)) ([6e5df58](https://github.com/ybiquitous/npm-audit-fix-action/commit/6e5df580b28c6d3e2a621e4bb17a76ff5db0e8ff))
 
-### [4.0.4](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.3...v4.0.4) (2022-05-10)
+## [4.0.4](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.3...v4.0.4) (2022-05-10)
 
 ### Bug Fixes
 
 - **deps:** bump @actions/core from 1.7.0 to 1.8.0 ([#571](https://github.com/ybiquitous/npm-audit-fix-action/issues/571)) ([5c44b6d](https://github.com/ybiquitous/npm-audit-fix-action/commit/5c44b6d339ea56693533f666400259ad39cb6290))
 
-### [4.0.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.2...v4.0.3) (2022-05-02)
+## [4.0.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.2...v4.0.3) (2022-05-02)
 
 ### Bug Fixes
 
 - **deps:** bump @actions/core from 1.6.0 to 1.7.0 ([#554](https://github.com/ybiquitous/npm-audit-fix-action/issues/554)) ([2427c57](https://github.com/ybiquitous/npm-audit-fix-action/commit/2427c57861062dad788227c9bacdb030853e2d80))
 
-### [4.0.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.1...v4.0.2) (2022-04-04)
+## [4.0.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.1...v4.0.2) (2022-04-04)
 
 ### Bug Fixes
 
 - **deps:** bump @actions/github from 5.0.0 to 5.0.1 ([#546](https://github.com/ybiquitous/npm-audit-fix-action/issues/546)) ([fd4bb7c](https://github.com/ybiquitous/npm-audit-fix-action/commit/fd4bb7c3c65e3632fdbf4aad184a5f9ce6242f98))
 - **deps:** bump hosted-git-info from 4.1.0 to 5.0.0 ([#537](https://github.com/ybiquitous/npm-audit-fix-action/issues/537)) ([786112a](https://github.com/ybiquitous/npm-audit-fix-action/commit/786112a774d0dcfa97353d121df59bbeaec07555))
 
-### [4.0.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.0...v4.0.1) (2022-03-15)
+## [4.0.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v4.0.0...v4.0.1) (2022-03-15)
 
 ### Bug Fixes
 
@@ -284,7 +280,7 @@ All notable changes to this project will be documented in this file. See [standa
 - **deps:** bump node-fetch from 2.6.1 to 2.6.7 ([#520](https://github.com/ybiquitous/npm-audit-fix-action/issues/520)) ([b6edd66](https://github.com/ybiquitous/npm-audit-fix-action/commit/b6edd66136f47d49faf47d82ee7d06264aa6ffaa))
 - migrate `@vercel/ncc` to `esbuild` ([#524](https://github.com/ybiquitous/npm-audit-fix-action/issues/524)) ([2e01d05](https://github.com/ybiquitous/npm-audit-fix-action/commit/2e01d05414d449a53511a3db64e3527b29404f17))
 
-### [3.4.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.4.0...v3.4.1) (2021-10-16)
+## [3.4.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.4.0...v3.4.1) (2021-10-16)
 
 ### Bug Fixes
 
@@ -302,27 +298,27 @@ All notable changes to this project will be documented in this file. See [standa
 
 - add configurable user and email ([#501](https://github.com/ybiquitous/npm-audit-fix-action/issues/501)) ([b5611f8](https://github.com/ybiquitous/npm-audit-fix-action/commit/b5611f8fc30e23f645932d5d897dd02195a000d1))
 
-### [3.2.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.2.4...v3.2.5) (2021-10-08)
+## [3.2.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.2.4...v3.2.5) (2021-10-08)
 
 ### Bug Fixes
 
 - allow npm@8 ([#498](https://github.com/ybiquitous/npm-audit-fix-action/issues/498)) ([5bfc9cc](https://github.com/ybiquitous/npm-audit-fix-action/commit/5bfc9ccefd3648187ffdf9022053f46ab578c05b))
 
-### [3.2.4](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.2.3...v3.2.4) (2021-07-17)
+## [3.2.4](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.2.3...v3.2.4) (2021-07-17)
 
 ### Bug Fixes
 
 - **deps:** migrate @zeit/ncc to @vercel/ncc ([#449](https://github.com/ybiquitous/npm-audit-fix-action/issues/449)) ([1b8aec2](https://github.com/ybiquitous/npm-audit-fix-action/commit/1b8aec2e239b749b66994206442d653ba764bb6b))
 
-### [3.2.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.2.2...v3.2.3) (2021-06-29)
+## [3.2.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.2.2...v3.2.3) (2021-06-29)
 
 ### Bug Fixes
 
 - sub dependencies ([#439](https://github.com/ybiquitous/npm-audit-fix-action/issues/439)) ([5d970e8](https://github.com/ybiquitous/npm-audit-fix-action/commit/5d970e8568ca278d79ad619a1bfc4dca7352e88f))
 
-### [3.2.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.2.1...v3.2.2) (2021-06-21)
+## [3.2.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.2.1...v3.2.2) (2021-06-21)
 
-### [3.2.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.2.0...v3.2.1) (2021-06-10)
+## [3.2.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.2.0...v3.2.1) (2021-06-10)
 
 ### Bug Fixes
 
@@ -338,37 +334,37 @@ All notable changes to this project will be documented in this file. See [standa
 
 - output warning when `npm audit fix` returns non-zero ([#415](https://github.com/ybiquitous/npm-audit-fix-action/issues/415)) ([9480f3a](https://github.com/ybiquitous/npm-audit-fix-action/commit/9480f3a2f633fe4ba29d0abb55cce851b501980a)), closes [#410](https://github.com/ybiquitous/npm-audit-fix-action/issues/410)
 
-### [3.1.6](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.1.5...v3.1.6) (2021-05-18)
+## [3.1.6](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.1.5...v3.1.6) (2021-05-18)
 
 ### Bug Fixes
 
 - ignore return code of `npm audit fix` ([#410](https://github.com/ybiquitous/npm-audit-fix-action/issues/410)) ([38f4153](https://github.com/ybiquitous/npm-audit-fix-action/commit/38f4153b92126206f8dd15e04a892c4dc06af860))
 
-### [3.1.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.1.4...v3.1.5) (2021-05-17)
+## [3.1.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.1.4...v3.1.5) (2021-05-17)
 
 ### Bug Fixes
 
 - **deps:** bump @actions/github from 4.0.0 to 5.0.0 ([#407](https://github.com/ybiquitous/npm-audit-fix-action/issues/407)) ([606a6fc](https://github.com/ybiquitous/npm-audit-fix-action/commit/606a6fcb6dfa18ea6fa45d160f1764c9c443ef89))
 
-### [3.1.4](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.1.3...v3.1.4) (2021-05-10)
+## [3.1.4](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.1.3...v3.1.4) (2021-05-10)
 
 ### Bug Fixes
 
 - re-run `npm ci` for more accurate diff list ([#406](https://github.com/ybiquitous/npm-audit-fix-action/issues/406)) ([1f9a52c](https://github.com/ybiquitous/npm-audit-fix-action/commit/1f9a52ca5303da1a397dbbb6c77d6cc1db0162ce))
 
-### [3.1.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.1.2...v3.1.3) (2021-05-10)
+## [3.1.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.1.2...v3.1.3) (2021-05-10)
 
 ### Bug Fixes
 
 - `npm ls` parsing ([#405](https://github.com/ybiquitous/npm-audit-fix-action/issues/405)) ([8ea9d50](https://github.com/ybiquitous/npm-audit-fix-action/commit/8ea9d5000d302c139de145f29a603519a1318acf))
 
-### [3.1.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.1.1...v3.1.2) (2021-05-06)
+## [3.1.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.1.1...v3.1.2) (2021-05-06)
 
 ### Bug Fixes
 
 - usage of `workflow_dispatch` ([#398](https://github.com/ybiquitous/npm-audit-fix-action/issues/398)) ([e455638](https://github.com/ybiquitous/npm-audit-fix-action/commit/e45563804571118fee228410b5a4214e8225adf8))
 
-### [3.1.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.1.0...v3.1.1) (2021-04-21)
+## [3.1.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.1.0...v3.1.1) (2021-04-21)
 
 ### Bug Fixes
 
@@ -380,7 +376,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 - update default `labels` parameter ([#390](https://github.com/ybiquitous/npm-audit-fix-action/issues/390)) ([ef459f9](https://github.com/ybiquitous/npm-audit-fix-action/commit/ef459f9e8c9291b377836c3d6210b0d5a6c4ee85))
 
-### [3.0.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.0.0...v3.0.1) (2021-04-09)
+## [3.0.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.0.0...v3.0.1) (2021-04-09)
 
 ### Bug Fixes
 
@@ -395,8 +391,8 @@ All notable changes to this project will be documented in this file. See [standa
 ### Features
 
 - add version to npmjs.com link ([#373](https://github.com/ybiquitous/npm-audit-fix-action/issues/373)) ([50e55a3](https://github.com/ybiquitous/npm-audit-fix-action/commit/50e55a3f5e0c8a4576b4fbb680099b28fc655fbb))
-- improve PR body ([#368](https://github.com/ybiquitous/npm-audit-fix-action/issues/368)) ([c7aa57e](https://github.com/ybiquitous/npm-audit-fix-action/commit/c7aa57eaa91adebf1341cb630cd35cb8015b2489))
 - **deps:** bump npm from 6.14.11 to 7 ([#317](https://github.com/ybiquitous/npm-audit-fix-action/issues/317)) ([46f8a79](https://github.com/ybiquitous/npm-audit-fix-action/commit/46f8a79e7819bcec7fcecd5baa9f267b73e0bc99))
+- improve PR body ([#368](https://github.com/ybiquitous/npm-audit-fix-action/issues/368)) ([c7aa57e](https://github.com/ybiquitous/npm-audit-fix-action/commit/c7aa57eaa91adebf1341cb630cd35cb8015b2489))
 
 ### Bug Fixes
 
@@ -404,71 +400,75 @@ All notable changes to this project will be documented in this file. See [standa
 - incorrect updated packages list ([#372](https://github.com/ybiquitous/npm-audit-fix-action/issues/372)) ([7c502cc](https://github.com/ybiquitous/npm-audit-fix-action/commit/7c502ccbcf54561a1979e9ac6eabe62af139e77b))
 - remove needless `npm install` ([#371](https://github.com/ybiquitous/npm-audit-fix-action/issues/371)) ([6f268a5](https://github.com/ybiquitous/npm-audit-fix-action/commit/6f268a508986758b6af3541e49a2777842cf81f4))
 
-### [2.1.12](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.11...v2.1.12) (2021-04-05)
+## [2.1.12](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.11...v2.1.12) (2021-04-05)
 
 ### Bug Fixes
 
 - **actions:** fix releasing ([75eb03a](https://github.com/ybiquitous/npm-audit-fix-action/commit/75eb03aaf046c521bce1126ac768708c12d6844c))
 
-### [2.1.11](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.10...v2.1.11) (2021-04-05)
+## [2.1.11](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.10...v2.1.11) (2021-04-05)
 
 ### Bug Fixes
 
 - **actions:** fix releasing ([222416c](https://github.com/ybiquitous/npm-audit-fix-action/commit/222416c72907b9e3696bc81aab99273a2f67f61a))
 
-### [2.1.10](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.9...v2.1.10) (2021-04-05)
+## [2.1.10](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.9...v2.1.10) (2021-04-05)
 
 ### Bug Fixes
 
 - **actions:** fix releasing ([cc5f387](https://github.com/ybiquitous/npm-audit-fix-action/commit/cc5f387da2e7a8c88da35dced7e1a4e45c298cf8))
 
-### [2.1.9](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.8...v2.1.9) (2021-04-05)
+## [2.1.9](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.8...v2.1.9) (2021-04-05)
 
 ### Bug Fixes
 
 - **actions:** fix releasing ([#365](https://github.com/ybiquitous/npm-audit-fix-action/issues/365)) ([be44457](https://github.com/ybiquitous/npm-audit-fix-action/commit/be444570f3df1ce1bc172d3605bbf12d4427d402))
 
-### [2.1.8](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.7...v2.1.8) (2021-04-05)
+## [2.1.8](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.7...v2.1.8) (2021-04-05)
 
-### [2.1.7](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.6...v2.1.7) (2021-04-05)
+### Reverts
+
+- Revert "ci(actions): change trigger event for update-dist (#361)" ([a88fc76](https://github.com/ybiquitous/npm-audit-fix-action/commit/a88fc76dd26efaf7f33f14146d105ae4638ceb78)), closes [#361](https://github.com/ybiquitous/npm-audit-fix-action/issues/361)
+
+## [2.1.7](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.6...v2.1.7) (2021-04-05)
 
 ### Bug Fixes
 
 - **deps:** bump hosted-git-info from 3.0.8 to 4.0.0 ([#341](https://github.com/ybiquitous/npm-audit-fix-action/issues/341)) ([8050e4d](https://github.com/ybiquitous/npm-audit-fix-action/commit/8050e4d05350a9f82af82708a3a55cc3fee6d226))
 - **deps:** bump hosted-git-info from 4.0.0 to 4.0.2 ([#350](https://github.com/ybiquitous/npm-audit-fix-action/issues/350)) ([eb8f0bb](https://github.com/ybiquitous/npm-audit-fix-action/commit/eb8f0bbd3285f2aef0b9fa68f8f83b3e7dbf8bf3))
 
-### [2.1.6](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.5...v2.1.6) (2021-01-11)
+## [2.1.6](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.5...v2.1.6) (2021-01-11)
 
 ### Bug Fixes
 
 - **deps:** bump npm from 6.14.8 to 6.14.11 ([#305](https://github.com/ybiquitous/npm-audit-fix-action/issues/305)) ([96f6523](https://github.com/ybiquitous/npm-audit-fix-action/commit/96f652301ced43bcd20bfa7458fe175ad83c69b7))
 
-### [2.1.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.4...v2.1.5) (2020-10-19)
+## [2.1.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.4...v2.1.5) (2020-10-19)
 
 ### Bug Fixes
 
-- **deps:** bump hosted-git-info from 3.0.5 to 3.0.7 ([#256](https://github.com/ybiquitous/npm-audit-fix-action/issues/256)) ([7b275b4](https://github.com/ybiquitous/npm-audit-fix-action/commit/7b275b48342dda47d3a664590b885eaa7a06cc15))
 - **deps-dev:** bump eslint-config-ybiquitous from 12.0.0 to 12.1.0 ([#249](https://github.com/ybiquitous/npm-audit-fix-action/issues/249)) ([cb67358](https://github.com/ybiquitous/npm-audit-fix-action/commit/cb673587f1d00d9b40eddc8ad2776080a7fb8627))
+- **deps:** bump hosted-git-info from 3.0.5 to 3.0.7 ([#256](https://github.com/ybiquitous/npm-audit-fix-action/issues/256)) ([7b275b4](https://github.com/ybiquitous/npm-audit-fix-action/commit/7b275b48342dda47d3a664590b885eaa7a06cc15))
 
-### [2.1.4](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.3...v2.1.4) (2020-09-29)
+## [2.1.4](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.3...v2.1.4) (2020-09-29)
 
 ### Bug Fixes
 
 - **deps:** bump @actions/core from 1.2.5 to 1.2.6 ([#243](https://github.com/ybiquitous/npm-audit-fix-action/issues/243)) ([58898fd](https://github.com/ybiquitous/npm-audit-fix-action/commit/58898fdc94d58c01adad6b87f351f6bff1f941a7))
 
-### [2.1.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.2...v2.1.3) (2020-09-15)
+## [2.1.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.2...v2.1.3) (2020-09-15)
 
 ### Bug Fixes
 
 - **deps:** bump node-fetch from 2.6.0 to 2.6.1 ([#229](https://github.com/ybiquitous/npm-audit-fix-action/issues/229)) ([5a78a75](https://github.com/ybiquitous/npm-audit-fix-action/commit/5a78a75656e3ed632bbd9537df48a87ad015e08a))
 
-### [2.1.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.1...v2.1.2) (2020-09-08)
+## [2.1.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.1...v2.1.2) (2020-09-08)
 
 ### Bug Fixes
 
 - use `info()` of `@actions/core` instead of `console.log()` ([#227](https://github.com/ybiquitous/npm-audit-fix-action/issues/227)) ([4941c8b](https://github.com/ybiquitous/npm-audit-fix-action/commit/4941c8b418e8e567a4eaa7b757b0b6ae39ffc3be))
 
-### [2.1.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.0...v2.1.1) (2020-08-19)
+## [2.1.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v2.1.0...v2.1.1) (2020-08-19)
 
 ### Bug Fixes
 
@@ -492,15 +492,19 @@ All notable changes to this project will be documented in this file. See [standa
 - change default branch from `master` to `main` ([#190](https://github.com/ybiquitous/npm-audit-fix-action/issues/190)) ([135de4c](https://github.com/ybiquitous/npm-audit-fix-action/commit/135de4ce82cb3827c4748bb30159ea2efbbe3500)), closes [#175](https://github.com/ybiquitous/npm-audit-fix-action/issues/175)
 - set default branch automatically ([#192](https://github.com/ybiquitous/npm-audit-fix-action/issues/192)) ([8ab3e33](https://github.com/ybiquitous/npm-audit-fix-action/commit/8ab3e335273ae2aabda3e563ed6a7e77b89b9c75))
 
-### [1.3.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.3.2...v1.3.3) (2020-07-22)
+### Reverts
+
+- Revert "ci(actions): use `$default-branch` macro" (#170) ([da55314](https://github.com/ybiquitous/npm-audit-fix-action/commit/da55314e2205e37201cd8f5af74f813883c5af7c)), closes [#170](https://github.com/ybiquitous/npm-audit-fix-action/issues/170)
+
+## [1.3.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.3.2...v1.3.3) (2020-07-22)
 
 ### Bug Fixes
 
 - **deps:** bump npm from 6.14.6 to 6.14.7 ([#167](https://github.com/ybiquitous/npm-audit-fix-action/issues/167)) ([239201b](https://github.com/ybiquitous/npm-audit-fix-action/commit/239201b71b5360303a98aa2d1bf6d8a556f9bad2))
 
-### [1.3.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.3.1...v1.3.2) (2020-07-17)
+## [1.3.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.3.1...v1.3.2) (2020-07-17)
 
-### [1.3.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.3.0...v1.3.1) (2020-07-17)
+## [1.3.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.3.0...v1.3.1) (2020-07-17)
 
 ## [1.3.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.2.3...v1.3.0) (2020-07-17)
 
@@ -510,19 +514,19 @@ All notable changes to this project will be documented in this file. See [standa
 - show the number of packages in PR body ([#161](https://github.com/ybiquitous/npm-audit-fix-action/issues/161)) ([7011bef](https://github.com/ybiquitous/npm-audit-fix-action/commit/7011befd69f57cc0948773a5132958db0b5ec653))
 - split column for repo link in PR body ([#163](https://github.com/ybiquitous/npm-audit-fix-action/issues/163)) ([42afd87](https://github.com/ybiquitous/npm-audit-fix-action/commit/42afd87a78ee34ea45985a8186f79b9065073517))
 
-### [1.2.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.2.2...v1.2.3) (2020-07-14)
+## [1.2.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.2.2...v1.2.3) (2020-07-14)
 
 ### Bug Fixes
 
 - **deps:** bump hosted-git-info from 3.0.4 to 3.0.5 ([#148](https://github.com/ybiquitous/npm-audit-fix-action/issues/148)) ([573c38a](https://github.com/ybiquitous/npm-audit-fix-action/commit/573c38a73208c01574faab7e6c21a1a44e638e98))
 
-### [1.2.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.2.1...v1.2.2) (2020-07-12)
+## [1.2.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.2.1...v1.2.2) (2020-07-12)
 
 ### Bug Fixes
 
 - bump npm from 6.14.5 to 6.14.6 ([#145](https://github.com/ybiquitous/npm-audit-fix-action/issues/145)) ([bcb7298](https://github.com/ybiquitous/npm-audit-fix-action/commit/bcb72984423b923d25e33da29caf4bedd0bd2e66))
 
-### [1.2.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.2.0...v1.2.1) (2020-07-04)
+## [1.2.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.2.0...v1.2.1) (2020-07-04)
 
 ### Bug Fixes
 
@@ -546,7 +550,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 - duplicated packages shown ([#105](https://github.com/ybiquitous/npm-audit-fix-action/issues/105)) ([ca2b1c6](https://github.com/ybiquitous/npm-audit-fix-action/commit/ca2b1c6e686e6915fc5c25302b10802ba00d5abb))
 
-### [1.0.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.0.0...v1.0.1) (2020-05-05)
+## [1.0.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v1.0.0...v1.0.1) (2020-05-05)
 
 ### Bug Fixes
 
