@@ -34335,7 +34335,7 @@ async function getDefaultBranch({ token, repository }) {
 
 
 async function getNpmVersion() {
-  const options = { ignoreReturnCode: false };
+  const options = { ignoreReturnCode: true };
   const { exitCode, stdout, stderr } = await (0,exec.getExecOutput)("npm", ["--version"], options);
 
   if (exitCode === 0) {
