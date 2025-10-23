@@ -33728,6 +33728,8 @@ exports.LRUCache = LRUCache;
 /************************************************************************/
 var __webpack_exports__ = {};
 
+;// CONCATENATED MODULE: external "node:fs/promises"
+const promises_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs/promises");
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(7484);
 // EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
@@ -34438,6 +34440,7 @@ function commaSeparatedList(str) {
 
 
 
+
 /**
  * @returns {Promise<boolean>}
  */
@@ -34468,18 +34471,10 @@ async function run() {
     core.info(`Node.js version: ${process.version}`);
     core.info(`Node.js location: ${process.execPath}`);
 
-    const { stdout: npmLocation } = await (0,exec.getExecOutput)("which", ["npm"]);
-    core.info(`npm location: ${npmLocation.trim()}`);
+    const npmLocation = `${process.execPath.replace(/\/bin\/node$/u, "")}/lib/node_modules/npm`;
+    core.info(`npm location: ${npmLocation}`);
 
-    // eslint-disable-next-line dot-notation -- Prevent TS4111
-    core.info(`PATH variable: ${process.env["PATH"]}`);
-
-    core.addPath(process.execPath.replace(/\/node$/u, ""));
-    // eslint-disable-next-line dot-notation -- Prevent TS4111
-    core.info(`Updated PATH variable: ${process.env["PATH"]}`);
-
-    const { stdout: updatedNpmLocation } = await (0,exec.getExecOutput)("which", ["npm"]);
-    core.info(`npm location (updated): ${updatedNpmLocation.trim()}`);
+    core.info(`npm package.json: ${await promises_namespaceObject.readFile(`${npmLocation}/package.json`, "utf8")}`);
   });
 
   const npmVersion = await core.group(`Update npm to ${NPM_VERSION}`, () => updateNpm(NPM_VERSION));
