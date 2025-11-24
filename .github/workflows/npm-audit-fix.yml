@@ -18,10 +18,3 @@ jobs:
         id: npm-audit-fix
         with:
           github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-      - name: Show outputs
-        env:
-          pull_request_url: ${{ steps.npm-audit-fix.outputs.pull_request_url }}
-          branch_name: ${{ steps.npm-audit-fix.outputs.branch_name }}
-        run: |
-          echo "pull_request_url: ${pull_request_url}"
-          echo "branch_name: ${branch_name}"

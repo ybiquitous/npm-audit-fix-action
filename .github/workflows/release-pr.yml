@@ -7,7 +7,7 @@ on:
         description: New version to release
         required: true
         type: choice
-        options: [patch, minor, major]
+        options: [auto, patch, minor, major]
 
 jobs:
   release:

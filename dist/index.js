@@ -34639,7 +34639,6 @@ async function updateNpm(version) {
   core.info(`The updated npm version: ${newVersion}`);
 
   // HACK: Fix the error "npm update check failed".
-  // eslint-disable-next-line dot-notation -- Prevent TS4111
   await (0,exec.exec)("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
 
   return newVersion;
@@ -34736,7 +34735,7 @@ async function filesChanged() {
   try {
     const exitCode = await (0,exec.exec)("git", ["diff", "--exit-code"]);
     return exitCode === 0;
-  } catch (err) {
+  } catch {
     return false;
   }
 }

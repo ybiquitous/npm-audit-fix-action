@@ -24,9 +24,9 @@
     "pretest": "npm run lint",
     "test": "node --test",
     "test:watch": "npm --ignore-scripts test -- --watch",
-    "test:coverage": "npm --ignore-scripts test -- --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=test.lcov",
-    "lint": "npm-run-all --print-label --silent --parallel lint:*",
-    "lint:js": "eslint --cache --ext=js,jsx,cjs,mjs,ts,tsx .",
+    "test:coverage": "npm --ignore-scripts test -- --coverage",
+    "lint": "ybiq run --npm lint:js lint:md lint:types lint:commit lint:styles",
+    "lint:js": "eslint --cache",
     "lint:js:fix": "npm run lint:js -- --fix",
     "lint:md": "remark . --frail",
     "lint:md:fix": "remark . --output",
@@ -36,7 +36,7 @@
     "lint:styles": "npm run prettier -- --check",
     "lint:styles:fix": "npm run prettier -- --write",
     "prettier": "prettier --cache .",
-    "format": "npm-run-all --print-label --silent --parallel lint:*:fix",
+    "format": "ybiq run --npm lint:js:fix lint:md:fix lint:styles:fix",
     "prerelease": "git switch main && git pull && npm ci && npm run clean && npm test && npm run clean",
     "clean": "git clean -dx --force --exclude=node_modules --exclude=.husky",
     "changelog": "if [ ! -f CHANGELOG.md ]; then opts='--first-release' ; fi && conventional-changelog --preset conventional-changelog-conventionalcommits $opts && prettier --write CHANGELOG.md",
@@ -54,10 +54,11 @@
     "@types/hosted-git-info": "^3.0.5",
     "@typescript-eslint/eslint-plugin": "^8.47.0",
     "@vercel/ncc": "^0.38.4",
-    "eslint": "^8.57.0",
-    "eslint-config-ybiquitous": "^22.0.0",
+    "eslint": "^9.39.1",
+    "eslint-plugin-n": "^17.23.1",
     "remark-preset-ybiquitous": "^0.5.1",
     "typescript": "^5.9.3",
+    "typescript-eslint": "^8.47.0",
     "ybiq": "^21.0.0"
   },
   "lint-staged": {
@@ -87,53 +88,9 @@
       ]
     }
   },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "ybiquitous/node"
-    ],
-    "ignorePatterns": [
-      "coverage",
-      "dist",
-      "tmp"
-    ],
-    "reportUnusedDisableDirectives": true,
-    "rules": {
-      "max-lines-per-function": "warn",
-      "max-statements": [
-        "warn",
-        20
-      ],
-      "import/no-internal-modules": [
-        "error",
-        {
-          "allow": [
-            "**/utils/*",
-            "**/fixtures/*"
-          ]
-        }
-      ]
-    },
-    "overrides": [
-      {
-        "files": [
-          "**/*.ts"
-        ],
-        "extends": [
-          "ybiquitous/typescript"
-        ],
-        "parserOptions": {
-          "project": "tsconfig.json"
-        }
-      },
-      {
-        "files": [
-          "**/*.test.*"
-        ],
-        "rules": {
-          "node/no-unpublished-import": "off"
-        }
-      }
-    ]
+  "overrides": {
+    "ybiq": {
+      "conventional-changelog-conventionalcommits": "^9.1.0"
+    }
   }
 }
