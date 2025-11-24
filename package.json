@@ -54,7 +54,7 @@
     "@types/hosted-git-info": "^3.0.5",
     "@typescript-eslint/eslint-plugin": "^8.47.0",
     "@vercel/ncc": "^0.38.4",
-    "eslint": "^8.57.0",
+    "eslint": "^9.39.1",
     "eslint-config-ybiquitous": "^22.0.0",
     "remark-preset-ybiquitous": "^0.5.1",
     "typescript": "^5.9.3",
