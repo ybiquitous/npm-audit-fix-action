@@ -24,7 +24,7 @@
     "pretest": "npm run lint",
     "test": "node --test",
     "test:watch": "npm --ignore-scripts test -- --watch",
-    "test:coverage": "npm --ignore-scripts test -- --coverage",
+    "test:coverage": "npm --ignore-scripts test -- --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=test.lcov",
     "lint": "ybiq run --npm lint:js lint:md lint:types lint:commit lint:styles",
     "lint:js": "eslint --cache",
     "lint:js:fix": "npm run lint:js -- --fix",
