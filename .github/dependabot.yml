@@ -8,8 +8,7 @@ updates:
     versioning-strategy: increase
     groups:
       eslint:
-        # TODO: Include "eslint" when all plugins support ESLint v9.
-        patterns: ["eslint-*", "@typescript-eslint/*"]
+        patterns: ["eslint", "eslint-*", "typescript-eslint"]
       jest:
         patterns: ["jest", "@jest/*"]
       typescript:
