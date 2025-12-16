@@ -16,6 +16,8 @@
 
 ## [7.3.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.0...v7.3.1) (2025-09-04)
 
+Changed the release workflow. No action behavior changes.
+
 ## [7.3.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.2.0...v7.3.0) (2025-08-12)
 
 ### Features
