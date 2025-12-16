@@ -1,3 +1,11 @@
+## [7.3.3](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.2...v7.3.3) (2025-12-16)
+
+### Bug Fixes
+
+- **deps:** bump @actions/core from 1.11.1 to 2.0.1 ([#1139](https://github.com/ybiquitous/npm-audit-fix-action/issues/1139)) ([d273bd5](https://github.com/ybiquitous/npm-audit-fix-action/commit/d273bd5566b49bf1110de0d02d6dccccf4185224))
+- **deps:** bump @actions/exec from 1.1.1 to 2.0.0 ([#1138](https://github.com/ybiquitous/npm-audit-fix-action/issues/1138)) ([b0ef85e](https://github.com/ybiquitous/npm-audit-fix-action/commit/b0ef85ed0ca41dce8e98945af7e504a3d5a104dc))
+- remove no longer needed workaround with local `npm` ([#1140](https://github.com/ybiquitous/npm-audit-fix-action/issues/1140)) ([dc3214b](https://github.com/ybiquitous/npm-audit-fix-action/commit/dc3214bbf224ec9137d9030d557e7576d79e19e5))
+
 ## [7.3.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.1...v7.3.2) (2025-10-23)
 
 ### Bug Fixes
