@@ -54,10 +54,10 @@
     "@types/hosted-git-info": "^3.0.5",
     "@vercel/ncc": "^0.38.4",
     "eslint": "^9.39.2",
-    "eslint-plugin-n": "^17.23.1",
+    "eslint-plugin-n": "^17.23.2",
     "remark-preset-ybiquitous": "^0.5.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.53.0",
+    "typescript-eslint": "^8.53.1",
     "ybiq": "^21.0.3"
   },
   "lint-staged": {
