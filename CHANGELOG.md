@@ -1,3 +1,9 @@
+## [7.3.5](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.4...v7.3.5) (2026-01-27)
+
+### Bug Fixes
+
+- **deps:** bump @actions/github from 7.0.0 to 8.0.0 ([#1159](https://github.com/ybiquitous/npm-audit-fix-action/issues/1159)) ([4a81a78](https://github.com/ybiquitous/npm-audit-fix-action/commit/4a81a787bbb6fd696cd8b54b276068058f084fbd))
+
 ## [7.3.4](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.3...v7.3.4) (2026-01-13)
 
 ### Bug Fixes
