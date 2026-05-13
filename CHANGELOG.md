@@ -2,8 +2,6 @@
 
 ### Bug Fixes
 
-- **deps-dev:** bump fast-uri from 3.1.0 to 3.1.2 ([#1217](https://github.com/ybiquitous/npm-audit-fix-action/issues/1217)) ([b982143](https://github.com/ybiquitous/npm-audit-fix-action/commit/b982143c05516390e3a0e24ce20711512dfef553))
-- **deps-dev:** bump the eslint group with 2 updates ([#1218](https://github.com/ybiquitous/npm-audit-fix-action/issues/1218)) ([b3df3e8](https://github.com/ybiquitous/npm-audit-fix-action/commit/b3df3e87ef4b15aaae23cf114292b29cba80af3e))
 - **deps:** bump hosted-git-info from 9.0.3 to 10.1.0 ([#1219](https://github.com/ybiquitous/npm-audit-fix-action/issues/1219)) ([737364d](https://github.com/ybiquitous/npm-audit-fix-action/commit/737364d59b598f44d6c34fa9e3f05e95c1708b58))
 
 ## [7.3.8](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.7...v7.3.8) (2026-05-05)
