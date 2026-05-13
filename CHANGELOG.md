@@ -1,3 +1,9 @@
+## [7.3.9](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.8...v7.3.9) (2026-05-13)
+
+### Bug Fixes
+
+- **deps:** bump hosted-git-info from 9.0.3 to 10.1.0 ([#1219](https://github.com/ybiquitous/npm-audit-fix-action/issues/1219)) ([737364d](https://github.com/ybiquitous/npm-audit-fix-action/commit/737364d59b598f44d6c34fa9e3f05e95c1708b58))
+
 ## [7.3.8](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.7...v7.3.8) (2026-05-05)
 
 ### Bug Fixes
