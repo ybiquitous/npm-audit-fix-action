@@ -1444,9 +1444,7 @@ module.exports = GitHost
 /***/ }),
 
 /***/ 1186:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
-
-const url = __nccwpck_require__(7016)
+/***/ ((module) => {
 
 const lastIndexOfBefore = (str, char, beforeChar) => {
   const startPosition = str.indexOf(beforeChar)
@@ -1455,7 +1453,7 @@ const lastIndexOfBefore = (str, char, beforeChar) => {
 
 const safeUrl = (u) => {
   try {
-    return new url.URL(u)
+    return new URL(u)
   } catch {
     // this fn should never throw
   }
@@ -29395,13 +29393,6 @@ module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("string_decod
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("tls");
-
-/***/ }),
-
-/***/ 7016:
-/***/ ((module) => {
-
-module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("url");
 
 /***/ }),
 
