@@ -47,7 +47,7 @@
     "@actions/core": "^3.0.1",
     "@actions/exec": "^3.0.0",
     "@actions/github": "^9.1.1",
-    "hosted-git-info": "^10.1.0"
+    "hosted-git-info": "^10.1.1"
   },
   "devDependencies": {
     "@tsconfig/strictest": "^2.0.8",
