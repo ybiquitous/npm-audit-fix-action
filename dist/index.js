@@ -34802,10 +34802,11 @@ function buildPullRequestBody({ report, npmVersion, github }) {
 const ALLOWED_FILES = new Set(["package.json", "package-lock.json"]);
 
 /**
+ * @param {typeof getExecOutput} [execFn]
  * @returns {Promise<string[]>}
  */
-async function changedFiles() {
-  const { stdout } = await getExecOutput("git", ["diff", "--name-only", "--relative", "HEAD"]);
+async function changedFiles(execFn = getExecOutput) {
+  const { stdout } = await execFn("git", ["diff", "--name-only", "--relative", "HEAD"]);
   const all = stdout
     .split("\n")
     .map((line) => line.trim())
