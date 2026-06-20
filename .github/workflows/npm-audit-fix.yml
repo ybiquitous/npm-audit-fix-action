@@ -14,7 +14,5 @@ jobs:
     steps:
       - name: Check out
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
-      - uses: ybiquitous/npm-audit-fix-action@main
-        id: npm-audit-fix
-        with:
-          github_token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+      - name: Run npm audit fix
+        uses: ybiquitous/npm-audit-fix-action@main # Testing this repo
