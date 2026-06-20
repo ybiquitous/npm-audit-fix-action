@@ -2,18 +2,7 @@
 
 ### Bug Fixes
 
-- **deps-dev:** bump @vercel/ncc from 0.38.4 to 0.44.0 ([#1232](https://github.com/ybiquitous/npm-audit-fix-action/issues/1232)) ([ee92324](https://github.com/ybiquitous/npm-audit-fix-action/commit/ee9232476c21670517b599eb169734f62b9e483e))
-- **deps-dev:** bump the eslint group across 1 directory with 2 updates ([#1222](https://github.com/ybiquitous/npm-audit-fix-action/issues/1222)) ([8cdb9a2](https://github.com/ybiquitous/npm-audit-fix-action/commit/8cdb9a25be75a1f41be2885914eda264f0562133))
-- **deps-dev:** bump the eslint group across 1 directory with 2 updates ([#1231](https://github.com/ybiquitous/npm-audit-fix-action/issues/1231)) ([a8b85a5](https://github.com/ybiquitous/npm-audit-fix-action/commit/a8b85a5d4e5ae546ffcdec7d0468f86e95fad7b4))
-- **deps-dev:** bump the eslint group with 2 updates ([#1227](https://github.com/ybiquitous/npm-audit-fix-action/issues/1227)) ([cb6d6e4](https://github.com/ybiquitous/npm-audit-fix-action/commit/cb6d6e4371c3ced0d662a9098a3c1a19e2cb323a))
-- **deps-dev:** bump the eslint group with 2 updates ([#1230](https://github.com/ybiquitous/npm-audit-fix-action/issues/1230)) ([cb55106](https://github.com/ybiquitous/npm-audit-fix-action/commit/cb551064f573deca3b0a13268694852a34301b78))
-- **deps-dev:** bump typescript-eslint from 8.59.4 to 8.60.0 in the eslint group ([#1225](https://github.com/ybiquitous/npm-audit-fix-action/issues/1225)) ([5963399](https://github.com/ybiquitous/npm-audit-fix-action/commit/5963399158767925311f579b16aff6a94b141610))
-- **deps:** bump actions/checkout from 6.0.2 to 6.0.3 ([#1226](https://github.com/ybiquitous/npm-audit-fix-action/issues/1226)) ([d11b2b8](https://github.com/ybiquitous/npm-audit-fix-action/commit/d11b2b8d013031280a43a46d912948647d7a6973))
-- **deps:** bump codecov/codecov-action from 6.0.0 to 6.0.1 ([#1221](https://github.com/ybiquitous/npm-audit-fix-action/issues/1221)) ([bdad6e9](https://github.com/ybiquitous/npm-audit-fix-action/commit/bdad6e9b4ab0afda2f7abe99f2523f107b578ad5))
-- **deps:** bump codecov/codecov-action from 6.0.1 to 7.0.0 ([#1229](https://github.com/ybiquitous/npm-audit-fix-action/issues/1229)) ([c1d720d](https://github.com/ybiquitous/npm-audit-fix-action/commit/c1d720d0b850b7798c3104ac3cdf848b9894eab0))
-- **deps:** bump hosted-git-info from 10.1.0 to 10.1.1 ([#1224](https://github.com/ybiquitous/npm-audit-fix-action/issues/1224)) ([37091d5](https://github.com/ybiquitous/npm-audit-fix-action/commit/37091d5a799393e405eb465a3bee9c4ae41b5ef4))
-- **deps:** bump js-yaml from 4.1.1 to 4.2.0 ([#1234](https://github.com/ybiquitous/npm-audit-fix-action/issues/1234)) ([5fc0223](https://github.com/ybiquitous/npm-audit-fix-action/commit/5fc0223e8dcd3ccd3eb7c1cecf455fb5ad7272df))
-- **deps:** npm audit fix ([#1237](https://github.com/ybiquitous/npm-audit-fix-action/issues/1237)) ([37b8968](https://github.com/ybiquitous/npm-audit-fix-action/commit/37b8968310fdba695bf8ad951fa6facfa434b2a1))
+- **deps:** bump undici from 6.24.1 to 6.27.0 ([#1237](https://github.com/ybiquitous/npm-audit-fix-action/issues/1237)) ([37b8968](https://github.com/ybiquitous/npm-audit-fix-action/commit/37b8968310fdba695bf8ad951fa6facfa434b2a1))
 
 ## [7.3.9](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.8...v7.3.9) (2026-05-13)
 
