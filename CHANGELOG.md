@@ -1,3 +1,9 @@
+## [7.3.10](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.9...v7.3.10) (2026-06-20)
+
+### Bug Fixes
+
+- **deps:** bump undici from 6.24.1 to 6.27.0 ([#1237](https://github.com/ybiquitous/npm-audit-fix-action/issues/1237)) ([37b8968](https://github.com/ybiquitous/npm-audit-fix-action/commit/37b8968310fdba695bf8ad951fa6facfa434b2a1))
+
 ## [7.3.9](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.8...v7.3.9) (2026-05-13)
 
 ### Bug Fixes
