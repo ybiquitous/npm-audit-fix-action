@@ -56,7 +56,7 @@ See [`action.yml`](action.yml).
 
 ### Using a personal access token
 
-If you want to run your CI with pull requests created by this action, you may need to set your [personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) instead of the GitHub's default token:
+If you want to run your CI with pull requests created by this action, you may need to set your [personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) instead of GitHub's default token:
 
 For example:
 
@@ -66,7 +66,7 @@ with:
 ```
 
 The reason is that the default token does not have enough permissions to trigger CI.
-See also the [GitHub document](https://docs.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token#permissions-for-the-github_token) about the token permissions.
+See also the [GitHub document](https://docs.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token#granting-additional-permissions) about the token permissions.
 
 ## Screenshot
 
