@@ -34819,6 +34819,7 @@ const promises_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.ur
 
 
 
+
 /**
  * @param {{ client: GitHubClient, branch: string, sha: string }} params
  */
@@ -34826,11 +34827,12 @@ async function createOrUpdateBranchRef({ client, branch, sha }) {
   const ref = `heads/${branch}`;
   try {
     await client.getRef({ ref });
+    await client.updateRef({ ref, sha, force: true });
+    info(`Updated the ref '${ref}' with ${sha}`);
   } catch {
     await client.createRef({ ref: `refs/${ref}`, sha });
-    return;
+    info(`Created the ref 'refs/${ref}' with ${sha}`);
   }
-  await client.updateRef({ ref, sha, force: true });
 }
 
 /**
@@ -34849,7 +34851,6 @@ async function revParse(rev) {
  *   message: string,
  *   author: { name: string, email: string },
  * }} params
- * @returns {Promise<{ sha: string; }>}
  */
 async function commit({ client, branch, files, message, author }) {
   const pathPrefix = await revParse("--show-prefix");
@@ -34872,6 +34873,7 @@ async function commit({ client, branch, files, message, author }) {
       content,
     })),
   });
+  info(`Created the tree ${tree.sha}`);
 
   const { data: commit } = await client.createCommit({
     message,
@@ -34879,10 +34881,9 @@ async function commit({ client, branch, files, message, author }) {
     parents: [baseSha],
     author,
   });
+  info(`Created the commit ${commit.sha}`);
 
   await createOrUpdateBranchRef({ client, branch, sha: commit.sha });
-
-  return { sha: commit.sha };
 }
 
 ;// CONCATENATED MODULE: ./lib/createOrUpdatePullRequest.js
@@ -34926,7 +34927,7 @@ async function createOrUpdatePullRequest({
       title,
       body: pullBody,
     });
-    info(`The pull request was updated successfully: ${updated.html_url}`);
+    info(`Updated pull request: ${updated.html_url}`);
     notice(`${PACKAGE_NAME} successfully updated PR #${updated.number}: ${updated.html_url}`);
     setOutput("pull_request_url", updated.html_url);
     setOutput("branch_name", updated.head.ref);
@@ -34937,19 +34938,19 @@ async function createOrUpdatePullRequest({
       head: branch,
       base: baseBranch,
     });
-    info(`The pull request was created successfully: ${created.html_url}`);
+    info(`Created pull request: ${created.html_url}`);
     notice(`${PACKAGE_NAME} successfully created PR #${created.number}: ${created.html_url}`);
     setOutput("pull_request_url", created.html_url);
     setOutput("branch_name", created.head.ref);
 
-    const newLabels = await client.addLabels({ issue_number: created.number, labels });
-    info(`The labels were added successfully: ${newLabels.data.map((l) => l.name).join(", ")}`);
+    if (labels.length > 0) {
+      const { data: newLabels } = await client.addLabels({ issue_number: created.number, labels });
+      info(`Added labels: ${newLabels.map((l) => `"${l.name}"`).join(", ")}`);
+    }
 
     if (assignees.length > 0) {
-      const newAssignees = await client.addAssignees({ issue_number: created.number, assignees });
-      info(
-        `The assignee(s) were added successfully: ${newAssignees.data.assignees?.map((a) => a.login).join(", ") ?? newAssignees.data.assignee}`,
-      );
+      const { data } = await client.addAssignees({ issue_number: created.number, assignees });
+      info(`Added assignees: ${data.assignees?.map((a) => a.login).join(", ") ?? data.assignee}`);
     }
   }
 }
@@ -39343,14 +39344,13 @@ async function run() {
   const title = getInput("commit_title");
 
   await group("Commit changes", async () => {
-    const { sha } = await commit({
+    await commit({
       client,
       branch,
       files,
       message: `${title}\n\n${buildCommitBody(report)}`,
       author: { name: getInput("github_user"), email: getInput("github_email") },
     });
-    info(`Created verified commit ${sha} on '${branch}'`);
   });
 
   await group("Create or update a pull request", async () => {
