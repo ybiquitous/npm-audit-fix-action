@@ -1,3 +1,5 @@
+## [7.3.11](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.10...v7.3.11) (2026-06-20)
+
 ## [7.3.10](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.9...v7.3.10) (2026-06-20)
 
 ### Bug Fixes
