@@ -34825,11 +34825,16 @@ const promises_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.ur
  */
 async function createOrUpdateBranchRef({ client, branch, sha }) {
   const ref = `heads/${branch}`;
+  let exists = true;
   try {
     await client.getRef({ ref });
+  } catch {
+    exists = false;
+  }
+  if (exists) {
     await client.updateRef({ ref, sha, force: true });
     info(`Updated ref: ${ref}`);
-  } catch {
+  } else {
     await client.createRef({ ref: `refs/${ref}`, sha });
     info(`Created ref: refs/${ref}`);
   }
@@ -34848,42 +34853,29 @@ async function revParse(rev) {
  *   client: GitHubClient,
  *   branch: string,
  *   files: string[],
- *   message: string,
- *   author: { name: string, email: string },
+ *   message: { headline: string, body: string },
  * }} params
  */
-async function commit({ client, branch, files, message, author }) {
+async function commit({ client, branch, files, message }) {
   const pathPrefix = await revParse("--show-prefix");
   const baseSha = await revParse("HEAD");
-  const baseTreeSha = await revParse("HEAD^{tree}");
 
-  const fileChanges = await Promise.all(
-    files.map(async (file) => {
-      const content = await (0,promises_namespaceObject.readFile)(file, "utf8");
-      return { file, content };
-    }),
+  await createOrUpdateBranchRef({ client, branch, sha: baseSha });
+
+  const additions = await Promise.all(
+    files.map(async (file) => ({
+      path: `${pathPrefix}${file}`,
+      contents: (await (0,promises_namespaceObject.readFile)(file)).toString("base64"),
+    })),
   );
 
-  const { data: tree } = await client.createTree({
-    base_tree: baseTreeSha,
-    tree: fileChanges.map(({ file, content }) => ({
-      path: `${pathPrefix}${file}`,
-      mode: "100644",
-      type: "blob",
-      content,
-    })),
-  });
-  info(`Created tree: ${tree.sha}`);
-
-  const { data: commit } = await client.createCommit({
+  const { sha } = await client.createCommitOnBranch({
+    branch,
+    expectedHeadOid: baseSha,
     message,
-    tree: tree.sha,
-    parents: [baseSha],
-    author,
+    fileChanges: { additions },
   });
-  info(`Created commit ${commit.sha}`);
-
-  await createOrUpdateBranchRef({ client, branch, sha: commit.sha });
+  info(`Created verified commit: ${sha}`);
 }
 
 ;// CONCATENATED MODULE: ./lib/createOrUpdatePullRequest.js
@@ -39134,14 +39126,36 @@ class GitHubClient {
     return this.octokit.rest.git.updateRef(this.#scoped(params));
   }
 
-  /** @param {OctokitParams<Octokit["rest"]["git"]["createTree"]>} params */
-  createTree(params) {
-    return this.octokit.rest.git.createTree(this.#scoped(params));
-  }
-
-  /** @param {OctokitParams<Octokit["rest"]["git"]["createCommit"]>} params */
-  createCommit(params) {
-    return this.octokit.rest.git.createCommit(this.#scoped(params));
+  /**
+   * @param {{
+   *   branch: string,
+   *   expectedHeadOid: string,
+   *   message: { headline: string, body: string },
+   *   fileChanges: {
+   *     additions: Array<{ path: string, contents: string }>,
+   *   },
+   * }} input
+   * @returns {Promise<{ sha: string }>}
+   */
+  async createCommitOnBranch({ branch, expectedHeadOid, message, fileChanges }) {
+    const result = await this.octokit.graphql(
+      `mutation ($input: CreateCommitOnBranchInput!) {
+         createCommitOnBranch(input: $input) {
+           commit {
+             oid
+           }
+         }
+       }`,
+      {
+        input: {
+          branch: { repositoryNameWithOwner: `${this.owner}/${this.repo}`, branchName: branch },
+          expectedHeadOid,
+          message,
+          fileChanges,
+        },
+      },
+    );
+    return { sha: result.createCommitOnBranch.commit };
   }
 }
 
@@ -39348,8 +39362,7 @@ async function run() {
       client,
       branch,
       files,
-      message: `${title}\n\n${buildCommitBody(report)}`,
-      author: { name: getInput("github_user"), email: getInput("github_email") },
+      message: { headline: title, body: buildCommitBody(report) },
     });
   });
 
