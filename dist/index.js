@@ -39155,7 +39155,7 @@ class GitHubClient {
         },
       },
     );
-    return { sha: result.createCommitOnBranch.commit };
+    return { sha: result.createCommitOnBranch.commit.oid };
   }
 }
 
