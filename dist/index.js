@@ -34828,10 +34828,10 @@ async function createOrUpdateBranchRef({ client, branch, sha }) {
   try {
     await client.getRef({ ref });
     await client.updateRef({ ref, sha, force: true });
-    info(`Updated the ref '${ref}' with ${sha}`);
+    info(`Updated ref: ${ref}`);
   } catch {
     await client.createRef({ ref: `refs/${ref}`, sha });
-    info(`Created the ref 'refs/${ref}' with ${sha}`);
+    info(`Created ref: refs/${ref}`);
   }
 }
 
@@ -34873,7 +34873,7 @@ async function commit({ client, branch, files, message, author }) {
       content,
     })),
   });
-  info(`Created the tree ${tree.sha}`);
+  info(`Created tree: ${tree.sha}`);
 
   const { data: commit } = await client.createCommit({
     message,
@@ -34881,7 +34881,7 @@ async function commit({ client, branch, files, message, author }) {
     parents: [baseSha],
     author,
   });
-  info(`Created the commit ${commit.sha}`);
+  info(`Created commit ${commit.sha}`);
 
   await createOrUpdateBranchRef({ client, branch, sha: commit.sha });
 }
