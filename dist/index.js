@@ -34798,19 +34798,25 @@ function buildPullRequestBody({ report, npmVersion, github }) {
 ;// CONCATENATED MODULE: ./lib/changedFiles.js
 
 
+
+const ALLOWED_FILES = new Set(["package.json", "package-lock.json"]);
+
 /**
- * List paths changed in the working tree relative to HEAD, scoped to the current
- * directory and returned relative to it (so they can be prefixed to form
- * repository-root paths).
- *
  * @returns {Promise<string[]>}
  */
 async function changedFiles() {
   const { stdout } = await getExecOutput("git", ["diff", "--name-only", "--relative", "HEAD"]);
-  return stdout
+  const all = stdout
     .split("\n")
     .map((line) => line.trim())
     .filter(Boolean);
+
+  const allowed = all.filter((file) => ALLOWED_FILES.has(file));
+  const ignored = all.filter((file) => !ALLOWED_FILES.has(file));
+  if (ignored.length > 0) {
+    info(`Ignored changed files: ${ignored.map((file) => `"${file}"`).join(", ")}`);
+  }
+  return allowed;
 }
 
 ;// CONCATENATED MODULE: external "node:fs/promises"
