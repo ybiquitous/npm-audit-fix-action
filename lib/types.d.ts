@@ -1,46 +1,52 @@
-type Finding = {
-  version: string;
-};
+import type { getOctokit } from "@actions/github";
 
-type Vulnerability = {
-  name: string;
-  severity: string;
-  via: Array<{ title: string; url: string }>;
-};
+declare global {
+  type Octokit = ReturnType<typeof getOctokit>;
 
-type AuditReport = Map<string, { name: string; severity: string; title: string; url: string }>;
+  type Finding = {
+    version: string;
+  };
 
-type FixEntry = {
-  name: string;
-  version: string;
-};
+  type Vulnerability = {
+    name: string;
+    severity: string;
+    via: Array<{ title: string; url: string }>;
+  };
 
-type FixUpdateEntry = FixEntry & {
-  previousVersion: string;
-};
+  type AuditReport = Map<string, { name: string; severity: string; title: string; url: string }>;
 
-type AuditFix = {
-  added: FixEntry[];
-  removed: FixEntry[];
-  updated: FixUpdateEntry[];
-  warnings: string[];
-  elapsed: number;
-};
+  type FixEntry = {
+    name: string;
+    version: string;
+  };
 
-type UrlInfo = { name: string; url: string; type: string };
+  type FixUpdateEntry = FixEntry & {
+    previousVersion: string;
+  };
 
-type PackageInfo = { name: string; version: string; location: string | null };
+  type AuditFix = {
+    added: FixEntry[];
+    removed: FixEntry[];
+    updated: FixUpdateEntry[];
+    warnings: string[];
+    elapsed: number;
+  };
 
-type PackageInfoWithAudit = PackageInfo & {
-  severity: string | null;
-  title: string | null;
-  url: string | null;
-};
+  type UrlInfo = { name: string; url: string; type: string };
 
-type Report = {
-  added: Array<PackageInfo>;
-  removed: Array<PackageInfoWithAudit>;
-  updated: Array<PackageInfoWithAudit & { previousVersion: string }>;
-  packageCount: number;
-  packageUrls: Record<string, UrlInfo>;
-};
+  type PackageInfo = { name: string; version: string; location: string | null };
+
+  type PackageInfoWithAudit = PackageInfo & {
+    severity: string | null;
+    title: string | null;
+    url: string | null;
+  };
+
+  type Report = {
+    added: Array<PackageInfo>;
+    removed: Array<PackageInfoWithAudit>;
+    updated: Array<PackageInfoWithAudit & { previousVersion: string }>;
+    packageCount: number;
+    packageUrls: Record<string, UrlInfo>;
+  };
+}
