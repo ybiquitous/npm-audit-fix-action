@@ -7,7 +7,7 @@ on:
 jobs:
   npm-diff:
     if: ${{ startsWith(github.head_ref, 'dependabot/npm_and_yarn/') }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     permissions:
       contents: read
       pull-requests: write
