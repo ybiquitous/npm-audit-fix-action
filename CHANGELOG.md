@@ -374,7 +374,7 @@ Changed the release workflow. No action behavior changes.
 
 ### Bug Fixes
 
-- allow npm@8 ([#498](https://github.com/ybiquitous/npm-audit-fix-action/issues/498)) ([5bfc9cc](https://github.com/ybiquitous/npm-audit-fix-action/commit/5bfc9ccefd3648187ffdf9022053f46ab578c05b))
+- allow npm\@8 ([#498](https://github.com/ybiquitous/npm-audit-fix-action/issues/498)) ([5bfc9cc](https://github.com/ybiquitous/npm-audit-fix-action/commit/5bfc9ccefd3648187ffdf9022053f46ab578c05b))
 
 ## [3.2.4](https://github.com/ybiquitous/npm-audit-fix-action/compare/v3.2.3...v3.2.4) (2021-07-17)
 
