@@ -1,3 +1,7 @@
+<!-- lint disable no-duplicate-headings -->
+
+# Changelog
+
 ## [7.3.11](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.10...v7.3.11) (2026-06-20)
 
 No action behavior changes.
@@ -243,7 +247,7 @@ Changed the release workflow. No action behavior changes.
 ### ⚠ BREAKING CHANGES
 
 - npm 9 has some breaking changes, but they may not affect. See the release note:
-  https://github.com/npm/cli/releases/tag/v9.0.0
+  <https://github.com/npm/cli/releases/tag/v9.0.0>
 
 ### Features
 
