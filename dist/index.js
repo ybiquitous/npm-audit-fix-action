@@ -34875,7 +34875,7 @@ async function commit({ client, branch, files, message }) {
     message,
     fileChanges: { additions },
   });
-  info(`Created verified commit: ${sha}`);
+  info(`Created commit: ${sha}`);
 }
 
 ;// CONCATENATED MODULE: ./lib/createOrUpdatePullRequest.js
