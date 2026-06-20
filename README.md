@@ -1,20 +1,19 @@
 [![Test](https://github.com/ybiquitous/npm-audit-fix-action/actions/workflows/test.yml/badge.svg)](https://github.com/ybiquitous/npm-audit-fix-action/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/ybiquitous/npm-audit-fix-action/graph/badge.svg?token=lcWzWUkwEy)](https://codecov.io/gh/ybiquitous/npm-audit-fix-action)
 
 # `npm audit fix` Action
 
-This action runs [`npm audit fix`](https://docs.npmjs.com/cli/audit) and creates a pull request.
+This GitHub Action runs [`npm audit fix`](https://docs.npmjs.com/cli/audit) and creates a pull request.
 
 ## Usage
 
-For example, you can add this action by creating [`.github/workflows/npm-audit-fix.yml`](.github/workflows/npm-audit-fix.yml):
+Create `.github/workflows/npm-audit-fix.yml` and put the following content into it:
 
 ```yaml
 name: npm audit fix
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 0 * * *" # every day at 00:00
   workflow_dispatch:
 
 jobs:
@@ -24,8 +23,10 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: ybiquitous/npm-audit-fix-action@v7
+      - name: Check out
+        uses: actions/checkout@v7
+      - name: Run npm audit fix
+        uses: ybiquitous/npm-audit-fix-action@v7
 ```
 
 ### Inputs
@@ -43,8 +44,6 @@ jobs:
 | `npm_args`       | Arguments for the `npm` command.              | n/a                                                                   |
 | `path`           | Path to the project root directory.           | `.`                                                                   |
 
-See [`action.yml`](action.yml).
-
 ### Outputs
 
 | Name               | Description                      |
@@ -52,7 +51,7 @@ See [`action.yml`](action.yml).
 | `pull_request_url` | URL of the created pull request. |
 | `branch_name`      | Name of the created branch.      |
 
-See [`action.yml`](action.yml).
+For more details, see [`action.yml`](action.yml).
 
 ## Screenshot
 
