@@ -34795,6 +34795,175 @@ function buildPullRequestBody({ report, npmVersion, github }) {
   return lines.join("\n").trim();
 }
 
+;// CONCATENATED MODULE: ./lib/changedFiles.js
+
+
+/**
+ * List paths changed in the working tree relative to HEAD, scoped to the current
+ * directory and returned relative to it (so they can be prefixed to form
+ * repository-root paths).
+ *
+ * @returns {Promise<string[]>}
+ */
+async function changedFiles() {
+  const { stdout } = await getExecOutput("git", ["diff", "--name-only", "--relative", "HEAD"]);
+  return stdout
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+;// CONCATENATED MODULE: external "node:fs/promises"
+const promises_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs/promises");
+;// CONCATENATED MODULE: ./lib/commit.js
+
+
+
+/**
+ * @param {{ client: GitHubClient, branch: string, sha: string }} params
+ */
+async function createOrUpdateBranchRef({ client, branch, sha }) {
+  const ref = `heads/${branch}`;
+  try {
+    await client.getRef({ ref });
+  } catch {
+    await client.createRef({ ref: `refs/${ref}`, sha });
+    return;
+  }
+  await client.updateRef({ ref, sha, force: true });
+}
+
+/**
+ * @param {string} rev
+ * @returns {Promise<string>}
+ */
+async function revParse(rev) {
+  return (await getExecOutput("git", ["rev-parse", rev])).stdout.trim();
+}
+
+/**
+ * @param {{
+ *   client: GitHubClient,
+ *   branch: string,
+ *   files: string[],
+ *   message: string,
+ *   author: { name: string, email: string },
+ * }} params
+ * @returns {Promise<{ sha: string; }>}
+ */
+async function commit({ client, branch, files, message, author }) {
+  const pathPrefix = await revParse("--show-prefix");
+  const baseSha = await revParse("HEAD");
+  const baseTreeSha = await revParse("HEAD^{tree}");
+
+  const fileChanges = await Promise.all(
+    files.map(async (file) => {
+      const content = await (0,promises_namespaceObject.readFile)(file, "utf8");
+      return { file, content };
+    }),
+  );
+
+  const { data: tree } = await client.createTree({
+    base_tree: baseTreeSha,
+    tree: fileChanges.map(({ file, content }) => ({
+      path: `${pathPrefix}${file}`,
+      mode: "100644",
+      type: "blob",
+      content,
+    })),
+  });
+
+  const { data: commit } = await client.createCommit({
+    message,
+    tree: tree.sha,
+    parents: [baseSha],
+    author,
+  });
+
+  await createOrUpdateBranchRef({ client, branch, sha: commit.sha });
+
+  return { sha: commit.sha };
+}
+
+;// CONCATENATED MODULE: ./lib/createOrUpdatePullRequest.js
+
+
+
+/**
+ * @param {{
+ *   client: GitHubClient,
+ *   branch: string,
+ *   baseBranch: string,
+ *   title: string,
+ *   pullBody: string,
+ *   labels: string[],
+ *   assignees: string[],
+ * }} params
+ */
+// eslint-disable-next-line max-lines-per-function
+async function createOrUpdatePullRequest({
+  client,
+  branch,
+  baseBranch,
+  title,
+  pullBody,
+  labels,
+  assignees,
+}) {
+  // Find pull request
+  const openPulls = await client.listPullRequest({
+    state: "open",
+    base: baseBranch,
+    sort: "updated",
+    direction: "desc",
+    per_page: 100,
+  });
+  const pull = openPulls.data.find(({ head }) => head.ref === branch);
+
+  if (pull) {
+    const { data: updated } = await client.updatePullRequest({
+      pull_number: pull.number,
+      title,
+      body: pullBody,
+    });
+    info(`The pull request was updated successfully: ${updated.html_url}`);
+    notice(`${PACKAGE_NAME} successfully updated PR #${updated.number}: ${updated.html_url}`);
+    setOutput("pull_request_url", updated.html_url);
+    setOutput("branch_name", updated.head.ref);
+  } else {
+    const { data: created } = await client.createPullRequest({
+      title,
+      body: pullBody,
+      head: branch,
+      base: baseBranch,
+    });
+    info(`The pull request was created successfully: ${created.html_url}`);
+    notice(`${PACKAGE_NAME} successfully created PR #${created.number}: ${created.html_url}`);
+    setOutput("pull_request_url", created.html_url);
+    setOutput("branch_name", created.head.ref);
+
+    const newLabels = await client.addLabels({ issue_number: created.number, labels });
+    info(`The labels were added successfully: ${newLabels.data.map((l) => l.name).join(", ")}`);
+
+    if (assignees.length > 0) {
+      const newAssignees = await client.addAssignees({ issue_number: created.number, assignees });
+      info(
+        `The assignee(s) were added successfully: ${newAssignees.data.assignees?.map((a) => a.login).join(", ") ?? newAssignees.data.assignee}`,
+      );
+    }
+  }
+}
+
+;// CONCATENATED MODULE: ./lib/getDefaultBranch.js
+/**
+ * @param {{client: GitHubClient}} params
+ * @returns {Promise<string>}
+ */
+async function getDefaultBranch({ client }) {
+  const res = await client.getRepository();
+  return res.data.default_branch;
+}
+
 ;// CONCATENATED MODULE: ./node_modules/@actions/github/lib/context.js
 
 
@@ -38893,138 +39062,86 @@ function getOctokit(token, options, ...additionalPlugins) {
     return new GitHubWithPlugins(getOctokitOptions(token, options));
 }
 //# sourceMappingURL=github.js.map
-;// CONCATENATED MODULE: ./lib/utils/splitRepo.js
-/**
- * @param {string} repository
- * @returns {{ owner: string, repo: string }}
- */
-function splitRepo(repository) {
-  const [owner, repo] = repository.split("/", 2);
-  if (owner && repo) {
-    return { owner, repo };
-  }
-  throw new TypeError(`invalid repository: "${repository}"`);
-}
-
-;// CONCATENATED MODULE: ./lib/createOrUpdatePullRequest.js
+;// CONCATENATED MODULE: ./lib/GitHubClient.js
 
 
-
-
-
-
-/**
- * @param {{
- *   token: string,
- *   branch: string,
- *   baseBranch: string,
- *   title: string,
- *   pullBody: string,
- *   commitBody: string,
- *   repository: string,
- *   author: string,
- *   email: string,
- *   labels: string[],
- *   assignees: string[],
- * }} params
- */
-// eslint-disable-next-line max-lines-per-function, max-statements
-async function createOrUpdatePullRequest({
-  token,
-  branch,
-  baseBranch,
-  title,
-  pullBody,
-  commitBody,
-  repository,
-  author,
-  email,
-  labels,
-  assignees,
-}) {
-  const remote = `https://${author}:${token}@github.com/${repository}.git`;
-  const { owner, repo } = splitRepo(repository);
-  const octokit = getOctokit(token);
-
-  // Find pull request
-  const pulls = await octokit.rest.pulls.list({
-    owner,
-    repo,
-    state: "open",
-    base: baseBranch,
-    sort: "updated",
-    direction: "desc",
-    per_page: 100,
-  });
-  const pull = pulls.data.find(({ head }) => head.ref === branch);
-
-  await exec_exec("git", ["config", "user.name", author]);
-  await exec_exec("git", ["config", "user.email", email]);
-  await exec_exec("git", ["add", "package.json", "package-lock.json"]);
-  await exec_exec("git", ["commit", "--message", `${title}\n\n${commitBody}`]);
-  await exec_exec("git", ["checkout", "-B", branch]);
-  await exec_exec("git", ["push", "--force", remote, `HEAD:${branch}`]);
-
-  if (pull) {
-    const { data: updated } = await octokit.rest.pulls.update({
-      owner,
-      repo,
-      pull_number: pull.number,
-      title,
-      body: pullBody,
-    });
-    info(`The pull request was updated successfully: ${updated.html_url}`);
-    notice(`${PACKAGE_NAME} successfully updated PR #${updated.number}: ${updated.html_url}`);
-    setOutput("pull_request_url", updated.html_url);
-    setOutput("branch_name", updated.head.ref);
-  } else {
-    const { data: created } = await octokit.rest.pulls.create({
-      owner,
-      repo,
-      title,
-      body: pullBody,
-      head: branch,
-      base: baseBranch,
-    });
-    info(`The pull request was created successfully: ${created.html_url}`);
-    notice(`${PACKAGE_NAME} successfully created PR #${created.number}: ${created.html_url}`);
-    setOutput("pull_request_url", created.html_url);
-    setOutput("branch_name", created.head.ref);
-
-    const newLabels = await octokit.rest.issues.addLabels({
-      owner,
-      repo,
-      issue_number: created.number,
-      labels,
-    });
-    info(`The labels were added successfully: ${newLabels.data.map((l) => l.name).join(", ")}`);
-
-    if (assignees.length > 0) {
-      const newAssignees = await octokit.rest.issues.addAssignees({
-        owner,
-        repo,
-        issue_number: created.number,
-        assignees,
-      });
-      info(
-        `The assignee(s) were added successfully: ${newAssignees.data.assignees?.map((a) => a.login).join(", ") ?? newAssignees.data.assignee}`,
-      );
+class GitHubClient {
+  /**
+   * @param {{ token: string, repository: string }} params
+   */
+  constructor({ token, repository }) {
+    const [owner, repo] = repository.split("/", 2);
+    if (!owner || !repo) {
+      throw new TypeError(`invalid repository: "${repository}"`);
     }
+    this.octokit = getOctokit(token);
+    this.owner = owner;
+    this.repo = repo;
   }
-}
 
-;// CONCATENATED MODULE: ./lib/getDefaultBranch.js
+  /**
+   * @template T
+   * @param {Record<string, unknown> | undefined} params
+   * @returns {T}
+   */
+  #scoped(params = {}) {
+    return /** @type {T} */ ({ owner: this.owner, repo: this.repo, ...params });
+  }
 
+  /** @param {OctokitParams<Octokit["rest"]["repos"]["get"]>} params */
+  getRepository(params = {}) {
+    return this.octokit.rest.repos.get(this.#scoped(params));
+  }
 
+  /** @param {OctokitParams<Octokit["rest"]["pulls"]["list"]>} params */
+  listPullRequest(params) {
+    return this.octokit.rest.pulls.list(this.#scoped(params));
+  }
 
-/**
- * @param {{token: string, repository: string}} params
- * @returns {Promise<string>}
- */
-async function getDefaultBranch({ token, repository }) {
-  const octokit = getOctokit(token);
-  const res = await octokit.rest.repos.get(splitRepo(repository));
-  return res.data.default_branch;
+  /** @param {OctokitParams<Octokit["rest"]["pulls"]["create"]>} params */
+  createPullRequest(params) {
+    return this.octokit.rest.pulls.create(this.#scoped(params));
+  }
+
+  /** @param {OctokitParams<Octokit["rest"]["pulls"]["update"]>} params */
+  updatePullRequest(params) {
+    return this.octokit.rest.pulls.update(this.#scoped(params));
+  }
+
+  /** @param {OctokitParams<Octokit["rest"]["issues"]["addLabels"]>} params */
+  addLabels(params) {
+    return this.octokit.rest.issues.addLabels(this.#scoped(params));
+  }
+
+  /** @param {OctokitParams<Octokit["rest"]["issues"]["addAssignees"]>} params */
+  addAssignees(params) {
+    return this.octokit.rest.issues.addAssignees(this.#scoped(params));
+  }
+
+  /** @param {OctokitParams<Octokit["rest"]["git"]["getRef"]>} params */
+  getRef(params) {
+    return this.octokit.rest.git.getRef(this.#scoped(params));
+  }
+
+  /** @param {OctokitParams<Octokit["rest"]["git"]["createRef"]>} params */
+  createRef(params) {
+    return this.octokit.rest.git.createRef(this.#scoped(params));
+  }
+
+  /** @param {OctokitParams<Octokit["rest"]["git"]["updateRef"]>} params */
+  updateRef(params) {
+    return this.octokit.rest.git.updateRef(this.#scoped(params));
+  }
+
+  /** @param {OctokitParams<Octokit["rest"]["git"]["createTree"]>} params */
+  createTree(params) {
+    return this.octokit.rest.git.createTree(this.#scoped(params));
+  }
+
+  /** @param {OctokitParams<Octokit["rest"]["git"]["createCommit"]>} params */
+  createCommit(params) {
+    return this.octokit.rest.git.createCommit(this.#scoped(params));
+  }
 }
 
 ;// CONCATENATED MODULE: ./lib/listPackages.js
@@ -39145,20 +39262,11 @@ function commaSeparatedList(str) {
 
 
 
+
+
+
 async function getNpmLocation() {
   return (await getExecOutput("which", ["npm"], { silent: true })).stdout.trim();
-}
-
-/**
- * @returns {Promise<boolean>}
- */
-async function filesChanged() {
-  try {
-    const exitCode = await exec_exec("git", ["diff", "--exit-code"]);
-    return exitCode === 0;
-  } catch {
-    return false;
-  }
 }
 
 /**
@@ -39173,7 +39281,7 @@ function getFromEnv(name) {
   throw new Error(`Not found '${name}' in the environment variables`);
 }
 
-// eslint-disable-next-line max-lines-per-function
+// eslint-disable-next-line max-lines-per-function, max-statements
 async function run() {
   await group("Show runtime info", async () => {
     info(`Node.js version: ${process.version}`);
@@ -39222,44 +39330,47 @@ async function run() {
     return;
   }
 
-  const changed = await group("Check file changes", filesChanged);
-  if (changed) {
+  const files = await group("Check file changes", changedFiles);
+  if (files.length === 0) {
     info("No file changes.");
     return;
   }
 
+  const token = getInput("github_token");
+  const repository = getFromEnv("GITHUB_REPOSITORY");
+  const client = new GitHubClient({ token, repository });
+  const branch = getInput("branch");
+  const title = getInput("commit_title");
+
+  await group("Commit changes", async () => {
+    const { sha } = await commit({
+      client,
+      branch,
+      files,
+      message: `${title}\n\n${buildCommitBody(report)}`,
+      author: { name: getInput("github_user"), email: getInput("github_email") },
+    });
+    info(`Created verified commit ${sha} on '${branch}'`);
+  });
+
   await group("Create or update a pull request", async () => {
-    const token = getInput("github_token");
-    const repository = getFromEnv("GITHUB_REPOSITORY");
-
-    let baseBranch = getInput("default_branch");
-    if (!baseBranch) {
-      baseBranch = await getDefaultBranch({ token, repository });
-    }
-
-    const author = getInput("github_user");
-    const email = getInput("github_email");
-    const assignees = commaSeparatedList(getInput("assignees"));
+    const baseBranch = getInput("default_branch") || (await getDefaultBranch({ client }));
 
     const serverUrl = getFromEnv("GITHUB_SERVER_URL");
     const runId = getFromEnv("GITHUB_RUN_ID");
 
     return createOrUpdatePullRequest({
-      branch: getInput("branch"),
-      token,
+      client,
+      branch,
       baseBranch,
-      title: getInput("commit_title"),
+      title,
       pullBody: buildPullRequestBody({
         report,
         npmVersion,
         github: { serverUrl, repository, runId },
       }),
-      commitBody: buildCommitBody(report),
-      repository,
-      author,
-      email,
       labels: commaSeparatedList(getInput("labels")),
-      assignees,
+      assignees: commaSeparatedList(getInput("assignees")),
     });
   });
 }

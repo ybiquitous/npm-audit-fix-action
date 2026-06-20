@@ -1,7 +1,16 @@
 import type { getOctokit } from "@actions/github";
+// eslint-disable-next-line n/no-missing-import
+import type GitHubClientClass from "./GitHubClient.js";
 
 declare global {
   type Octokit = ReturnType<typeof getOctokit>;
+
+  type GitHubClient = InstanceType<typeof GitHubClientClass>;
+
+  type OctokitParams<T extends (...args: never) => unknown> = Omit<
+    NonNullable<Parameters<T>[0]>,
+    "owner" | "repo"
+  >;
 
   type Finding = {
     version: string;
