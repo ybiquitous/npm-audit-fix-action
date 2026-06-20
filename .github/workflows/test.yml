@@ -40,7 +40,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   smoke:
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest # ubuntu-slim would require setup-node.
     permissions:
       contents: write
       pull-requests: write
