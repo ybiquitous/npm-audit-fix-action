@@ -52,7 +52,7 @@
   "devDependencies": {
     "@tsconfig/strictest": "^2.0.8",
     "@types/hosted-git-info": "^3.0.5",
-    "@vercel/ncc": "^0.44.0",
+    "@vercel/ncc": "^0.44.1",
     "eslint": "^10.6.0",
     "eslint-plugin-n": "^18.2.1",
     "remark-preset-ybiquitous": "^0.5.1",
