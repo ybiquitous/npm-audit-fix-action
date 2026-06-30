@@ -7,14 +7,6 @@ inputs:
     description: "GitHub token."
     required: false
     default: ${{ github.token }}
-  github_user:
-    description: "GitHub user name for commit changes."
-    required: false
-    default: ${{ github.actor }}
-  github_email:
-    description: "GitHub user email for commit changes."
-    required: false
-    default: "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
   branch:
     description: "Created branch."
     required: false
