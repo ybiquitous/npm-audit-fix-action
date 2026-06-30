@@ -80,6 +80,11 @@
         "always",
         300
       ],
+      "footer-max-line-length": [
+        1,
+        "always",
+        150
+      ],
       "header-max-length": [
         1,
         "always",
