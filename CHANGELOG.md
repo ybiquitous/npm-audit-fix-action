@@ -2,6 +2,21 @@
 
 # Changelog
 
+## [8.0.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.11...v8.0.0) (2026-07-02)
+
+### ⚠ BREAKING CHANGES
+
+- commits are now verified.
+- the `github_user` and `github_email` inputs have been removed, so a committer is always the Actions bot.
+
+### Features
+
+- create verified commits and drop `github_user`/`github_email` inputs ([#1251](https://github.com/ybiquitous/npm-audit-fix-action/issues/1251)) ([a1119e4](https://github.com/ybiquitous/npm-audit-fix-action/commit/a1119e4e66279a6f7551bbdc37bbb6189b831bf5))
+
+### Bug Fixes
+
+- **deps:** bump actions/checkout from 6.0.3 to 7.0.0 ([#1252](https://github.com/ybiquitous/npm-audit-fix-action/issues/1252)) ([c05370f](https://github.com/ybiquitous/npm-audit-fix-action/commit/c05370f6fbb851a47d9d9a524eb53ba146b9aaa9))
+
 ## [7.3.11](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.10...v7.3.11) (2026-06-20)
 
 No action behavior changes.
