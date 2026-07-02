@@ -1,3 +1,20 @@
+## [8.0.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.11...v8.0.0) (2026-07-02)
+
+### ⚠ BREAKING CHANGES
+
+- commits are now verified.
+- the `github_user` and `github_email` inputs have been removed, so a committer is always the Actions bot.
+
+### Features
+
+- create verified commits and drop `github_user`/`github_email` inputs ([#1251](https://github.com/ybiquitous/npm-audit-fix-action/issues/1251)) ([a1119e4](https://github.com/ybiquitous/npm-audit-fix-action/commit/a1119e4e66279a6f7551bbdc37bbb6189b831bf5))
+
+### Bug Fixes
+
+- **deps-dev:** bump @vercel/ncc from 0.44.0 to 0.44.1 ([#1255](https://github.com/ybiquitous/npm-audit-fix-action/issues/1255)) ([8d7603e](https://github.com/ybiquitous/npm-audit-fix-action/commit/8d7603ef439085ac24f9b511af0ce1fd6d62be71))
+- **deps-dev:** bump the eslint group with 3 updates ([#1254](https://github.com/ybiquitous/npm-audit-fix-action/issues/1254)) ([017325f](https://github.com/ybiquitous/npm-audit-fix-action/commit/017325f04620938594e5c828c224506810e073bc))
+- **deps-dev:** bump typescript-eslint from 8.61.1 to 8.62.0 in the eslint group ([#1253](https://github.com/ybiquitous/npm-audit-fix-action/issues/1253)) ([be3695c](https://github.com/ybiquitous/npm-audit-fix-action/commit/be3695cbdbdd2e88afc067804f5abb3144e542c3))
+- **deps:** bump actions/checkout from 6.0.3 to 7.0.0 ([#1252](https://github.com/ybiquitous/npm-audit-fix-action/issues/1252)) ([c05370f](https://github.com/ybiquitous/npm-audit-fix-action/commit/c05370f6fbb851a47d9d9a524eb53ba146b9aaa9))
 <!-- lint disable no-duplicate-headings -->
 
 # Changelog
