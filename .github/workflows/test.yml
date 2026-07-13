@@ -74,6 +74,6 @@ jobs:
           fi
 
   lint:
-    uses: ybiquitous/.github/.github/workflows/nodejs-lint-reusable.yml@0ebbcd566ff759b0399d9c036be5c205a03053b1 # v3.1.0
+    uses: ybiquitous/.github/.github/workflows/nodejs-lint-reusable.yml@2f13cf9e69be40562c26464439a9dd258a99cc98 # v3.1.1
     permissions:
       contents: read
