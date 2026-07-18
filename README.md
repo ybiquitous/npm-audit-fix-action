@@ -26,7 +26,7 @@ jobs:
       - name: Check out
         uses: actions/checkout@v7
       - name: Run npm audit fix
-        uses: ybiquitous/npm-audit-fix-action@v7
+        uses: ybiquitous/npm-audit-fix-action@v8
 ```
 
 ### Inputs
