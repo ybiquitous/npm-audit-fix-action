@@ -7,7 +7,7 @@ on:
 
 jobs:
   release:
-    uses: ybiquitous/.github/.github/workflows/nodejs-release-reusable.yml@2f13cf9e69be40562c26464439a9dd258a99cc98 # v3.1.1
+    uses: ybiquitous/.github/.github/workflows/nodejs-release-reusable.yml@cdefa43486604b3aae79e9d1db24b670475f2c92 # v3.2.0
     with:
       publish: false
       draft: false
