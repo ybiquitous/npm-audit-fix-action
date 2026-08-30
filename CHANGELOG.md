@@ -6,11 +6,11 @@
 
 ### ⚠ BREAKING CHANGES
 
-- bump npm from 11 to 12 ([#1290](https://github.com/ybiquitous/npm-audit-fix-action/issues/1290))
+- **deps:** bump npm from 11 to 12 ([#1290](https://github.com/ybiquitous/npm-audit-fix-action/issues/1290))
 
 ### Features
 
-- bump npm from 11 to 12 ([#1290](https://github.com/ybiquitous/npm-audit-fix-action/issues/1290)) ([4e4a26d](https://github.com/ybiquitous/npm-audit-fix-action/commit/4e4a26d7a6055ae93963684b2ef3ac9150a69095))
+- **deps:** bump npm from 11 to 12 ([#1290](https://github.com/ybiquitous/npm-audit-fix-action/issues/1290)) ([4e4a26d](https://github.com/ybiquitous/npm-audit-fix-action/commit/4e4a26d7a6055ae93963684b2ef3ac9150a69095))
 
 ### Bug Fixes
 
