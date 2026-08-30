@@ -83,11 +83,6 @@
       ]
     }
   },
-  "overrides": {
-    "ybiq": {
-      "conventional-changelog-conventionalcommits": "^9.1.0"
-    }
-  },
   "publishConfig": {
     "provenance": true
   }
