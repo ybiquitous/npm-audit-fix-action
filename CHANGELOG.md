@@ -1,6 +1,37 @@
+# Changelog
+
 <!-- lint disable no-duplicate-headings -->
 
-# Changelog
+## [9.0.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v8.0.0...v9.0.0) (2026-08-30)
+
+### ⚠ BREAKING CHANGES
+
+- bump npm from 11 to 12 ([#1290](https://github.com/ybiquitous/npm-audit-fix-action/issues/1290))
+
+### Features
+
+- bump npm from 11 to 12 ([#1290](https://github.com/ybiquitous/npm-audit-fix-action/issues/1290)) ([4e4a26d](https://github.com/ybiquitous/npm-audit-fix-action/commit/4e4a26d7a6055ae93963684b2ef3ac9150a69095))
+
+### Bug Fixes
+
+- **deps-dev:** bump the eslint group with 2 updates ([#1285](https://github.com/ybiquitous/npm-audit-fix-action/issues/1285)) ([c2be52f](https://github.com/ybiquitous/npm-audit-fix-action/commit/c2be52f29bd0ff58cc0f379d1719a45ba0993882))
+- **deps-dev:** bump the eslint group with 2 updates ([#1287](https://github.com/ybiquitous/npm-audit-fix-action/issues/1287)) ([11b18e1](https://github.com/ybiquitous/npm-audit-fix-action/commit/11b18e1a55345641238bc2d45a7fd4cd8d16d8e0))
+- **deps-dev:** bump the eslint group with 3 updates ([#1267](https://github.com/ybiquitous/npm-audit-fix-action/issues/1267)) ([978e31b](https://github.com/ybiquitous/npm-audit-fix-action/commit/978e31ba3afa3bf367559fa2c33e4e40a46e644c))
+- **deps-dev:** bump typescript-eslint from 8.62.1 to 8.63.0 in the eslint group ([#1261](https://github.com/ybiquitous/npm-audit-fix-action/issues/1261)) ([d91c2e8](https://github.com/ybiquitous/npm-audit-fix-action/commit/d91c2e8069bf076ffe6308988897ef5d9bbfa360))
+- **deps:** bump actions/checkout from 7.0.0 to 7.0.1 ([#1274](https://github.com/ybiquitous/npm-audit-fix-action/issues/1274)) ([e09a8ec](https://github.com/ybiquitous/npm-audit-fix-action/commit/e09a8ec41109f4a5a0e2faf8dc290459ee760e8d))
+- **deps:** bump undici from 6.27.0 to 6.28.0 ([#1283](https://github.com/ybiquitous/npm-audit-fix-action/issues/1283)) ([e0eaced](https://github.com/ybiquitous/npm-audit-fix-action/commit/e0eacedf1939303b2547e3f9566a527449028b42))
+- **deps:** bump ybiquitous/.github/.github/workflows/dependabot-auto-merge-reusable.yml from 3.0.2 to 3.1.0 ([#1258](https://github.com/ybiquitous/npm-audit-fix-action/issues/1258)) ([f423936](https://github.com/ybiquitous/npm-audit-fix-action/commit/f423936d03ff424573832f0c4c1cfb32d61b3892))
+- **deps:** bump ybiquitous/.github/.github/workflows/dependabot-auto-merge-reusable.yml from 3.1.0 to 3.1.1 ([#1264](https://github.com/ybiquitous/npm-audit-fix-action/issues/1264)) ([cd42824](https://github.com/ybiquitous/npm-audit-fix-action/commit/cd42824634ad01e0ba097935015165b76fb40efe))
+- **deps:** bump ybiquitous/.github/.github/workflows/dependabot-auto-merge-reusable.yml from 3.1.1 to 3.2.0 ([#1270](https://github.com/ybiquitous/npm-audit-fix-action/issues/1270)) ([5db40c5](https://github.com/ybiquitous/npm-audit-fix-action/commit/5db40c5d987c4989012f0d9280753e172f93a52f))
+- **deps:** bump ybiquitous/.github/.github/workflows/nodejs-lint-reusable.yml from 3.0.2 to 3.1.0 ([#1259](https://github.com/ybiquitous/npm-audit-fix-action/issues/1259)) ([ebe03f6](https://github.com/ybiquitous/npm-audit-fix-action/commit/ebe03f6705864b0863d697ba74d95bf9f25534fd))
+- **deps:** bump ybiquitous/.github/.github/workflows/nodejs-lint-reusable.yml from 3.1.0 to 3.1.1 ([#1263](https://github.com/ybiquitous/npm-audit-fix-action/issues/1263)) ([b417a91](https://github.com/ybiquitous/npm-audit-fix-action/commit/b417a91da5c3bd86b521904583f15f0b1ee2ec47))
+- **deps:** bump ybiquitous/.github/.github/workflows/nodejs-lint-reusable.yml from 3.1.1 to 3.2.0 ([#1277](https://github.com/ybiquitous/npm-audit-fix-action/issues/1277)) ([c37d001](https://github.com/ybiquitous/npm-audit-fix-action/commit/c37d001dc39916056b581d29ce2794e1bce9f62d))
+- **deps:** bump ybiquitous/.github/.github/workflows/nodejs-release-pr-reusable.yml from 3.0.2 to 3.1.0 ([#1262](https://github.com/ybiquitous/npm-audit-fix-action/issues/1262)) ([a54c2dc](https://github.com/ybiquitous/npm-audit-fix-action/commit/a54c2dca06707c4cc28623a3cefddaf66842804e))
+- **deps:** bump ybiquitous/.github/.github/workflows/nodejs-release-pr-reusable.yml from 3.1.0 to 3.1.1 ([#1266](https://github.com/ybiquitous/npm-audit-fix-action/issues/1266)) ([cc543f7](https://github.com/ybiquitous/npm-audit-fix-action/commit/cc543f749af261b7be775f982c4cfc5d5b2ca637))
+- **deps:** bump ybiquitous/.github/.github/workflows/nodejs-release-pr-reusable.yml from 3.1.1 to 3.2.0 ([#1271](https://github.com/ybiquitous/npm-audit-fix-action/issues/1271)) ([bbcdbfa](https://github.com/ybiquitous/npm-audit-fix-action/commit/bbcdbfa491f38d34c8305d4bef1233d5ca354b68))
+- **deps:** bump ybiquitous/.github/.github/workflows/nodejs-release-reusable.yml from 3.0.2 to 3.1.0 ([#1260](https://github.com/ybiquitous/npm-audit-fix-action/issues/1260)) ([d1f9105](https://github.com/ybiquitous/npm-audit-fix-action/commit/d1f91052328507e89cb99d60ad561f83b6bf64de))
+- **deps:** bump ybiquitous/.github/.github/workflows/nodejs-release-reusable.yml from 3.1.0 to 3.1.1 ([#1265](https://github.com/ybiquitous/npm-audit-fix-action/issues/1265)) ([65f38b7](https://github.com/ybiquitous/npm-audit-fix-action/commit/65f38b74364f6115cc7123af1d9b883081281d01))
+- **deps:** bump ybiquitous/.github/.github/workflows/nodejs-release-reusable.yml from 3.1.1 to 3.2.0 ([#1273](https://github.com/ybiquitous/npm-audit-fix-action/issues/1273)) ([c6c41d7](https://github.com/ybiquitous/npm-audit-fix-action/commit/c6c41d74eb6fe2390c083046e111e0be0f50757c))
 
 ## [8.0.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v7.3.11...v8.0.0) (2026-07-02)
 
