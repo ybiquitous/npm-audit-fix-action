@@ -18,7 +18,7 @@
   "type": "module",
   "main": "lib/index.js",
   "scripts": {
-    "prepare": "husky",
+    "prepare": "git config set --local core.hooksPath .githooks || true",
     "postprepare": "npm run build",
     "build": "ncc build lib/index.js",
     "pretest": "npm run lint",
@@ -38,9 +38,9 @@
     "prettier": "prettier --cache .",
     "format": "ybiq run --npm lint:js:fix lint:md:fix lint:styles:fix",
     "prerelease": "git switch main && git pull && npm ci && npm run clean && npm test && npm run clean",
-    "clean": "git clean -dx --force --exclude=node_modules --exclude=.husky",
-    "changelog": "if [ ! -f CHANGELOG.md ]; then opts='--first-release' ; fi && conventional-changelog --preset conventional-changelog-conventionalcommits $opts && prettier --write CHANGELOG.md",
-    "changelog:dryrun": "npm version \"${NEW_VERSION:-major}\" --no-git-tag-version && git --no-pager diff CHANGELOG.md && git checkout CHANGELOG.md package.json package-lock.json",
+    "clean": "git clean -dx --force --exclude=node_modules",
+    "changelog": "ybiq changelog",
+    "changelog:dryrun": "ybiq changelog --dry-run",
     "postversion": "npm run changelog"
   },
   "dependencies": {
@@ -63,7 +63,7 @@
   },
   "lint-staged": {
     "!(dist)/**/*.{js,jsx,cjs,mjs,ts,tsx}": "eslint --cache --fix",
-    "!(dist/**|**/*.snap|.husky/**)": "prettier --cache --write",
+    "!(dist/**|**/*.snapshot|.githooks/**)": "prettier --cache --write",
     "!(CHANGELOG).md": "remark --frail"
   },
   "remarkConfig": {
@@ -80,16 +80,6 @@
         1,
         "always",
         300
-      ],
-      "footer-max-line-length": [
-        1,
-        "always",
-        150
-      ],
-      "header-max-length": [
-        1,
-        "always",
-        150
       ]
     }
   },
@@ -97,5 +87,8 @@
     "ybiq": {
       "conventional-changelog-conventionalcommits": "^9.1.0"
     }
+  },
+  "publishConfig": {
+    "provenance": true
   }
 }

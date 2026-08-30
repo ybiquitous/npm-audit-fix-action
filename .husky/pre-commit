@@ -1,2 +1,0 @@
-lint-staged
-npm run prepare && git add --force dist/
