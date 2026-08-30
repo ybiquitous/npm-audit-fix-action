@@ -34778,7 +34778,7 @@ function buildCommitBody({ updated, added, removed }) {
 ;// CONCATENATED MODULE: ./lib/constants.js
 const PACKAGE_NAME = "ybiquitous/npm-audit-fix-action";
 const PACKAGE_URL = "https://github.com/ybiquitous/npm-audit-fix-action";
-const NPM_VERSION = "11";
+const NPM_VERSION = "12";
 
 ;// CONCATENATED MODULE: ./lib/buildPullRequestBody.js
 
