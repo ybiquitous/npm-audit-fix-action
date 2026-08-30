@@ -13,7 +13,15 @@ updates:
         patterns: ["jest", "@jest/*"]
       typescript:
         patterns: ["typescript", "@types/*"]
+    cooldown:
+      exclude: ["ybiq"]
+
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: weekly
+    groups:
+      ybiquitous-actions:
+        patterns: ["ybiquitous/.github/*"]
+    cooldown:
+      exclude: ["ybiquitous/.github/*"]
