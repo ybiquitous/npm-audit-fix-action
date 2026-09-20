@@ -34920,7 +34920,27 @@ function buildPullRequestBody({ report, npmVersion, github }) {
   return lines.join("\n").trim();
 }
 
+;// CONCATENATED MODULE: ./lib/utils/separatedList.js
+/**
+ * @param {string} str
+ * @returns {string}
+ */
+function trim(str) {
+  return str.trim();
+}
+
+/**
+ * @param {string} str
+ * @param {string | RegExp} separator
+ * @returns {string[]}
+ */
+function separatedList(str, separator) {
+  return str.split(separator).map(trim).filter(Boolean);
+}
+
 ;// CONCATENATED MODULE: ./lib/changedFiles.js
+
+
 
 
 
@@ -34932,11 +34952,7 @@ const ALLOWED_FILES = new Set(["package.json", "package-lock.json"]);
  */
 async function changedFiles(execFn = getExecOutput) {
   const { stdout } = await execFn("git", ["diff", "--name-only", "--relative", "HEAD"]);
-  const all = stdout
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
-
+  const all = separatedList(stdout, "\n");
   const allowed = all.filter((file) => ALLOWED_FILES.has(file));
   const ignored = all.filter((file) => !ALLOWED_FILES.has(file));
   if (ignored.length > 0) {
@@ -39340,15 +39356,30 @@ async function listPackages(options = {}) {
   return packages;
 }
 
+// EXTERNAL MODULE: external "node:util"
+var external_node_util_ = __nccwpck_require__(7975);
 ;// CONCATENATED MODULE: ./lib/mergeReports.js
+
+
+/**
+ * @template T
+ * @param {T[]} array
+ * @returns {T[]}
+ */
+function unique(array) {
+  return array.filter(
+    (elem, index, self) => index === self.findIndex((elem2) => (0,external_node_util_.isDeepStrictEqual)(elem, elem2)),
+  );
+}
+
 /**
  * @param {Report[]} reports
  * @returns {Report}
  */
 function mergeReports(reports) {
-  const added = new Set(reports.flatMap((report) => report.added));
-  const removed = new Set(reports.flatMap((report) => report.removed));
-  const updated = new Set(reports.flatMap((report) => report.updated));
+  const added = unique(reports.flatMap((report) => report.added));
+  const removed = unique(reports.flatMap((report) => report.removed));
+  const updated = unique(reports.flatMap((report) => report.updated));
 
   /** @type {Record<string, UrlInfo>} */
   const packageUrls = {};
@@ -39358,13 +39389,7 @@ function mergeReports(reports) {
 
   const packageCount = new Set([...added, ...removed, ...updated].map((entry) => entry.name)).size;
 
-  return {
-    added: [...added],
-    removed: [...removed],
-    updated: [...updated],
-    packageCount,
-    packageUrls,
-  };
+  return { added, removed, updated, packageCount, packageUrls };
 }
 
 ;// CONCATENATED MODULE: ./lib/resolveDirPaths.js
@@ -39468,24 +39493,6 @@ async function updateNpm(version) {
   await exec_exec("sudo", ["chown", "-R", `${process.env["USER"]}:`, `${process.env["HOME"]}/.config`]);
 
   return newVersion;
-}
-
-;// CONCATENATED MODULE: ./lib/utils/separatedList.js
-/**
- * @param {string} str
- * @returns {string}
- */
-function trim(str) {
-  return str.trim();
-}
-
-/**
- * @param {string} str
- * @param {string | RegExp} separator
- * @returns {string[]}
- */
-function separatedList(str, separator) {
-  return str.split(separator).map(trim).filter(Boolean);
 }
 
 ;// CONCATENATED MODULE: ./lib/index.js
