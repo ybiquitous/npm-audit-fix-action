@@ -47,7 +47,7 @@ jobs:
           pr_head_ref: ${{ github.event.pull_request.head.ref }}
         run: |
           npm run build
-          if git diff --exit-code dist/; then
+          if git diff --exit-code dist/ ; then
             echo "No changes."
             exit 0
           fi
