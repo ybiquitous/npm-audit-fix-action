@@ -31,16 +31,16 @@ jobs:
 
 ### Inputs
 
-| Name             | Description                                                                                  | Default                              |
-| ---------------- | -------------------------------------------------------------------------------------------- | ------------------------------------ |
-| `github_token`   | GitHub token.                                                                                | `${{ github.token }}`                |
-| `branch`         | Created branch.                                                                              | `npm-audit-fix-action/fix`           |
-| `default_branch` | Default branch.                                                                              | Auto-detected.                       |
-| `commit_title`   | Commit message and pull request title.                                                       | `build(deps): npm audit fix`         |
-| `labels`         | Labels for pull request (comma-separated).                                                   | `dependencies, javascript, security` |
-| `assignees`      | Assignees for pull request (comma-separated).                                                | n/a                                  |
-| `npm_args`       | Arguments for the `npm` command.                                                             | n/a                                  |
-| `path`           | Directory path(s) or glob pattern(s) that locate `package.json` (comma- or space-separated). | `.` (current directory)              |
+| Name             | Description                                                                                | Default                              |
+| ---------------- | ------------------------------------------------------------------------------------------ | ------------------------------------ |
+| `github_token`   | GitHub token.                                                                              | `${{ github.token }}`                |
+| `branch`         | Created branch.                                                                            | `npm-audit-fix-action/fix`           |
+| `default_branch` | Default branch.                                                                            | Auto-detected.                       |
+| `commit_title`   | Commit message and pull request title.                                                     | `build(deps): npm audit fix`         |
+| `labels`         | Labels for pull request (comma-separated).                                                 | `dependencies, javascript, security` |
+| `assignees`      | Assignees for pull request (comma-separated).                                              | n/a                                  |
+| `npm_args`       | Arguments for the `npm` command.                                                           | n/a                                  |
+| `path`           | Directory path(s) or glob pattern(s) to locate `package.json` (comma- or space-separated). | `.` (current directory)              |
 
 ### Outputs
 
@@ -55,7 +55,7 @@ For more details, see [`action.yml`](action.yml).
 
 ### Monorepo
 
-Assume that the project root is checked out. The following sets the `path` input to a space-separated list, including `.` (the current directory):
+Assuming the project root is checked out, the following sets the `path` input to a space-separated list that includes `.` (the current directory):
 
 ```yaml
 - uses: ybiquitous/npm-audit-fix-action@v9
