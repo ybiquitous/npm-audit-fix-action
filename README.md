@@ -67,7 +67,7 @@ Given:
         └── package.json
 ```
 
-Assuming the project root is checked out, the following sets the `path` input to a space-separated list that includes `.` (the current directory):
+Assuming the project root is checked out, the following sets the `path` input to a space-separated list, i.e., `[".", "packages/*"]`:
 
 ```yaml
 - uses: ybiquitous/npm-audit-fix-action@v9
