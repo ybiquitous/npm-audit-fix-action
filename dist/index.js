@@ -39361,7 +39361,7 @@ function mergeReports(reports) {
   return { added, removed, updated, packageCount, packageUrls };
 }
 
-;// CONCATENATED MODULE: ./lib/resolvePaths.js
+;// CONCATENATED MODULE: ./lib/resolveDirPaths.js
 
 
 
@@ -39369,11 +39369,14 @@ function mergeReports(reports) {
  * @param {string} dirPath
  * @returns {Promise<boolean>}
  */
-async function resolvePaths_isDirectory(dirPath) {
+async function resolveDirPaths_isDirectory(dirPath) {
   try {
-    return (await (0,promises_namespaceObject.stat)(dirPath)).isDirectory();
-  } catch {
-    return false;
+    // TODO: `{ throwIfNoEntry: false }` option will make the error catching unneeded.
+    const dir = await promises_namespaceObject.stat(dirPath);
+    return Boolean(dir?.isDirectory());
+  } catch (e) {
+    if (e instanceof Error && "code" in e && e.code === "ENOENT") return false;
+    throw e;
   }
 }
 
@@ -39381,44 +39384,39 @@ async function resolvePaths_isDirectory(dirPath) {
  * @param {string} dirPath
  * @returns {string}
  */
-function toPosixRelativePath(dirPath) {
-  const posixPath = dirPath.split(external_node_path_namespaceObject.sep).join("/");
-  return posixPath === "" ? "." : posixPath;
+function resolveDirPaths_toPosixPath(dirPath) {
+  return dirPath.split(external_node_path_namespaceObject.sep).join(external_node_path_namespaceObject.posix.sep);
 }
 
 /**
- * Resolves directory paths from a list of literal paths and/or glob patterns.
- *
  * @param {string[]} patterns
- * @param {string} [cwd]
- * @returns {Promise<string[]>}
+ * @param {string} baseDir
+ * @returns {Promise<{ resolved: string[], failed: string[] }>}
  */
-async function resolvePaths(patterns, cwd = process.cwd()) {
+async function resolveDirPaths(patterns, baseDir) {
   /** @type {Set<string>} */
   const resolved = new Set();
+  /** @type {Set<string>} */
+  const failed = new Set();
 
   for (const pattern of patterns) {
-    // A literal, existing directory is used as-is, without being treated as a glob pattern.
-    if (await resolvePaths_isDirectory(external_node_path_namespaceObject.join(cwd, pattern))) {
-      resolved.add(toPosixRelativePath(pattern));
+    if (await resolveDirPaths_isDirectory(external_node_path_namespaceObject.join(baseDir, pattern))) {
+      resolved.add(resolveDirPaths_toPosixPath(pattern));
       continue;
     }
 
     let matched = false;
-    for await (const entry of (0,promises_namespaceObject.glob)(pattern, { cwd, withFileTypes: true })) {
+    for await (const entry of promises_namespaceObject.glob(pattern, { cwd: baseDir, withFileTypes: true })) {
       if (entry.isDirectory()) {
         matched = true;
-        const relativePath = external_node_path_namespaceObject.relative(cwd, external_node_path_namespaceObject.join(entry.parentPath, entry.name));
-        resolved.add(toPosixRelativePath(relativePath));
+        const relativePath = external_node_path_namespaceObject.relative(baseDir, external_node_path_namespaceObject.join(entry.parentPath, entry.name));
+        resolved.add(resolveDirPaths_toPosixPath(relativePath));
       }
     }
-
-    if (!matched) {
-      throw new Error(`No directory matched for the "path" input: "${pattern}"`);
-    }
+    if (!matched) failed.add(pattern);
   }
 
-  return Array.from(resolved).sort();
+  return { resolved: Array.from(resolved).sort(), failed: Array.from(failed).sort() };
 }
 
 ;// CONCATENATED MODULE: ./lib/getNpmVersion.js
@@ -39523,15 +39521,9 @@ function getFromEnv(name) {
 }
 
 /**
- * Runs the `npm audit fix` workflow for a single directory.
- *
- * @param {string} targetPath
  * @returns {Promise<{ report: Report, files: string[] }>}
  */
-async function processPath(targetPath) {
-  process.chdir(targetPath);
-  info(`Current directory: ${process.cwd()}`);
-
+async function processDir() {
   await group("Install user packages", async () => {
     await exec_exec("npm", npmArgs("ci"));
   });
@@ -39578,12 +39570,25 @@ async function run() {
     return await updateNpm(NPM_VERSION);
   });
 
-  const rootDir = process.cwd();
-  const pathPatterns = separatedList(getInput("path"), /[,\s]+/u);
+  const inputPath = getInput("path") || ".";
+  const pathPatterns = separatedList(inputPath, /[,\s]+/u);
 
-  const targetPaths = await group("Resolve paths", async () => {
-    const resolved = await resolvePaths(pathPatterns, rootDir);
-    info(`Target paths: ${resolved.join(", ")}`);
+  if (pathPatterns.length === 0) {
+    throw new Error(`"path" input must not be empty`);
+  }
+
+  const rootDir = process.cwd();
+  const targetDirs = await group("Resolve input paths", async () => {
+    const { resolved, failed } = await resolveDirPaths(pathPatterns, rootDir);
+
+    /** @type {(list: string[]) => string} */
+    const patternsToText = (list) => list.map((s) => `"${s}"`).join(", ");
+
+    if (failed.length > 0) {
+      throw new Error(`No such directories matching patterns: ${patternsToText(failed)}`);
+    }
+
+    info(`Target directories: ${patternsToText(resolved)}`);
     return resolved;
   });
 
@@ -39592,12 +39597,12 @@ async function run() {
   /** @type {string[]} */
   const files = [];
 
-  for (const targetPath of targetPaths) {
-    await group(`Process path: "${targetPath}"`, async () => {
-      process.chdir(rootDir);
-      const result = await processPath(targetPath);
-      reports.push(result.report);
-      files.push(...result.files.map((file) => external_node_path_namespaceObject.posix.join(targetPath, file)));
+  for (const targetDir of targetDirs) {
+    await group(`Process directory: "${targetDir}"`, async () => {
+      process.chdir(targetDir);
+      const { report, files } = await processDir();
+      reports.push(report);
+      files.push(...files.map((file) => external_node_path_namespaceObject.posix.join(targetDir, file)));
     });
   }
 
