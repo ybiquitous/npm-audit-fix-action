@@ -39346,9 +39346,9 @@ async function listPackages(options = {}) {
  * @returns {Report}
  */
 function mergeReports(reports) {
-  const added = reports.flatMap((report) => report.added);
-  const removed = reports.flatMap((report) => report.removed);
-  const updated = reports.flatMap((report) => report.updated);
+  const added = new Set(reports.flatMap((report) => report.added));
+  const removed = new Set(reports.flatMap((report) => report.removed));
+  const updated = new Set(reports.flatMap((report) => report.updated));
 
   /** @type {Record<string, UrlInfo>} */
   const packageUrls = {};
@@ -39358,7 +39358,13 @@ function mergeReports(reports) {
 
   const packageCount = new Set([...added, ...removed, ...updated].map((entry) => entry.name)).size;
 
-  return { added, removed, updated, packageCount, packageUrls };
+  return {
+    added: [...added],
+    removed: [...removed],
+    updated: [...updated],
+    packageCount,
+    packageUrls,
+  };
 }
 
 ;// CONCATENATED MODULE: ./lib/resolveDirPaths.js
