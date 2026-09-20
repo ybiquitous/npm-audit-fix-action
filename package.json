@@ -63,7 +63,7 @@
   },
   "lint-staged": {
     "!(dist)/**/*.{js,jsx,cjs,mjs,ts,tsx}": "eslint --cache --fix",
-    "!(dist/**|**/*.{snapshot,txt}|.githooks/**)": "prettier --cache --write",
+    "!(dist/**|**/*.snapshot|.githooks/**)": "prettier --cache --write",
     "!(CHANGELOG).md": "remark --frail"
   },
   "remarkConfig": {
