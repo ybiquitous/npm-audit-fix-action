@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "name": "@npm-audit-fix-action/example-subproject-b",
+  "version": "1.0.0",
+  "dependencies": {
+    "undici": "^6.23.0"
+  }
+}
