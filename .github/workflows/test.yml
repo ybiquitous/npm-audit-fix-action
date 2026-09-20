@@ -108,8 +108,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           sleep 3
-          gh pr close --delete-branch "${pr_url}"
-          gh pr close --delete-branch "${pr_url_2}"
+          if [[ -z "${pr_url}" ]]; then
+            gh pr close --delete-branch "${pr_url}"
+          fi
+          if [[ -z "${pr_url_2}" ]]; then
+            gh pr close --delete-branch "${pr_url_2}"
+          fi
 
   lint:
     uses: ybiquitous/.github/.github/workflows/nodejs-lint-reusable.yml@11134ce0efbe36bdd758ab41e38fd8e05bf0a10d # v3.3.0
