@@ -96,11 +96,10 @@ jobs:
           fi
       - name: Run local action for subprojects
         uses: ./
-        working-directory: examples/subprojects
         with:
           branch: "npm-audit-fix-action/test-subprojects"
           commit_title: "test(deps): npm audit fix for subprojects"
-          path: "project-a, project-b"
+          path: "examples/subprojects/project-a, examples/subprojects/project-b"
 
   lint:
     uses: ybiquitous/.github/.github/workflows/nodejs-lint-reusable.yml@5e88270a455e5daf2387974dcb3cdea448076387 # v3.2.2
