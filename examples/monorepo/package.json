@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "name": "@npm-audit-fix-action/example-monorepo",
+  "version": "1.0.0",
+  "dependencies": {
+    "flatted": "^3.4.1"
+  }
+}
