@@ -108,10 +108,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           sleep 3
-          if [[ -z "${pr_url}" ]]; then
+          if [[ -n "${pr_url}" ]]; then
             gh pr ready --undo "${pr_url}"
           fi
-          if [[ -z "${pr_url_2}" ]]; then
+          if [[ -n "${pr_url_2}" ]]; then
             gh pr ready --undo "${pr_url_2}"
           fi
 
