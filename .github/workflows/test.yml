@@ -95,11 +95,20 @@ jobs:
             exit 1
           fi
       - name: Run local action for subprojects
+        id: npm-audit-fix-2
         uses: ./
         with:
           branch: "npm-audit-fix-action/test-subprojects"
           commit_title: "test(deps): npm audit fix for subprojects"
           path: "examples/subprojects/project-a, examples/subprojects/project-b"
+      - name: Close test PRs
+        env:
+          pr_url: ${{ steps.npm-audit-fix.outputs.pull_request_url }}
+          pr_url_2: ${{ steps.npm-audit-fix-2.outputs.pull_request_url }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr close --delete-branch "${pr_url}"
+          gh pr close --delete-branch "${pr_url2}"
 
   lint:
     uses: ybiquitous/.github/.github/workflows/nodejs-lint-reusable.yml@5e88270a455e5daf2387974dcb3cdea448076387 # v3.2.2
