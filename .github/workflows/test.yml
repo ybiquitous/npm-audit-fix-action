@@ -42,7 +42,6 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Build
-        if: ${{ github.event.pull_request.head.ref && github.event.pull_request.head.repo.full_name == github.repository }}
         env:
           pr_head_ref: ${{ github.event.pull_request.head.ref }}
         run: |
