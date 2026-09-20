@@ -83,7 +83,7 @@ The `path` input is a space-separated list (i.e., `[".", "packages/*"]`):
 
 Then, the target files are: `package.json`, `packages/pkg-a/package.json`, and `packages/pkg-b/package.json`.
 
-## Subprojects
+### Subprojects
 
 Given:
 
