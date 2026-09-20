@@ -29,7 +29,7 @@ inputs:
     description: "Arguments for the `npm` command."
     required: false
   path:
-    description: "Directory path(s) or glob pattern(s) that locate `package.json` (comma-, space-, or newline-separated). Defaults to the current directory."
+    description: "Directory path(s) or glob pattern(s) that locate `package.json` (comma- or space-separated). Defaults to the current directory."
     required: false
     default: "."
 
