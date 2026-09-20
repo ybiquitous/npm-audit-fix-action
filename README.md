@@ -51,6 +51,10 @@ jobs:
 
 For more details, see [`action.yml`](action.yml).
 
+## Screenshot
+
+![A pull request created by npm-audit-fix-action](screenshot.png)
+
 ## Examples
 
 ### Monorepo
@@ -62,12 +66,12 @@ Given:
 ├── package.json
 └── packages/
     ├── pkg-a/
-    │   └── package.json
+    │   └── package.json
     └── pkg-b/
         └── package.json
 ```
 
-Assuming the project root is checked out, the following sets the `path` input to a space-separated list, i.e., `[".", "packages/*"]`:
+The `path` input is a space-separated list (i.e., `[".", "packages/*"]`):
 
 ```yaml
 - uses: ybiquitous/npm-audit-fix-action@v9
@@ -77,11 +81,29 @@ Assuming the project root is checked out, the following sets the `path` input to
       packages/*
 ```
 
-In this case, target files are: `package.json`, `packages/pkg-a/package.json`, and `packages/pkg-b/package.json`.
+Then, the target files are: `package.json`, `packages/pkg-a/package.json`, and `packages/pkg-b/package.json`.
 
-## Screenshot
+## Subprojects
 
-![A pull request created by npm-audit-fix-action](screenshot.png)
+Given:
+
+```txt
+/
+├── project-a/
+│   └── package.json
+└── project-b/
+    └── package.json/
+```
+
+The `path` input is a comma-separated list:
+
+```yaml
+- uses: ybiquitous/npm-audit-fix-action@v9
+  with:
+    path: project-a, project-b
+```
+
+Then, the target files are: `package.json`, `packages/pkg-a/package.json`, and `packages/pkg-b/package.json`.
 
 ## License
 
