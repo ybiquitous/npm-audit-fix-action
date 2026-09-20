@@ -107,8 +107,9 @@ jobs:
           pr_url_2: ${{ steps.npm-audit-fix-2.outputs.pull_request_url }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh pr close "${pr_url}"
-          gh pr close "${pr_url2}"
+          sleep 3
+          gh pr close --delete-branch "${pr_url}"
+          gh pr close --delete-branch "${pr_url2}"
 
   lint:
     uses: ybiquitous/.github/.github/workflows/nodejs-lint-reusable.yml@5e88270a455e5daf2387974dcb3cdea448076387 # v3.2.2
