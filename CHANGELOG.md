@@ -2,6 +2,12 @@
 
 <!-- lint disable no-duplicate-headings -->
 
+## [9.1.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v9.0.0...v9.1.0) (2026-09-20)
+
+### Features
+
+- support multiple `path` inputs ([#1306](https://github.com/ybiquitous/npm-audit-fix-action/issues/1306)) ([e710de5](https://github.com/ybiquitous/npm-audit-fix-action/commit/e710de5a39f7e45f0ae1ba4fd213a5401cc4a6c0))
+
 ## [9.0.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v8.0.0...v9.0.0) (2026-08-30)
 
 ### ⚠ BREAKING CHANGES
