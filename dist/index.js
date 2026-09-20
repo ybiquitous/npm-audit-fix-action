@@ -39600,14 +39600,15 @@ async function run() {
   for (const targetDir of targetDirs) {
     await group(`Process directory: "${targetDir}"`, async () => {
       process.chdir(targetDir);
-      const { report, files } = await processDir();
-      info(`files: ${JSON.stringify(files)}`); // debug
+      const { report, files: newFiles } = await processDir();
+      info(`newFiles: ${JSON.stringify(newFiles)}`); // debug
       reports.push(report);
-      files.push(...files.map((file) => external_node_path_namespaceObject.posix.join(targetDir, file)));
+      files.push(...newFiles.map((file) => external_node_path_namespaceObject.posix.join(targetDir, file)));
     });
 
     process.chdir(baseDir);
   }
+  info(`files: ${JSON.stringify(files)}`); // debug
 
   const report = mergeReports(reports);
   if (report.packageCount === 0) {
