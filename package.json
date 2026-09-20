@@ -20,7 +20,7 @@
   "scripts": {
     "prepare": "git config set --local core.hooksPath .githooks || true",
     "postprepare": "npm run build",
-    "build": "ncc build lib/index.js",
+    "build": "ncc build lib/index.js --license=LICENSE.txt",
     "pretest": "npm run lint",
     "test": "node --test",
     "test:watch": "npm --ignore-scripts test -- --watch",
