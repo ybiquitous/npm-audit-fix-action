@@ -69,6 +69,11 @@ jobs:
       - name: Run local action
         id: npm-audit-fix
         uses: ./
+        with:
+          path: |
+            .
+            examples/monorepo
+            examples/monorepo/packages/*
       - name: Verify outputs
         if: ${{ steps.npm-audit-fix.outputs.pull_request_url }}
         shell: bash

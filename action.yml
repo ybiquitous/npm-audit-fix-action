@@ -23,13 +23,13 @@ inputs:
     required: false
     default: "dependencies, javascript, security"
   assignees:
-    description: "Assignees for pull request (comma-separated)"
+    description: "Assignees for pull request (comma-separated)."
     required: false
   npm_args:
     description: "Arguments for the `npm` command."
     required: false
   path:
-    description: "Path to the project root directory."
+    description: "Directory path(s) or glob pattern(s) to locate `package.json` (comma- or space-separated). Defaults to the current directory."
     required: false
     default: "."
 

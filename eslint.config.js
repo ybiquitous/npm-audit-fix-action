@@ -21,6 +21,7 @@ export default defineConfig([
     rules: {
       "max-lines-per-function": "warn",
       "max-statements": ["warn", 20],
+      "no-shadow": "error",
     },
   },
   {
