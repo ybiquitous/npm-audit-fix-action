@@ -98,7 +98,7 @@ jobs:
         uses: ./
         with:
           branch: "npm-audit-fix-action/test-subprojects"
-          commit_title: "test(deps): npm audit fix for monorepo"
+          commit_title: "test(deps): npm audit fix for subprojects"
           path: "examples/subprojects/project-a, examples/subprojects/project-b"
 
   lint:
