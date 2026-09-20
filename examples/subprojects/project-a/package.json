@@ -3,6 +3,6 @@
   "name": "@npm-audit-fix-action/example-subproject-a",
   "version": "1.0.0",
   "dependencies": {
-    "flatted": "^3.4.1"
+    "flatted": "^3.4.2"
   }
 }

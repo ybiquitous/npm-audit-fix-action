@@ -3,6 +3,6 @@
   "name": "@npm-audit-fix-action/example-subproject-b",
   "version": "1.0.0",
   "dependencies": {
-    "undici": "^6.23.0"
+    "undici": "^6.28.0"
   }
 }
