@@ -101,18 +101,18 @@ jobs:
           branch: "npm-audit-fix-action/test-subprojects"
           commit_title: "test(deps): npm audit fix for subprojects"
           path: "examples/subprojects/project-a, examples/subprojects/project-b"
-      - name: Close test PRs
+      - name: Move test PRs to draft # Prevent PRs from increasing
         env:
           pr_url: ${{ steps.npm-audit-fix.outputs.pull_request_url }}
           pr_url_2: ${{ steps.npm-audit-fix-2.outputs.pull_request_url }}
           GH_TOKEN: ${{ github.token }}
         run: |
           sleep 3
-          if [[ -z "${pr_url}" ]]; then
-            gh pr close --delete-branch "${pr_url}"
+          if [[ -n "${pr_url}" ]]; then
+            gh pr ready --undo "${pr_url}"
           fi
-          if [[ -z "${pr_url_2}" ]]; then
-            gh pr close --delete-branch "${pr_url_2}"
+          if [[ -n "${pr_url_2}" ]]; then
+            gh pr ready --undo "${pr_url_2}"
           fi
 
   lint:
