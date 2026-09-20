@@ -66,9 +66,16 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - name: Run local action
+      - name: Run local action for monorepo
         id: npm-audit-fix
         uses: ./
+        with:
+          branch: "npm-audit-fix-action/test-monorepo"
+          commit_title: "test(deps): npm audit fix for monorepo"
+          path: |
+            .
+            examples/monorepo
+            examples/monorepo/packages/*
       - name: Verify outputs
         if: ${{ steps.npm-audit-fix.outputs.pull_request_url }}
         shell: bash
@@ -87,6 +94,22 @@ jobs:
             echo "::error::Branch names are unexpected: '${branch_name}' != '${head_ref_name}'"
             exit 1
           fi
+      - name: Run local action for subprojects
+        id: npm-audit-fix-2
+        uses: ./
+        with:
+          branch: "npm-audit-fix-action/test-subprojects"
+          commit_title: "test(deps): npm audit fix for subprojects"
+          path: "examples/subprojects/project-a, examples/subprojects/project-b"
+      - name: Close test PRs
+        env:
+          pr_url: ${{ steps.npm-audit-fix.outputs.pull_request_url }}
+          pr_url_2: ${{ steps.npm-audit-fix-2.outputs.pull_request_url }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sleep 3
+          gh pr close --delete-branch "${pr_url}"
+          gh pr close --delete-branch "${pr_url2}"
 
   lint:
     uses: ybiquitous/.github/.github/workflows/nodejs-lint-reusable.yml@5e88270a455e5daf2387974dcb3cdea448076387 # v3.2.2
