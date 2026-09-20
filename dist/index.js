@@ -39524,3 +39524,5 @@ async function run() {
 
 run().catch((e) => setFailed(e.message));
 
+console.log("test");
+
