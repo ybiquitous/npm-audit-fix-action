@@ -11,6 +11,10 @@ on:
   # Allow manual triggering of the workflow.
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   unit:
     runs-on: ubuntu-slim
@@ -66,8 +70,10 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - name: Run local action for monorepo
-        id: npm-audit-fix
+      - name: Run local action (default)
+        uses: ./
+      - name: Run local action (monorepo)
+        id: npm-audit-fix-monorepo
         uses: ./
         with:
           branch: "npm-audit-fix-action/test-monorepo"
@@ -77,12 +83,10 @@ jobs:
             examples/monorepo
             examples/monorepo/packages/*
       - name: Verify outputs
-        if: ${{ steps.npm-audit-fix.outputs.pull_request_url }}
-        shell: bash
         env:
-          pull_request_url: ${{ steps.npm-audit-fix.outputs.pull_request_url }}
-          branch_name: ${{ steps.npm-audit-fix.outputs.branch_name }}
-          GH_TOKEN: ${{ github.token }}
+          pull_request_url: ${{ steps.npm-audit-fix-monorepo.outputs.pull_request_url }}
+          branch_name: ${{ steps.npm-audit-fix-monorepo.outputs.branch_name }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           echo "pull_request_url: ${pull_request_url}"
           echo "branch_name: ${branch_name}"
@@ -94,8 +98,8 @@ jobs:
             echo "::error::Branch names are unexpected: '${branch_name}' != '${head_ref_name}'"
             exit 1
           fi
-      - name: Run local action for subprojects
-        id: npm-audit-fix-2
+      - name: Run local action (subprojects)
+        id: npm-audit-fix-subprojects
         uses: ./
         with:
           branch: "npm-audit-fix-action/test-subprojects"
@@ -103,17 +107,13 @@ jobs:
           path: "examples/subprojects/project-a, examples/subprojects/project-b"
       - name: Move test PRs to draft # Prevent PRs from increasing
         env:
-          pr_url: ${{ steps.npm-audit-fix.outputs.pull_request_url }}
-          pr_url_2: ${{ steps.npm-audit-fix-2.outputs.pull_request_url }}
-          GH_TOKEN: ${{ github.token }}
+          pr_url_monorepo: ${{ steps.npm-audit-fix-monorepo.outputs.pull_request_url }}
+          pr_url_subprojects: ${{ steps.npm-audit-fix-subprojects.outputs.pull_request_url }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           sleep 3
-          if [[ -n "${pr_url}" ]]; then
-            gh pr ready --undo "${pr_url}"
-          fi
-          if [[ -n "${pr_url_2}" ]]; then
-            gh pr ready --undo "${pr_url_2}"
-          fi
+          gh pr ready --undo "${pr_url_monorepo}"
+          gh pr ready --undo "${pr_url_subprojects}"
 
   lint:
     uses: ybiquitous/.github/.github/workflows/nodejs-lint-reusable.yml@11134ce0efbe36bdd758ab41e38fd8e05bf0a10d # v3.3.0
