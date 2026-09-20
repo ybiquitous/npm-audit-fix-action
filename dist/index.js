@@ -31512,6 +31512,8 @@ exports.LRUCache = LRUCache;
 /************************************************************************/
 var __webpack_exports__ = {};
 
+;// CONCATENATED MODULE: external "node:path"
+const external_node_path_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:path");
 ;// CONCATENATED MODULE: external "os"
 const external_os_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("os");
 ;// CONCATENATED MODULE: ./node_modules/@actions/core/lib/utils.js
@@ -39338,6 +39340,91 @@ async function listPackages(options = {}) {
   return packages;
 }
 
+;// CONCATENATED MODULE: ./lib/mergeReports.js
+/**
+ * @param {Report[]} reports
+ * @returns {Report}
+ */
+function mergeReports(reports) {
+  const added = new Set(reports.flatMap((report) => report.added));
+  const removed = new Set(reports.flatMap((report) => report.removed));
+  const updated = new Set(reports.flatMap((report) => report.updated));
+
+  /** @type {Record<string, UrlInfo>} */
+  const packageUrls = {};
+  for (const report of reports) {
+    Object.assign(packageUrls, report.packageUrls);
+  }
+
+  const packageCount = new Set([...added, ...removed, ...updated].map((entry) => entry.name)).size;
+
+  return {
+    added: [...added],
+    removed: [...removed],
+    updated: [...updated],
+    packageCount,
+    packageUrls,
+  };
+}
+
+;// CONCATENATED MODULE: ./lib/resolveDirPaths.js
+
+
+
+/**
+ * @param {string} dirPath
+ * @returns {Promise<boolean>}
+ */
+async function resolveDirPaths_isDirectory(dirPath) {
+  try {
+    // TODO: `{ throwIfNoEntry: false }` option will make the error catching unneeded.
+    const dir = await promises_namespaceObject.stat(dirPath);
+    return Boolean(dir?.isDirectory());
+  } catch (e) {
+    if (e instanceof Error && "code" in e && e.code === "ENOENT") return false;
+    throw e;
+  }
+}
+
+/**
+ * @param {string} dirPath
+ * @returns {string}
+ */
+function resolveDirPaths_toPosixPath(dirPath) {
+  return dirPath.split(external_node_path_namespaceObject.sep).join(external_node_path_namespaceObject.posix.sep);
+}
+
+/**
+ * @param {string[]} patterns
+ * @param {string} baseDir
+ * @returns {Promise<{ resolved: string[], failed: string[] }>}
+ */
+async function resolveDirPaths(patterns, baseDir) {
+  /** @type {Set<string>} */
+  const resolved = new Set();
+  /** @type {Set<string>} */
+  const failed = new Set();
+
+  for (const pattern of patterns) {
+    if (await resolveDirPaths_isDirectory(external_node_path_namespaceObject.join(baseDir, pattern))) {
+      resolved.add(resolveDirPaths_toPosixPath(pattern));
+      continue;
+    }
+
+    let matched = false;
+    for await (const entry of promises_namespaceObject.glob(pattern, { cwd: baseDir, withFileTypes: true })) {
+      if (entry.isDirectory()) {
+        matched = true;
+        const relativePath = external_node_path_namespaceObject.relative(baseDir, external_node_path_namespaceObject.join(entry.parentPath, entry.name));
+        resolved.add(resolveDirPaths_toPosixPath(relativePath));
+      }
+    }
+    if (!matched) failed.add(pattern);
+  }
+
+  return { resolved: Array.from(resolved).sort(), failed: Array.from(failed).sort() };
+}
+
 ;// CONCATENATED MODULE: ./lib/getNpmVersion.js
 
 
@@ -39383,19 +39470,28 @@ async function updateNpm(version) {
   return newVersion;
 }
 
-;// CONCATENATED MODULE: ./lib/utils/commaSeparatedList.js
+;// CONCATENATED MODULE: ./lib/utils/separatedList.js
 /**
  * @param {string} str
+ * @returns {string}
+ */
+function trim(str) {
+  return str.trim();
+}
+
+/**
+ * @param {string} str
+ * @param {string | RegExp} separator
  * @returns {string[]}
  */
-function commaSeparatedList(str) {
-  return str
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
+function separatedList(str, separator) {
+  return str.split(separator).map(trim).filter(Boolean);
 }
 
 ;// CONCATENATED MODULE: ./lib/index.js
+
+
+
 
 
 
@@ -39430,24 +39526,10 @@ function getFromEnv(name) {
   throw new Error(`Not found '${name}' in the environment variables`);
 }
 
-// eslint-disable-next-line max-lines-per-function, max-statements
-async function run() {
-  await group("Show runtime info", async () => {
-    info(`Node.js version: ${process.version}`);
-    info(`Node.js location: ${process.execPath}`);
-
-    addPath(process.execPath.replace(/\/node$/u, ""));
-
-    info(`npm location: ${await getNpmLocation()}`);
-  });
-
-  const npmVersion = await group(`Update npm to ${NPM_VERSION}`, async () => {
-    return await updateNpm(NPM_VERSION);
-  });
-
-  process.chdir(getInput("path"));
-  info(`Current directory: ${process.cwd()}`);
-
+/**
+ * @returns {Promise<{ report: Report, files: string[] }>}
+ */
+async function processDir() {
   await group("Install user packages", async () => {
     await exec_exec("npm", npmArgs("ci"));
   });
@@ -39474,12 +39556,70 @@ async function run() {
     return res;
   });
 
+  const files = await group("Check file changes", changedFiles);
+
+  return { report, files };
+}
+
+// eslint-disable-next-line max-lines-per-function, max-statements
+async function run() {
+  await group("Show runtime info", async () => {
+    info(`Node.js version: ${process.version}`);
+    info(`Node.js location: ${process.execPath}`);
+
+    addPath(process.execPath.replace(/\/node$/u, ""));
+
+    info(`npm location: ${await getNpmLocation()}`);
+  });
+
+  const npmVersion = await group(`Update npm to ${NPM_VERSION}`, async () => {
+    return await updateNpm(NPM_VERSION);
+  });
+
+  const inputPath = getInput("path") || ".";
+  const pathPatterns = separatedList(inputPath, /[,\s]+/u);
+
+  if (pathPatterns.length === 0) {
+    throw new Error(`"path" input must not be empty`);
+  }
+
+  const baseDir = process.cwd();
+  const targetDirs = await group("Resolve input paths", async () => {
+    const { resolved, failed } = await resolveDirPaths(pathPatterns, baseDir);
+
+    /** @type {(list: string[]) => string} */
+    const patternsToText = (list) => list.map((s) => `"${s}"`).join(", ");
+
+    if (failed.length > 0) {
+      throw new Error(`No such directories matching patterns: ${patternsToText(failed)}`);
+    }
+
+    info(`Target directories: ${patternsToText(resolved)}`);
+    return resolved;
+  });
+
+  /** @type {Report[]} */
+  const reports = [];
+  /** @type {string[]} */
+  const files = [];
+
+  for (const targetDir of targetDirs) {
+    await group(`Process directory: "${targetDir}"`, async () => {
+      process.chdir(targetDir);
+      const { report, files: newFiles } = await processDir();
+      reports.push(report);
+      files.push(...newFiles.map((file) => external_node_path_namespaceObject.posix.join(targetDir, file)));
+    });
+
+    process.chdir(baseDir);
+  }
+
+  const report = mergeReports(reports);
   if (report.packageCount === 0) {
     info("No update.");
     return;
   }
 
-  const files = await group("Check file changes", changedFiles);
   if (files.length === 0) {
     info("No file changes.");
     return;
@@ -39516,8 +39656,8 @@ async function run() {
         npmVersion,
         github: { serverUrl, repository, runId },
       }),
-      labels: commaSeparatedList(getInput("labels")),
-      assignees: commaSeparatedList(getInput("assignees")),
+      labels: separatedList(getInput("labels"), ","),
+      assignees: separatedList(getInput("assignees"), ","),
     });
   });
 }
