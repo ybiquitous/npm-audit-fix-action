@@ -55,6 +55,18 @@ For more details, see [`action.yml`](action.yml).
 
 ### Monorepo
 
+Given:
+
+```txt
+/
+├── package.json
+└── packages/
+    ├── pkg-a/
+    │   └── package.json
+    └── pkg-b/
+        └── package.json
+```
+
 Assuming the project root is checked out, the following sets the `path` input to a space-separated list that includes `.` (the current directory):
 
 ```yaml
@@ -64,6 +76,8 @@ Assuming the project root is checked out, the following sets the `path` input to
       .
       packages/*
 ```
+
+In this case, target files are: `package.json`, `packages/pkg-a/package.json`, and `packages/pkg-b/package.json`.
 
 ## Screenshot
 
