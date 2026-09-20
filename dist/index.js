@@ -39601,6 +39601,7 @@ async function run() {
     await group(`Process directory: "${targetDir}"`, async () => {
       process.chdir(targetDir);
       const { report, files } = await processDir();
+      info(`files: ${JSON.stringify(files)}`); // debug
       reports.push(report);
       files.push(...files.map((file) => external_node_path_namespaceObject.posix.join(targetDir, file)));
     });
