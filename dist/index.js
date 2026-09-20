@@ -39577,9 +39577,9 @@ async function run() {
     throw new Error(`"path" input must not be empty`);
   }
 
-  const rootDir = process.cwd();
+  const baseDir = process.cwd();
   const targetDirs = await group("Resolve input paths", async () => {
-    const { resolved, failed } = await resolveDirPaths(pathPatterns, rootDir);
+    const { resolved, failed } = await resolveDirPaths(pathPatterns, baseDir);
 
     /** @type {(list: string[]) => string} */
     const patternsToText = (list) => list.map((s) => `"${s}"`).join(", ");
@@ -39604,9 +39604,9 @@ async function run() {
       reports.push(report);
       files.push(...files.map((file) => external_node_path_namespaceObject.posix.join(targetDir, file)));
     });
-  }
 
-  process.chdir(rootDir);
+    process.chdir(baseDir);
+  }
 
   const report = mergeReports(reports);
   if (report.packageCount === 0) {
