@@ -39618,11 +39618,19 @@ async function run() {
   if (report.packageCount === 0) {
     info("No update.");
     return;
+  } else {
+    await group("Merged reports", async () => {
+      info(JSON.stringify(report, null, 2));
+    });
   }
 
   if (files.length === 0) {
     info("No file changes.");
     return;
+  } else {
+    await group("All changed files", async () => {
+      info(JSON.stringify(files, null, 2));
+    });
   }
 
   const token = getInput("github_token");
