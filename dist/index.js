@@ -39383,14 +39383,15 @@ async function updateNpm(version) {
   return newVersion;
 }
 
-;// CONCATENATED MODULE: ./lib/utils/commaSeparatedList.js
+;// CONCATENATED MODULE: ./lib/utils/separatedList.js
 /**
  * @param {string} str
+ * @param {string | RegExp} separator
  * @returns {string[]}
  */
-function commaSeparatedList(str) {
+function separatedList(str, separator) {
   return str
-    .split(",")
+    .split(separator)
     .map((s) => s.trim())
     .filter(Boolean);
 }
@@ -39516,8 +39517,8 @@ async function run() {
         npmVersion,
         github: { serverUrl, repository, runId },
       }),
-      labels: commaSeparatedList(getInput("labels")),
-      assignees: commaSeparatedList(getInput("assignees")),
+      labels: separatedList(getInput("labels"), ","),
+      assignees: separatedList(getInput("assignees"), ","),
     });
   });
 }
