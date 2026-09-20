@@ -31512,6 +31512,8 @@ exports.LRUCache = LRUCache;
 /************************************************************************/
 var __webpack_exports__ = {};
 
+;// CONCATENATED MODULE: external "node:path"
+const external_node_path_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:path");
 ;// CONCATENATED MODULE: external "os"
 const external_os_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("os");
 ;// CONCATENATED MODULE: ./node_modules/@actions/core/lib/utils.js
@@ -39338,6 +39340,87 @@ async function listPackages(options = {}) {
   return packages;
 }
 
+;// CONCATENATED MODULE: ./lib/mergeReports.js
+/**
+ * @param {Report[]} reports
+ * @returns {Report}
+ */
+function mergeReports(reports) {
+  const added = reports.flatMap((report) => report.added);
+  const removed = reports.flatMap((report) => report.removed);
+  const updated = reports.flatMap((report) => report.updated);
+
+  /** @type {Record<string, UrlInfo>} */
+  const packageUrls = {};
+  for (const report of reports) {
+    Object.assign(packageUrls, report.packageUrls);
+  }
+
+  const packageCount = new Set([...added, ...removed, ...updated].map((entry) => entry.name)).size;
+
+  return { added, removed, updated, packageCount, packageUrls };
+}
+
+;// CONCATENATED MODULE: ./lib/resolvePaths.js
+
+
+
+/**
+ * @param {string} dirPath
+ * @returns {Promise<boolean>}
+ */
+async function resolvePaths_isDirectory(dirPath) {
+  try {
+    return (await (0,promises_namespaceObject.stat)(dirPath)).isDirectory();
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * @param {string} dirPath
+ * @returns {string}
+ */
+function toPosixRelativePath(dirPath) {
+  const posixPath = dirPath.split(external_node_path_namespaceObject.sep).join("/");
+  return posixPath === "" ? "." : posixPath;
+}
+
+/**
+ * Resolves directory paths from a list of literal paths and/or glob patterns.
+ *
+ * @param {string[]} patterns
+ * @param {string} [cwd]
+ * @returns {Promise<string[]>}
+ */
+async function resolvePaths(patterns, cwd = process.cwd()) {
+  /** @type {Set<string>} */
+  const resolved = new Set();
+
+  for (const pattern of patterns) {
+    // A literal, existing directory is used as-is, without being treated as a glob pattern.
+    if (await resolvePaths_isDirectory(external_node_path_namespaceObject.join(cwd, pattern))) {
+      resolved.add(toPosixRelativePath(pattern));
+      continue;
+    }
+
+    let matched = false;
+    for await (const entry of (0,promises_namespaceObject.glob)(pattern, { cwd, withFileTypes: true })) {
+      if (entry.isDirectory()) {
+        matched = true;
+        const relativePath = external_node_path_namespaceObject.relative(cwd, external_node_path_namespaceObject.join(entry.parentPath, entry.name));
+        resolved.add(toPosixRelativePath(relativePath));
+      }
+    }
+
+    if (!matched) {
+      throw new Error(`No directory matched for the "path" input: "${pattern}"`);
+    }
+  }
+
+  return Array.from(resolved).sort();
+}
+
 ;// CONCATENATED MODULE: ./lib/getNpmVersion.js
 
 
@@ -39415,6 +39498,9 @@ function separatedList(str, separator) {
 
 
 
+
+
+
 async function getNpmLocation() {
   return (await getExecOutput("which", ["npm"], { silent: true })).stdout.trim();
 }
@@ -39431,22 +39517,14 @@ function getFromEnv(name) {
   throw new Error(`Not found '${name}' in the environment variables`);
 }
 
-// eslint-disable-next-line max-lines-per-function, max-statements
-async function run() {
-  await group("Show runtime info", async () => {
-    info(`Node.js version: ${process.version}`);
-    info(`Node.js location: ${process.execPath}`);
-
-    addPath(process.execPath.replace(/\/node$/u, ""));
-
-    info(`npm location: ${await getNpmLocation()}`);
-  });
-
-  const npmVersion = await group(`Update npm to ${NPM_VERSION}`, async () => {
-    return await updateNpm(NPM_VERSION);
-  });
-
-  process.chdir(getInput("path"));
+/**
+ * Runs the `npm audit fix` workflow for a single directory.
+ *
+ * @param {string} targetPath
+ * @returns {Promise<{ report: Report, files: string[] }>}
+ */
+async function processPath(targetPath) {
+  process.chdir(targetPath);
   info(`Current directory: ${process.cwd()}`);
 
   await group("Install user packages", async () => {
@@ -39475,12 +39553,57 @@ async function run() {
     return res;
   });
 
+  const files = await group("Check file changes", changedFiles);
+
+  return { report, files };
+}
+
+// eslint-disable-next-line max-lines-per-function, max-statements
+async function run() {
+  await group("Show runtime info", async () => {
+    info(`Node.js version: ${process.version}`);
+    info(`Node.js location: ${process.execPath}`);
+
+    addPath(process.execPath.replace(/\/node$/u, ""));
+
+    info(`npm location: ${await getNpmLocation()}`);
+  });
+
+  const npmVersion = await group(`Update npm to ${NPM_VERSION}`, async () => {
+    return await updateNpm(NPM_VERSION);
+  });
+
+  const rootDir = process.cwd();
+  const pathPatterns = separatedList(getInput("path"), /[,\s]+/u);
+
+  const targetPaths = await group("Resolve paths", async () => {
+    const resolved = await resolvePaths(pathPatterns, rootDir);
+    info(`Target paths: ${resolved.join(", ")}`);
+    return resolved;
+  });
+
+  /** @type {Report[]} */
+  const reports = [];
+  /** @type {string[]} */
+  const files = [];
+
+  for (const targetPath of targetPaths) {
+    await group(`Process path: "${targetPath}"`, async () => {
+      process.chdir(rootDir);
+      const result = await processPath(targetPath);
+      reports.push(result.report);
+      files.push(...result.files.map((file) => external_node_path_namespaceObject.posix.join(targetPath, file)));
+    });
+  }
+
+  process.chdir(rootDir);
+
+  const report = mergeReports(reports);
   if (report.packageCount === 0) {
     info("No update.");
     return;
   }
 
-  const files = await group("Check file changes", changedFiles);
   if (files.length === 0) {
     info("No file changes.");
     return;
