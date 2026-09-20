@@ -19,7 +19,6 @@
   "main": "lib/index.js",
   "scripts": {
     "prepare": "git config set --local core.hooksPath .githooks || true",
-    "postprepare": "npm run build",
     "build": "ncc build lib/index.js --license=LICENSE.txt",
     "pretest": "npm run lint",
     "test": "node --test",
