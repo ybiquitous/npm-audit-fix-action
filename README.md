@@ -81,7 +81,7 @@ The `path` input is a space-separated list (i.e., `[".", "packages/*"]`):
       packages/*
 ```
 
-Then, the target files are: `package.json`, `packages/pkg-a/package.json`, and `packages/pkg-b/package.json`.
+The target files are `package.json`, `packages/pkg-a/package.json`, and `packages/pkg-b/package.json`.
 
 ### Subprojects
 
@@ -92,7 +92,7 @@ Given:
 ├── project-a/
 │   └── package.json
 └── project-b/
-    └── package.json/
+    └── package.json
 ```
 
 The `path` input is a comma-separated list:
@@ -103,7 +103,7 @@ The `path` input is a comma-separated list:
     path: project-a, project-b
 ```
 
-Then, the target files are: `project-a/package.json`, and `project-b/package.json`.
+The target files are `project-a/package.json` and `project-b/package.json`.
 
 ## License
 
