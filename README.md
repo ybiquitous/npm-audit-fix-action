@@ -81,8 +81,6 @@ The `path` input is a space-separated list (i.e., `[".", "packages/*"]`):
       packages/*
 ```
 
-The target files are `package.json`, `packages/pkg-a/package.json`, and `packages/pkg-b/package.json`.
-
 ### Subprojects
 
 Given:
@@ -102,8 +100,6 @@ The `path` input is a comma-separated list:
   with:
     path: project-a, project-b
 ```
-
-The target files are `project-a/package.json` and `project-b/package.json`.
 
 ## License
 
