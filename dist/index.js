@@ -39413,6 +39413,15 @@ async function resolveDirPaths_isDirectory(dirPath) {
 
 /**
  * @param {string} dirPath
+ * @returns {Promise<boolean>}
+ */
+async function hasPackageFile(dirPath) {
+  const file = await promises_namespaceObject.stat(external_node_path_namespaceObject.join(dirPath, "package.json"), { throwIfNoEntry: false });
+  return Boolean(file?.isFile() || file?.isSymbolicLink());
+}
+
+/**
+ * @param {string} dirPath
  * @returns {string}
  */
 function resolveDirPaths_toPosixPath(dirPath) {
@@ -39422,17 +39431,20 @@ function resolveDirPaths_toPosixPath(dirPath) {
 /**
  * @param {string[]} patterns
  * @param {string} baseDir
- * @returns {Promise<{ resolved: string[], failed: string[] }>}
+ * @returns {Promise<{ resolved: string[], excluded: string[], failed: string[] }>}
  */
 async function resolveDirPaths(patterns, baseDir) {
   /** @type {Set<string>} */
   const resolved = new Set();
   /** @type {Set<string>} */
+  const excluded = new Set();
+  /** @type {Set<string>} */
   const failed = new Set();
 
   for (const pattern of patterns) {
-    if (await resolveDirPaths_isDirectory(external_node_path_namespaceObject.join(baseDir, pattern))) {
-      resolved.add(resolveDirPaths_toPosixPath(pattern));
+    const testDir = external_node_path_namespaceObject.join(baseDir, pattern);
+    if (await resolveDirPaths_isDirectory(testDir)) {
+      ((await hasPackageFile(testDir)) ? resolved : excluded).add(resolveDirPaths_toPosixPath(pattern));
       continue;
     }
 
@@ -39441,13 +39453,19 @@ async function resolveDirPaths(patterns, baseDir) {
       if (entry.isDirectory()) {
         matched = true;
         const relativePath = external_node_path_namespaceObject.relative(baseDir, external_node_path_namespaceObject.join(entry.parentPath, entry.name));
-        resolved.add(resolveDirPaths_toPosixPath(relativePath));
+        ((await hasPackageFile(external_node_path_namespaceObject.join(baseDir, relativePath))) ? resolved : excluded).add(
+          resolveDirPaths_toPosixPath(relativePath),
+        );
       }
     }
     if (!matched) failed.add(pattern);
   }
 
-  return { resolved: Array.from(resolved).sort(), failed: Array.from(failed).sort() };
+  return {
+    resolved: Array.from(resolved).sort(),
+    excluded: Array.from(excluded).sort(),
+    failed: Array.from(failed).sort(),
+  };
 }
 
 ;// CONCATENATED MODULE: ./lib/getNpmVersion.js
@@ -39592,13 +39610,17 @@ async function run() {
 
   const baseDir = process.cwd();
   const targetDirs = await group("Resolve input paths", async () => {
-    const { resolved, failed } = await resolveDirPaths(pathPatterns, baseDir);
+    const { resolved, excluded, failed } = await resolveDirPaths(pathPatterns, baseDir);
 
     /** @type {(list: string[]) => string} */
     const patternsToText = (list) => list.map((s) => `"${s}"`).join(", ");
 
     if (failed.length > 0) {
       throw new Error(`No such directories matching patterns: ${patternsToText(failed)}`);
+    }
+
+    if (excluded.length > 0) {
+      info(`No package files found in directories: ${patternsToText(excluded)}`);
     }
 
     info(`Target directories: ${patternsToText(resolved)}`);
