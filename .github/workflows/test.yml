@@ -25,7 +25,7 @@ jobs:
       - name: Check out
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
+          ref: ${{ case(github.event.pull_request.head.repo.full_name == github.repository, github.event.pull_request.head.ref, github.sha) }}
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
@@ -46,11 +46,16 @@ jobs:
       - name: Build
         env:
           pr_head_ref: ${{ github.event.pull_request.head.ref }}
+          pr_head_repo: ${{ github.event.pull_request.head.repo.full_name }}
         run: |
           npm run build
           if git diff --exit-code dist/ ; then
             echo "No changes."
             exit 0
+          fi
+          if [[ -z "${pr_head_ref}" || "${pr_head_repo}" != "${GITHUB_REPOSITORY}" ]]; then
+            echo "::error::dist/ is out of date. Build and push it."
+            exit 1
           fi
           git config --local user.name "${GITHUB_ACTOR}"
           git config --local user.email "${GITHUB_ACTOR}@users.noreply.github.com"
