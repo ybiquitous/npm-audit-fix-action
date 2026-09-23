@@ -2,6 +2,12 @@
 
 <!-- lint disable no-duplicate-headings -->
 
+## [9.1.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v9.1.0...v9.1.1) (2026-09-23)
+
+### Bug Fixes
+
+- exclude paths without `package.json` file ([#1363](https://github.com/ybiquitous/npm-audit-fix-action/issues/1363)) ([737f4fc](https://github.com/ybiquitous/npm-audit-fix-action/commit/737f4fc8899d61047ca088f7d1129634682c9394))
+
 ## [9.1.0](https://github.com/ybiquitous/npm-audit-fix-action/compare/v9.0.0...v9.1.0) (2026-09-20)
 
 ### Features
