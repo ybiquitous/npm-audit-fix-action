@@ -73,9 +73,21 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+      - name: Check if the local action can run
+        id: check
+        env:
+          pr_head_repo: ${{ github.event.pull_request.head.repo.full_name }}
+        run: |
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" && "${pr_head_repo}" != "${GITHUB_REPOSITORY}" ]]; then
+            echo "::warning::Smoke test steps were skipped on this fork PR because fork PRs cannot get write permissions."
+          else
+            echo "can_run=true" >> "${GITHUB_OUTPUT}"
+          fi
       - name: Run local action (default)
+        if: ${{ steps.check.outputs.can_run }}
         uses: ./
       - name: Run local action (monorepo)
+        if: ${{ steps.check.outputs.can_run }}
         id: npm-audit-fix-monorepo
         uses: ./
         with:
@@ -86,6 +98,7 @@ jobs:
             examples/monorepo
             examples/monorepo/packages/*
       - name: Verify outputs
+        if: ${{ steps.check.outputs.can_run }}
         env:
           pull_request_url: ${{ steps.npm-audit-fix-monorepo.outputs.pull_request_url }}
           branch_name: ${{ steps.npm-audit-fix-monorepo.outputs.branch_name }}
@@ -102,6 +115,7 @@ jobs:
             exit 1
           fi
       - name: Run local action (subprojects)
+        if: ${{ steps.check.outputs.can_run }}
         id: npm-audit-fix-subprojects
         uses: ./
         with:
@@ -109,6 +123,7 @@ jobs:
           commit_title: "test(deps): npm audit fix for subprojects"
           path: "examples/subprojects/project-a, examples/subprojects/project-b"
       - name: Move test PRs to draft # Prevent PRs from increasing
+        if: ${{ steps.check.outputs.can_run }}
         env:
           pr_url_monorepo: ${{ steps.npm-audit-fix-monorepo.outputs.pull_request_url }}
           pr_url_subprojects: ${{ steps.npm-audit-fix-subprojects.outputs.pull_request_url }}
