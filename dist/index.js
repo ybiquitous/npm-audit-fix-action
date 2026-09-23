@@ -39401,14 +39401,8 @@ function mergeReports(reports) {
  * @returns {Promise<boolean>}
  */
 async function resolveDirPaths_isDirectory(dirPath) {
-  try {
-    // TODO: `{ throwIfNoEntry: false }` option will make the error catching unneeded.
-    const dir = await promises_namespaceObject.stat(dirPath);
-    return Boolean(dir?.isDirectory());
-  } catch (e) {
-    if (e instanceof Error && "code" in e && e.code === "ENOENT") return false;
-    throw e;
-  }
+  const dir = await promises_namespaceObject.stat(dirPath, { throwIfNoEntry: false });
+  return Boolean(dir?.isDirectory());
 }
 
 /**
