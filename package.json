@@ -80,6 +80,11 @@
         1,
         "always",
         300
+      ],
+      "header-max-length": [
+        2,
+        "always",
+        200
       ]
     }
   },
