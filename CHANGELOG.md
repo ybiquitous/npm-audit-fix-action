@@ -2,6 +2,12 @@
 
 <!-- lint disable no-duplicate-headings -->
 
+## [9.1.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v9.1.1...v9.1.2) (2026-09-29)
+
+### Bug Fixes
+
+- **deps:** bump undici from 6.28.0 to 6.29.0 ([#1388](https://github.com/ybiquitous/npm-audit-fix-action/issues/1388)) ([624989c](https://github.com/ybiquitous/npm-audit-fix-action/commit/624989c8cc615ae835a82882e87eff9a6bcbd4a4))
+
 ## [9.1.1](https://github.com/ybiquitous/npm-audit-fix-action/compare/v9.1.0...v9.1.1) (2026-09-23)
 
 ### Bug Fixes
