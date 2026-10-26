@@ -6,19 +6,6 @@
 
 ### Bug Fixes
 
-- **deps-dev:** bump @types/node from 26.6.3 to 26.6.4 in the typescript group ([#1402](https://github.com/ybiquitous/npm-audit-fix-action/issues/1402)) ([a03ad25](https://github.com/ybiquitous/npm-audit-fix-action/commit/a03ad2591188f01e48d8a3768e85fcb2fd3b04e3))
-- **deps-dev:** bump @types/node from 26.6.4 to 26.6.5 in the typescript group across 1 directory ([#1414](https://github.com/ybiquitous/npm-audit-fix-action/issues/1414)) ([9d69540](https://github.com/ybiquitous/npm-audit-fix-action/commit/9d6954098006f66e8fd4c17ebb3db5a8a8a37d26))
-- **deps-dev:** bump fast-uri from 3.1.8 to 3.1.9 ([#1420](https://github.com/ybiquitous/npm-audit-fix-action/issues/1420)) ([88d16f6](https://github.com/ybiquitous/npm-audit-fix-action/commit/88d16f6122801dec127d1378f71f5f2b99e5effb))
-- **deps-dev:** bump source-map-js from 1.2.1 to 1.2.2 ([#1415](https://github.com/ybiquitous/npm-audit-fix-action/issues/1415)) ([390f8b2](https://github.com/ybiquitous/npm-audit-fix-action/commit/390f8b26f96f6ec973598e21945bc4536dfdd976))
-- **deps-dev:** bump the eslint group with 3 updates ([#1401](https://github.com/ybiquitous/npm-audit-fix-action/issues/1401)) ([74d07a1](https://github.com/ybiquitous/npm-audit-fix-action/commit/74d07a1fa13f374981ee29aebb43f8ac7b1b2f3c))
-- **deps-dev:** bump the eslint group with 3 updates ([#1416](https://github.com/ybiquitous/npm-audit-fix-action/issues/1416)) ([5ce7e4b](https://github.com/ybiquitous/npm-audit-fix-action/commit/5ce7e4bb75d075bf37586c500c879b79be540731))
-- **deps-dev:** bump typescript-eslint from 8.71.0 to 8.71.1 in the eslint group across 1 directory ([#1413](https://github.com/ybiquitous/npm-audit-fix-action/issues/1413)) ([71c7ffe](https://github.com/ybiquitous/npm-audit-fix-action/commit/71c7ffe53889f26278db200282c6244d8bfaf36c))
-- **deps-dev:** bump typescript-eslint from 8.71.2 to 8.72.0 in the eslint group ([#1417](https://github.com/ybiquitous/npm-audit-fix-action/issues/1417)) ([3ade7af](https://github.com/ybiquitous/npm-audit-fix-action/commit/3ade7af4feaca2e5a05a208bf5964454bce16c0f))
-- **deps-dev:** bump ybiq from 22.2.0 to 22.3.0 ([#1404](https://github.com/ybiquitous/npm-audit-fix-action/issues/1404)) ([959fa5f](https://github.com/ybiquitous/npm-audit-fix-action/commit/959fa5f8b6291fbf815b874bbf10f808fec71f6b))
-- **deps:** bump actions/setup-node from 7.0.0 to 7.1.0 ([#1412](https://github.com/ybiquitous/npm-audit-fix-action/issues/1412)) ([38f2d3a](https://github.com/ybiquitous/npm-audit-fix-action/commit/38f2d3a2d61223be451b9ccaa7b88839d6c5f837))
-- **deps:** bump the npm_and_yarn group across 3 directories with 1 update ([#1405](https://github.com/ybiquitous/npm-audit-fix-action/issues/1405)) ([e7d64ce](https://github.com/ybiquitous/npm-audit-fix-action/commit/e7d64cec4ba64329e115ffc7cbd6d3a6c98e5fc0))
-- **deps:** bump the npm_and_yarn group across 3 directories with 1 update ([#1419](https://github.com/ybiquitous/npm-audit-fix-action/issues/1419)) ([8661136](https://github.com/ybiquitous/npm-audit-fix-action/commit/8661136e0699ada27eb3ae47e5469aa7cfc726ca))
-- **deps:** bump the ybiquitous-actions group with 4 updates ([#1400](https://github.com/ybiquitous/npm-audit-fix-action/issues/1400)) ([dcbd8a8](https://github.com/ybiquitous/npm-audit-fix-action/commit/dcbd8a88d8dfd265bd2ca5f40a51f1cc87397539))
 - **deps:** bump undici from 6.29.0 to 6.29.1 ([#1421](https://github.com/ybiquitous/npm-audit-fix-action/issues/1421)) ([fbeb3fc](https://github.com/ybiquitous/npm-audit-fix-action/commit/fbeb3fc8bc6813a2c3e6c5c98b9a2f3e76c7d04c))
 
 ## [9.1.2](https://github.com/ybiquitous/npm-audit-fix-action/compare/v9.1.1...v9.1.2) (2026-09-29)
