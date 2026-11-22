@@ -65,7 +65,7 @@
     "eslint-plugin-n": "^18.5.0",
     "remark-preset-ybiquitous": "^0.5.1",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "typescript-eslint": "^8.72.2",
+    "typescript-eslint": "^8.73.0",
     "ybiq": "^22.3.0"
   },
   "lint-staged": {
