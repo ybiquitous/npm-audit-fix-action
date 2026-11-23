@@ -59,7 +59,7 @@
     "@tsconfig/strictest": "^2.0.9",
     "@types/hosted-git-info": "^3.0.5",
     "@types/node": "^26.6.6",
-    "@typescript/native": "npm:typescript@^7.0.2",
+    "@typescript/native": "npm:typescript@^7.1.0-beta",
     "@vercel/ncc": "^0.45.0",
     "eslint": "^10.15.0",
     "eslint-plugin-n": "^18.5.0",
